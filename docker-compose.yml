@@ -1,0 +1,16 @@
+version: '3'
+services:
+  api0:
+    build: .
+    env_file:
+      - .env
+    command:
+      - "python"
+      - "main.py"
+    ports:
+      - "8000:8000"
+    network_mode: host
+    restart: always
+
+networks:
+  default:
