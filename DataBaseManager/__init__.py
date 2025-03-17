@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignK
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship
 from pydantic import BaseModel
 from utils.variable_environment import VarEnv
-from DataBaseManager.models import Users, Groups, Tasks
+from DataBaseManager.models import *
 
 
 class DataBaseManager:
