@@ -9,7 +9,8 @@ from starlette.responses import HTMLResponse
 
 from DataBaseManager import db
 from DataBaseManager.models import Students as Users
-# TODO исправить импорт + спец метод вообще нужны отдельные проверки на тонну всего а делать так просто ужасно, задача уже у турпала, потом поменять
+# TODO исправить импорт + спец метод вообще нужны отдельные проверки на тонну всего а делать так просто ужасно,
+#  задача уже у турпала, потом поменять
 from routers.auth.auntefication import SessionData, get_session_data, create_session_user, backend, cookie
 from routers.auth.models import UserAuth
 
