@@ -45,6 +45,10 @@ class UserManager:
     def register_teacher(self, login, password):
         self.db.execute_commit(sqlalchemy.insert(Teachers).values(login=login, password=password))
         return self.db.select(sqlalchemy.select(Teachers).where(Teachers.login == login), self.db.any_)
+    
+    def is_user(self, login, password):
+        query = sqlalchemy.select(Users).where(and_(Users.login == login, Users.password == password))
+        return self.db.select(query, types=self.db.any_)
 
 db = DataBaseManager()
 user_manager = UserManager(db)
