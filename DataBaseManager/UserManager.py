@@ -17,11 +17,11 @@ class UserManager:
         return self.db.select(sqlalchemy.select(Teachers).where(Teachers.login == login), self.db.any_)
     
     def is_student(self, login, password):
-        query = sqlalchemy.select(Students).where(and_(Students.login == login, Students.password == password))
+        query = sqlalchemy.select(Students).where(and_(Students.login == login, Students.password_hash == password))
         return self.db.select(query, types=self.db.any_)
     
     def is_teacher(self, login, password):
-        query = sqlalchemy.select(Teachers).where(and_(Teachers.login == login, Teachers.password == password))
+        query = sqlalchemy.select(Teachers).where(and_(Teachers.login == login, Teachers.password_hash == password))
         return self.db.select(query, types=self.db.any_)
 
 

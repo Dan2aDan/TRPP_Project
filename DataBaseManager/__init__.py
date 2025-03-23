@@ -5,7 +5,6 @@ from pydantic import BaseModel
 from utils.variable_environment import VarEnv
 
 
-
 class DataBaseManager:
     all_ = 0
     any_ = 1
