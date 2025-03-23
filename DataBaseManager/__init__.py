@@ -6,6 +6,7 @@ from utils.variable_environment import VarEnv
 from DataBaseManager.models import Students, Teachers
 
 
+
 class DataBaseManager:
     all_ = 0
     any_ = 1
