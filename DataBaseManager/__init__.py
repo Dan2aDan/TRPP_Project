@@ -1,8 +1,9 @@
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey
+import sqlalchemy
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, and_
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship
 from pydantic import BaseModel
 from utils.variable_environment import VarEnv
-from DataBaseManager.models import *
+from DataBaseManager.models import Students, Teachers
 
 
 class DataBaseManager:
@@ -46,8 +47,12 @@ class UserManager:
         self.db.execute_commit(sqlalchemy.insert(Teachers).values(login=login, password=password))
         return self.db.select(sqlalchemy.select(Teachers).where(Teachers.login == login), self.db.any_)
     
-    def is_user(self, login, password):
-        query = sqlalchemy.select(Users).where(and_(Users.login == login, Users.password == password))
+    def is_student(self, login, password):
+        query = sqlalchemy.select(Students).where(and_(Students.login == login, Students.password == password))
+        return self.db.select(query, types=self.db.any_)
+    
+    def is_teacher(self, login, password):
+        query = sqlalchemy.select(Teachers).where(and_(Teachers.login == login, Teachers.password == password))
         return self.db.select(query, types=self.db.any_)
 
 db = DataBaseManager()
