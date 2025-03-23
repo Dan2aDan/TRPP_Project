@@ -1,8 +1,9 @@
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey
+import sqlalchemy
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, and_
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship
 from pydantic import BaseModel
 from utils.variable_environment import VarEnv
-from DataBaseManager.models import *
+
 
 
 class DataBaseManager:
@@ -32,6 +33,4 @@ class DataBaseManager:
                 data = session.execute(command).fetchone()
             session.close()
             return data
-
-
 db = DataBaseManager()
