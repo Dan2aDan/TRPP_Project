@@ -33,4 +33,5 @@ class DataBaseManager:
             session.close()
             return data
 
+
 db = DataBaseManager()
