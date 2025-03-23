@@ -33,4 +33,5 @@ class DataBaseManager:
                 data = session.execute(command).fetchone()
             session.close()
             return data
+
 db = DataBaseManager()
