@@ -1,5 +1,5 @@
 import sqlalchemy
-from DataBaseManager.__init__ import DataBaseManager
+from DataBaseManager.__init__ import db
 from DataBaseManager.models import Students, Teachers
 
 
@@ -23,5 +23,5 @@ class UserManager:
         query = sqlalchemy.select(Teachers).where(and_(Teachers.login == login, Teachers.password == password))
         return self.db.select(query, types=self.db.any_)
 
-db = DataBaseManager()
+
 user_manager = UserManager(db)
