@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignK
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship
 from pydantic import BaseModel
 from utils.variable_environment import VarEnv
-from DataBaseManager.models import Users, Groups, Tasks
+from DataBaseManager.models import *
 
 
 class DataBaseManager:
@@ -34,4 +34,17 @@ class DataBaseManager:
             return data
 
 
+class UserManager:
+    def __init__(self, db):
+        self.db = db
+
+    def register_student(self, login, password):
+        self.db.execute_commit(sqlalchemy.insert(Students).values(login=login, password=password))
+        return self.db.select(sqlalchemy.select(Students).where(Students.login == login), self.db.any_)
+
+    def register_teacher(self, login, password):
+        self.db.execute_commit(sqlalchemy.insert(Teachers).values(login=login, password=password))
+        return self.db.select(sqlalchemy.select(Teachers).where(Teachers.login == login), self.db.any_)
+
 db = DataBaseManager()
+user_manager = UserManager(db)
