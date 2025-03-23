@@ -1,4 +1,5 @@
 import sqlalchemy
+from sqlalchemy import and_
 from DataBaseManager.__init__ import db
 from DataBaseManager.models import Students, Teachers
 
