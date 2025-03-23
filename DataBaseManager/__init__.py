@@ -5,7 +5,6 @@ from pydantic import BaseModel
 from utils.variable_environment import VarEnv
 
 
-
 class DataBaseManager:
     all_ = 0
     any_ = 1
@@ -33,4 +32,6 @@ class DataBaseManager:
                 data = session.execute(command).fetchone()
             session.close()
             return data
+
+
 db = DataBaseManager()
