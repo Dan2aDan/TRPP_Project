@@ -13,7 +13,7 @@ from routers.pages import router as pages_router
 app = FastAPI()
 router = APIRouter()
 router.include_router(auth_router, prefix="/auth", tags=["auth"])
-app.include_router(router, prefix="/api", tags=["api"])
+app.include_router(router, prefix="/api/v0", tags=["api"])
 app.include_router(pages_router, prefix="/pages")
 
 @app.get("/", response_class=JSONResponse)
