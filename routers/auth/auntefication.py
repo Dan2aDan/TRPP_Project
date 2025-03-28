@@ -10,6 +10,7 @@ from utils.variable_environment import VarEnv
 class SessionData(BaseModel):
     login: str
     id: int
+    state: bool
 
 
 cookie_params = CookieParameters()

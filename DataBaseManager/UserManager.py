@@ -9,11 +9,11 @@ class UserManager:
         self.db = db
 
     def register_student(self, login, password):
-        self.db.execute_commit(sqlalchemy.insert(Students).values(login=login, password=password))
+        self.db.execute_commit(sqlalchemy.insert(Students).values(login=login, password_hash=password))
         return self.db.select(sqlalchemy.select(Students).where(Students.login == login), self.db.any_)
 
     def register_teacher(self, login, password):
-        self.db.execute_commit(sqlalchemy.insert(Teachers).values(login=login, password=password))
+        self.db.execute_commit(sqlalchemy.insert(Teachers).values(login=login, password_hash=password, bio=""))
         return self.db.select(sqlalchemy.select(Teachers).where(Teachers.login == login), self.db.any_)
 
     def is_student(self, login, password):
