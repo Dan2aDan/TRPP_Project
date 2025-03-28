@@ -1,6 +1,6 @@
 import sqlalchemy
 from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignKey, and_
-from sqlalchemy.orm import sessionmaker, declarative_base, relationship
+from sqlalchemy.orm import sessionmaker, declarative_base, relationship, Session
 from pydantic import BaseModel
 from utils.variable_environment import VarEnv
 
@@ -19,19 +19,22 @@ class DataBaseManager:
         self.engine = create_engine(db_url, echo=True)
 
     def execute_commit(self, command):
-        with self.engine.connect() as session:
+        with Session(self.engine) as session:
             session.execute(command)
             session.commit()
             session.close()
 
     def select(self, command, types=all_):
-        with self.engine.connect() as session:
+        with Session(self.engine) as session:
             if types == self.all_:
-                data = session.execute(command).fetchall()
+                data = session.scalars(command).fetchall()
             else:
-                data = session.execute(command).fetchone()
+                data = session.scalars(command).first()
             session.close()
             return data
 
 
 db = DataBaseManager()
+
+if __name__ == '__main__':
+    pass
