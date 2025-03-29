@@ -14,7 +14,7 @@ app = FastAPI()
 router = APIRouter()
 router.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(router, prefix="/api/v0", tags=["api"])
-app.include_router(pages_router, prefix="/pages")
+app.include_router(pages_router, prefix="/templates")
 
 @app.get("/", response_class=JSONResponse)
 async def index(session_data: SessionData = Depends(get_session_data)):
