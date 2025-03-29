@@ -32,7 +32,7 @@
             let password = $("#password").val();
 
             $.ajax({
-                url: "/api/auth/login",
+                url: "/api/v0/auth/login",
                 type: "POST",
                 contentType: "application/json",
                 data: JSON.stringify({login: login, password: password}),
