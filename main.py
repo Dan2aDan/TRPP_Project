@@ -4,6 +4,7 @@ import sqlalchemy
 import uvicorn
 from fastapi import FastAPI, Depends, Response, APIRouter
 from fastapi.responses import JSONResponse
+from starlette.staticfiles import StaticFiles
 
 from DataBaseManager import db
 from routers.auth.auntefication import SessionData, get_session_data, create_session_user, backend, cookie
@@ -15,6 +16,7 @@ router = APIRouter()
 router.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(router, prefix="/api/v0", tags=["api"])
 app.include_router(pages_router, prefix="/templates")
+app.mount("/templates", StaticFiles(directory="templates"), name="templates")
 
 @app.get("/", response_class=JSONResponse)
 async def index(session_data: SessionData = Depends(get_session_data)):

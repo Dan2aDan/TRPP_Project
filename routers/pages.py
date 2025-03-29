@@ -17,5 +17,4 @@ router = APIRouter()
 
 @router.get("/login")
 async def home():
-    print(open("templates/login.html", encoding='utf-8').read())
     return HTMLResponse(content=open("templates/login_page.html", encoding="utf-8").read())

@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const login = document.getElementById("login").value.trim();
         const password = document.getElementById("password").value.trim();
-
+        console.trace("ll")
         if (!login || !password) {
             errorMessage.textContent = "Введите логин и пароль!";
             errorMessage.style.display = "block";
