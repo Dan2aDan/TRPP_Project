@@ -10,31 +10,31 @@
 </head>
 
 <body>
-    <section class="position-relative py-4 py-xl-5"><div class="container pt-0">
-    <div class="row mb-5" style="height: 52.7266px;margin: 0px;padding: 20px;">
-        <div class="col-md-7 col-xl-6 text-center mx-auto" style="padding: 0px;">
+    <section class="position-relative py-4 py-xl-5">
+        <div class="col-md-7 col-xl-6 text-center mx-auto" style="padding:0px;">
             <p class="w-lg-50"></p>
             <h2>Вход</h2>
         </div>
-    </div>
-    <div class="row d-flex justify-content-center">
-        <div class="col-md-9 col-xl-4">
-            <div class="card mb-5">
-                <div class="card-body bg-white border rounded border-0 shadow-none d-flex flex-column align-items-center" style="color: rgba(255,255,255,0.5);background: var(--bs-card-cap-bg);">
-                    <div class="bs-icon-xl bs-icon-circle bs-icon-primary bs-icon my-4"><svg class="bi bi-person" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16">
+        <div class="container d-lg-flex justify-content-lg-center pt-0">
+            <div class="row d-flex justify-content-center justify-content-md-center" style="width: 720px;">
+                <div class="col-md-9 col-xl-4 d-md-flex justify-content-md-center align-items-md-center" style="width: 698px;">
+                    <div class="card d-lg-flex justify-content-lg-center mb-5" style="width: 583px;box-shadow: 0px 0px 1px 0px;">
+                        <div class="card-body bg-white border-0 shadow-none d-flex flex-column align-items-center justify-content-md-center border rounded" style="color: rgba(255,255,255,0.5);background: var(--bs-card-cap-bg);height: 382px;width: 576px;">
+                            <div class="bs-icon-xl bs-icon-circle bs-icon-primary bs-icon my-4" style="background: #06799f;box-shadow: 0px 0px 20px 0px #06799f;border-color: #06799f;"><svg class="bi bi-person" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664z"></path>
                         </svg></div>
-                    <form id="loginForm" class="text-center" method="post" style="height: 174px;">
-                        <div class="mb-3"><input id="login" class="form-control" type="text" name="login" placeholder="Логин" /></div>
-                        <div class="mb-3"><input id="password" class="form-control" type="password" name="password" placeholder="Пароль" /></div>
-                        <div class="mb-3"><button id="log_btn" class="btn btn-primary d-block w-100" type="submit">Войти</button></div>
-                        <div id="error-message"></div>
-                    </form>
+                            <form class="text-center" id="loginForm" method="post" style="height:174px;">
+                                <div class="mb-3"><input class="form-control form-control" type="text" id="login" name="login" placeholder="Логин" style="filter: sepia(0%);backdrop-filter: blur(0px);-webkit-backdrop-filter: blur(0px);border-color: #06799f;"></div>
+                                <div class="mb-3"><input class="form-control form-control" type="password" id="password" name="password" placeholder="Пароль" style="border-color: #06799f;"></div>
+                                <div class="mb-3"><button class="btn btn-primary d-block w-100" id="log_btn" type="submit" style="border-color: #06799f;filter: blur(0px);">Войти</button></div>
+                                <div id="error-message"></div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div></section>
+    </section>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/js/login_page.js"></script>
 </body>
