@@ -26,7 +26,4 @@ done
 
 # --- 3. Запуск Python-скрипта ---
 echo "Запуск main.py с переменными:"
-echo "MY_VAR=${MY_VAR:-не задано}"
-echo "ANOTHER_VAR=${ANOTHER_VAR:-не задано}"
-
 python3 main.py
