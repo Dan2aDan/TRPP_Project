@@ -2,7 +2,7 @@
 async function loadStudents() {
     try {
         // Загружаем список учеников с сервера
-        const response = await fetch('/api/students'); // Замените на ваш эндпоинт
+        const response = await fetch('/api/v0/students'); // Замените на ваш эндпоинт
         const students = await response.json();
 
         const container = document.getElementById('students-container'); // Контейнер на странице
@@ -82,7 +82,7 @@ async function deleteStudent(studentId) {
     if (confirm('Вы уверены, что хотите удалить этого ученика?')) {
         try {
             // Отправляем запрос на удаление ученика с сервера
-            const response = await fetch(`/api/students/${studentId}`, {
+            const response = await fetch(`/api/v0/students/${studentId}`, {
                 method: 'DELETE',
             });
 

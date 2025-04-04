@@ -2,7 +2,7 @@
 async function loadLessons() {
     try {
         // Загружаем список уроков с сервера
-        const response = await fetch('/api/lessons'); // Замените на ваш эндпоинт
+        const response = await fetch('api/v0/lessons'); // Замените на ваш эндпоинт
         const lessons = await response.json();
 
         const container = document.getElementById('students-container'); // Контейнер на странице
@@ -59,7 +59,7 @@ async function addLesson() {
     const lessonName = prompt("Введите название нового урока");
     if (lessonName) {
         try {
-            const response = await fetch('/api/lessons', {
+            const response = await fetch('/api/v0/lessons', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: lessonName })
