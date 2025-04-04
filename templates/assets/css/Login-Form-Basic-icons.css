@@ -73,3 +73,47 @@
   display: none;
 }
 
+#log_btn:active:hover {
+  background-color: #024E68;
+  transition: 0.1s ease;
+  border-color: #06799f;
+}
+
+#log_btn:hover {
+  background-color: #024E68;
+}
+
+#log_btn {
+  background: #06799f;
+}
+
+.go-btns {
+  background-color: #06799f;
+}
+
+.go-btns:hover {
+  background-color: #024e68;
+  transition: 0.1s ease;
+}
+
+.go-btns:active:hover {
+  background-color: #024e68;
+}
+
+.active-btn-students {
+  background-color: #00A08A;
+}
+
+.active-btn:hover {
+  background-color: #00685A;
+  transition: 0.1s ease;
+}
+
+.active-btn:active:hover {
+  background-color: #00685a;
+}
+
+.active-btn {
+  background-color: #00a08a;
+}
+
