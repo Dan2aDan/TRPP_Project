@@ -21,14 +21,5 @@ jobs:
           script: |
             cd /root
 
-            if [ ! -d my-project ]; then
-              git clone git@github.com:LastNightMoon/TRPP_Project.git my-project
-            else
-              cd my-project
-              git pull
-              cd ..
-            fi
-
-            cd my-project
-            docker-compose pull
+            
             docker-compose up -d
