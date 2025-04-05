@@ -14,9 +14,9 @@ jobs:
       - name: 🔄 Перезапуск Docker на сервере
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ DB.SERVER_HOST }}
-          username: ${{ DB.SERVER_USER }}
-          key: ${{ DB.SERVER_SSH_KEY }}
+          host: ${{ secret.SERVER_HOST }}
+          username: ${{ secret.SERVER_USER }}
+          key: ${{ secret.SERVER_SSH_KEY }}
           script: |
             cd /home/vin
             docker-compose pull
