@@ -11,9 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Debug secrets
+        run: echo "Host is ${{ secrets.SERVER_HOST }}"
+
       - name: 🔄 Перезапуск Docker на сервере
         uses: appleboy/ssh-action@master
-        run: echo "Host is ${{ secrets.SERVER_HOST }}"
 
         with:
         
