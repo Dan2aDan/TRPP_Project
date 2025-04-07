@@ -9,8 +9,6 @@ from starlette.responses import HTMLResponse
 
 from DataBaseManager.UserManager import user_manager
 from DataBaseManager.models import Students as Users, Teachers
-# TODO исправить импорт + спец метод вообще нужны отдельные проверки на тонну всего а делать так просто ужасно,
-#  задача уже у турпала, потом поменять
 from routers.auth.auntefication import SessionData, get_session_data, create_session_user, backend, cookie
 from routers.auth.schems import UserAuth, Response as AnswerResponse
 from utils.utils import generate_json
@@ -18,7 +16,6 @@ from utils.utils import generate_json
 router = APIRouter()
 
 
-# TODO исправить здесь весь файл + под новый метод
 @router.post("/register", response_class=JSONResponse)
 async def registerUser(item: UserAuth):
     if user_manager.get_user_type(item.login, item.password):
