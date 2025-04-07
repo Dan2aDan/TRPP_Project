@@ -5,6 +5,7 @@ from sqlalchemy import and_, delete
 from DataBaseManager.__init__ import db
 from DataBaseManager.models import Students, Teachers, Lessons, Tasks, Solutions
 
+
 class DatabaseQueries:
     def __init__(self, db):
         self.db = db
@@ -16,7 +17,7 @@ class DatabaseQueries:
         else:
             # Для студента - уроки его преподавателя
             query = sqlalchemy.select(Lessons).join(Teachers).join(Students).where(Students.id == user_id)
-        
+
         return self.db.select(query, types=db.all_)
 
     def get_lesson_tasks(self, lesson_id, user_id=None, is_teacher=False):
@@ -41,7 +42,7 @@ class DatabaseQueries:
         if not update_data:
             return None
 
-        with Session(db.engine) as session:
+        with self.db.create_session() as session:
             student = session.get(Students, student_id)
             if student:
                 for key, value in update_data.items():
@@ -52,11 +53,11 @@ class DatabaseQueries:
             return student
 
     def delete_student(self, student_id):
-        with Session(db.engine) as session:
+        with self.db.create_session() as session:
             try:
                 session.execute(delete(Solutions).where(Solutions.student_id == student_id))
                 session.execute(delete(Students).where(Students.id == student_id))
-                
+
                 session.commit()
                 return True
             except Exception as e:
@@ -65,5 +66,6 @@ class DatabaseQueries:
                 return False
             finally:
                 session.close()
+
 
 db_queries = DatabaseQueries(db)

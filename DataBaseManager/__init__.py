@@ -24,6 +24,9 @@ class DataBaseManager:
             session.commit()
             session.close()
 
+    def create_session(self):
+        return Session(bind=self.engine)
+
     def select(self, command, types=all_):
         with Session(self.engine) as session:
             if types == self.all_:
