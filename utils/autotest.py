@@ -4,6 +4,7 @@ import sys
 import io
 from multiprocessing import Process, Queue
 
+
 def _execute_code_func_process(code_str: str, input_text: str, queue: Queue):
     """
     Выполняет переданный код в изолированном процессе.
@@ -23,6 +24,7 @@ def _execute_code_func_process(code_str: str, input_text: str, queue: Queue):
         sys.stdout = old_stdout
         sys.stdin = old_stdin
     queue.put(output)
+
 
 class AsyncCode:
     def __init__(self, code_str, allowed_modules=None):
@@ -111,6 +113,7 @@ class Runner:
         except Exception as e:
             return str(e)
 
+
 # Пример использования
 async def main():
     # Пример кода: первая программа засыпает на 10 секунд, вторая — на 1 секунду
@@ -138,6 +141,7 @@ print(open("logger.py").read())
         result = str(e)
     print("Captured output:")
     print(result)
+
 
 if __name__ == "__main__":
     asyncio.run(main())

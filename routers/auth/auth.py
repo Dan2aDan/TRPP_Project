@@ -42,11 +42,12 @@ async def registerUser(item: UserAuth):
 async def authenticate(item: UserAuth):
     if not item.login or not item.password:
         return generate_json(
-            AnswerResponse.model_validate({"result": None, "msg": "Login and password fields cannot be empty", 'status_code':200}))
+            AnswerResponse.model_validate(
+                {"result": None, "msg": "Login and password fields cannot be empty", 'code': 200}))
     user = user_manager.get_user_type(item.login, item.password)
     if not user:
         return generate_json(
-            AnswerResponse.model_validate({"result": None, "msg": "User not found", 'status_code': 404}))
+            AnswerResponse.model_validate({"result": None, "msg": "User not found", 'code': 404}))
     response = generate_json(
         AnswerResponse.model_validate({"result": {'state': isinstance(user, Teachers), 'login': item.login}, "msg":
             "ok", 'code': 200}))
