@@ -13,6 +13,7 @@ from starlette.responses import RedirectResponse
 
 from utils.variable_environment import VarEnv
 
+
 class SessionData(BaseModel):
     login: str
     id: int
@@ -30,12 +31,14 @@ cookie = SessionCookie(
 )
 backend = InMemoryBackend[UUID, SessionData]()
 
+
 async def get_session_data(session_id: UUID = Depends(cookie)) -> SessionData:
     session_data = await backend.read(session_id)
     if session_data is None:
         # return RedirectResponse('/')
         raise HTTPException(status_code=403, detail="Invalid session")
     return session_data
+
 
 async def create_session_user(response, **session_data) -> SessionData:
     session = uuid4()
