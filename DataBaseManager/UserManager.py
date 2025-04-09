@@ -8,8 +8,8 @@ class UserManager:
     def __init__(self, db):
         self.db = db
 
-    def register_student(self, login, password):
-        self.db.execute_commit(sqlalchemy.insert(Students).values(login=login, password_hash=password))
+    def register_student(self, login, password, teacher_id):
+        self.db.execute_commit(sqlalchemy.insert(Students).values(login=login, password_hash=password, bio="", teacher_id=teacher_id))
         return self.db.select(sqlalchemy.select(Students).where(Students.login == login), self.db.any_)
 
     def register_teacher(self, login, password):
