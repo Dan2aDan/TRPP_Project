@@ -37,6 +37,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            ls
             bash run_test.sh
 
       - name: 🔄 Перезапуск на сервере
