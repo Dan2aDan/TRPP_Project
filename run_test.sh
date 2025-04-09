@@ -26,4 +26,4 @@ done
 
 # --- 3. Запуск Python-скрипта ---
 echo "Запуск main.py с переменными:"
-python3 main.py
+python3 run_test.py
