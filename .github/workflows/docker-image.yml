@@ -20,16 +20,15 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd /root
+            if [ ! -d my-project ]; then
+              git clone git@github.com:LastNightMoon/TRPP_Project.git my-project
+            else
+              cd my-project
+              git pull
+              cd ..
+            fi
+            cd my-project
 
-                        if [ ! -d my-project ]; then
-                          git clone git@github.com:LastNightMoon/TRPP_Project.git my-project
-                        else
-                          cd my-project
-                          git pull
-                          cd ..
-                        fi
-
-                        cd my-project
       - name: Тесты
         uses: appleboy/ssh-action@master
         with:
@@ -37,6 +36,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            cd my-project
             ls
             bash run_test.sh
 
@@ -47,6 +47,6 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            
+            cd my-project
             docker-compose pull
             docker-compose up -d --build
