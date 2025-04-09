@@ -13,11 +13,9 @@ from starlette.responses import RedirectResponse
 
 from utils.variable_environment import VarEnv
 
+from routers.auth.schems import SessionData
 
-class SessionData(BaseModel):
-    login: str
-    id: int
-    state: bool
+
 
 
 cookie_params = CookieParameters()
