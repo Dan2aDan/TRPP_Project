@@ -6,27 +6,17 @@ from DataBaseManager.__init__ import db
 from DataBaseManager.models import Students, Teachers, Lessons, Tasks, Solutions
 
 
-class DatabaseQueries:
+class DatabaseStudents:
     def __init__(self, db):
         self.db = db
-
-    def get_user_lessons(self, user_id, is_teacher=False):
-        if is_teacher:
-            # Для преподавателя - все уроки, которые он создал
-            query = sqlalchemy.select(Lessons).where(Lessons.teacher_id == user_id)
-        else:
-            # Для студента - уроки его преподавателя
-            query = sqlalchemy.select(Lessons).join(Teachers).join(Students).where(Students.id == user_id)
-
-        return self.db.select(query, types=db.all_)
-
-    def get_lesson_tasks(self, lesson_id, user_id=None, is_teacher=False):
-        query = sqlalchemy.select(Tasks).where(Tasks.lesson_id == lesson_id)
-        return self.db.select(query, types=db.all_)
-
-    def get_teacher_students(self, teacher_id):
-        query = sqlalchemy.select(Students).where(Students.teacher_id == teacher_id)
-        return self.db.select(query, types=db.all_)
+    
+    def register_student(self, login, password, teacher_id):
+        self.db.execute_commit(sqlalchemy.insert(Students).values(login=login, password_hash=password, bio="", teacher_id=teacher_id))
+        return self.db.select(sqlalchemy.select(Students).where(Students.login == login), self.db.any_)
+    
+    def get_student_by_id(self, student_id):
+        query = sqlalchemy.select(Students).where(Students.id == student_id)
+        return self.db.select(query, types=db.any_)
 
     def update_student(self, student_id, login=None, password_hash=None, bio=None, teacher_id=None):
         update_data = {}
@@ -68,4 +58,4 @@ class DatabaseQueries:
                 session.close()
 
 
-db_queries = DatabaseQueries(db)
+db_students = DatabaseStudents(db)
