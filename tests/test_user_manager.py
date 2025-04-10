@@ -48,6 +48,7 @@ def test_is_student(user_manager, database_students, database_teachers):
     assert result
     assert result.login == "s1"
 
+
 def test_is_teacher(user_manager, database_teachers):
     database_teachers.register_teacher("t1", "abc")
     result = user_manager.is_teacher("t1", "abc")

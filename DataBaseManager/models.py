@@ -46,6 +46,14 @@ class Lessons(Base):
     tasks = relationship("Tasks", back_populates="lesson")
 
 
+class LessonsDepends(Base):
+    __tablename__ = 'lessonsdepends'
+    id: int = Column(Integer, primary_key=True)
+    lesson_id: int = Column(Integer, ForeignKey('lessons.id'), nullable=False)
+    student_id: int = Column(Integer, ForeignKey('students.id'), nullable=False)
+
+
+
 class Tasks(Base):
     __tablename__ = 'tasks'
     id: int = Column(Integer, primary_key=True)
