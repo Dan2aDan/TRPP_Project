@@ -38,7 +38,7 @@ class Lessons(Base):
     content: str = Column(String, nullable=False)
     created_at: date = Column(Date)
     teacher_id: int = Column(Integer, ForeignKey('teachers.id'), nullable=False)
-    file_id: int = Column(Integer, ForeignKey('files.id'), nullable=False)
+    file_id: int = Column(Integer, ForeignKey('files.id'))
 
     # Связи
     teacher = relationship("Teachers", back_populates="lessons")
@@ -51,7 +51,6 @@ class LessonsDepends(Base):
     id: int = Column(Integer, primary_key=True)
     lesson_id: int = Column(Integer, ForeignKey('lessons.id'), nullable=False)
     student_id: int = Column(Integer, ForeignKey('students.id'), nullable=False)
-
 
 
 class Tasks(Base):
