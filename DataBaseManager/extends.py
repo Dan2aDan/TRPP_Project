@@ -14,4 +14,4 @@ from utils.utils import singleton
 @singleton
 class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, UserManager):
     def get_obj_unique(self, cls, **kwargs):
-        return db.select(sqlalchemy.select(cls).where(**kwargs), types=db.any_)
+        return db.select(sqlalchemy.select(cls).filter_by(**kwargs), types=db.any_)
