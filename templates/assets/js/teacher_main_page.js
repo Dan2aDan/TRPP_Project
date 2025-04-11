@@ -2,12 +2,14 @@
 async function loadStudents() {
     try {
         // Загружаем список учеников с сервера
-        const response = await fetch('/api/v0/students'); // Замените на ваш эндпоинт
+        const response = await fetch('/api/v0/students/students'); // Замените на ваш эндпоинт
         const students = await response.json();
+        console.trace(students);
+
 
         const container = document.getElementById('students-container'); // Контейнер на странице
         container.innerHTML = '<p class="text-center d-lg-flex justify-content-lg-center" style="font-size: 26px;margin: 0;padding: 0;height: 39px;width: 971px;">Список учеников</p>'; // Очищаем старый список
-
+        if (students.length > 0) {
         students.forEach(student => {
             const studentHTML = `
             <div class="row" style="height: 42px;width: 971px;margin: 0;padding: 0;margin-top: 10px;">
@@ -21,6 +23,7 @@ async function loadStudents() {
 
             container.insertAdjacentHTML('beforeend', studentHTML);
         });
+        }
 
         // Добавляем обработчики событий
         document.querySelectorAll('.view-tasks').forEach(button => {
