@@ -7,7 +7,7 @@ async function loadStudents() {
 
         const container = document.getElementById('students-container');// Контейнер на странице
         const StudentsList = container.querySelector('.row');
-        container.innerHTML = ''; // Очищаем старый список
+        StudentsList.innerHTML = ''; // Очищаем старый список
 
         students.forEach(student => {
             const studentHTML = `
