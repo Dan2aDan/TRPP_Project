@@ -14,3 +14,11 @@ class Response(BaseModel):
     result: Result | None
     msg: str
     code: int
+
+class SessionData(BaseModel):
+    login: str
+    id: int
+    state: bool
+
+
+
