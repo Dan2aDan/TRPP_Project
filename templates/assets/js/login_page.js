@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loginButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Входим...';
 
         // Отправляем запрос на сервер
-        fetch("/api/v0/auth/login", {
+        fetch("/auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ "login": login, "password":password }),

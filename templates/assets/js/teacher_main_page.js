@@ -2,11 +2,12 @@
 async function loadStudents() {
     try {
         // Загружаем список учеников с сервера
-        const response = await fetch('/api/v0/students'); // Замените на ваш эндпоинт
+        const response = await fetch('/api/students'); // Замените на ваш эндпоинт
         const students = await response.json();
 
-        const container = document.getElementById('students-container'); // Контейнер на странице
-        container.innerHTML = '<p class="text-center d-lg-flex justify-content-lg-center" style="font-size: 26px;margin: 0;padding: 0;height: 39px;width: 971px;">Список учеников</p>'; // Очищаем старый список
+        const container = document.getElementById('students-container');// Контейнер на странице
+        const StudentsList = container.querySelector('.row');
+        container.innerHTML = ''; // Очищаем старый список
 
         students.forEach(student => {
             const studentHTML = `
@@ -82,7 +83,7 @@ async function deleteStudent(studentId) {
     if (confirm('Вы уверены, что хотите удалить этого ученика?')) {
         try {
             // Отправляем запрос на удаление ученика с сервера
-            const response = await fetch(`/api/v0/students/${studentId}`, {
+            const response = await fetch(`/api/students/${studentId}`, {
                 method: 'DELETE',
             });
 
