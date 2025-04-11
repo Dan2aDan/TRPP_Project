@@ -1,23 +1,17 @@
-from routers.students.schems import StudentAdd, StudentResponse, StudentsListResponse
-from DataBaseManager.models import Students
+from fastapi import APIRouter
+from fastapi import Request
 from fastapi.responses import JSONResponse
-from fastapi import APIRouter, HTTPException, Request
-from DataBaseManager.UserManager import user_manager
-from routers.auth.auntefication import SessionData, get_session_data, create_session_user, backend, cookie
-from routers.students.schems import Response as AnswerResponse
-from utils.utils import generate_json
-from fastapi import FastAPI, Depends, Response, APIRouter
+from fastapi.responses import RedirectResponse
 
+from DataBaseManager.extends import DBALL
+from DataBaseManager.models import Students
+from routers.auth.auntefication import create_session_user
+from routers.students.schems import Response as AnswerResponse
+from routers.students.schems import StudentAdd
+from routers.students.schems import StudentResponse, StudentsListResponse
+from utils.utils import generate_json
 
 router = APIRouter()
-
-from fastapi import Depends, HTTPException
-from sqlalchemy.orm import Session
-from routers.students.schems import StudentAdd
-from routers.auth.auntefication import get_session_data  # Импортируем функцию для получения данных сессии
-from DataBaseManager.UserManager import user_manager
-from DataBaseManager.models import Students
-from fastapi.responses import RedirectResponse
 
 
 @router.post("/add_student", response_class=JSONResponse)
@@ -39,17 +33,17 @@ async def add_student(item: StudentAdd, request: Request):
                 {"result": None, "msg": "Login and password fields cannot be empty", 'code': 400}))
 
     # Проверяем, существует ли уже пользователь с таким логином
-    existing_user = user_manager.get_user_type(item.login, item.password)
+    existing_user = DBALL().get_user_type(item.login, item.password)
     if existing_user:
         return generate_json(
             AnswerResponse.model_validate(
                 {"msg": "A user with this login already exists", 'code': 400, 'result': None}))
 
     # Регистрируем нового студента с teacher_id
-    user_manager.register_student(item.login, item.password, item.bio, teacher_id)
+    DBALL().register_student(item.login, item.password, teacher_id)
 
     # После регистрации получаем нового студента
-    user = user_manager.get_user_type(item.login, item.password)
+    user = DBALL().get_user_type(item.login, item.password)
 
     # Формируем ответ с данными нового студента
     response = generate_json(AnswerResponse.model_validate({
@@ -75,7 +69,7 @@ async def get_students(request: Request):
         return RedirectResponse(url="/")
 
     teacher_id = session_data.id
-    students = user_manager.get_students_by_teacher(teacher_id)
+    students = DBALL().get_students_by_teacher(teacher_id)
 
     students_list = [
         StudentResponse(

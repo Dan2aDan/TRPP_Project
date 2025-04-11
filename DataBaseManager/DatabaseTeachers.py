@@ -9,7 +9,7 @@ class DatabaseTeachers:
     def __init__(self, db):
         self.db = db
 
-    def get_teacher_students(self, teacher_id):
+    def get_students_by_teacher(self, teacher_id):
         query = sqlalchemy.select(Students).where(Students.teacher_id == teacher_id)
         return self.db.select(query, types=db.all_)
     

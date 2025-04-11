@@ -8,9 +8,9 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette.staticfiles import StaticFiles
 
 from DataBaseManager import db
-from routers.auth.auntefication import SessionData, get_session_data, create_session_user, backend, cookie, \
-    AuthMiddleware
+from routers.auth.auntefication import SessionData, get_session_data, create_session_user, backend, cookie, AuthMiddleware
 from routers.auth.auth import router as auth_router
+from routers.students.students import router as student_router
 from utils.variable_environment import VarEnv
 
 app = FastAPI()
@@ -20,6 +20,7 @@ app.add_middleware(AuthMiddleware)
 
 router = APIRouter()
 router.include_router(auth_router, prefix="/auth")
+router.include_router(student_router, prefix="/students")
 app.include_router(router, prefix="/api/v0")
 app.mount("/templates", StaticFiles(directory="templates"), name="templates")
 
