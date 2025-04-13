@@ -5,49 +5,40 @@ async function loadStudents() {
         const response = await fetch('/api/v0/students/students'); // Замените на ваш эндпоинт
         const students = await response.json();
         console.trace(students);
-
-
         const container = document.getElementById('students-container'); // Контейнер на странице
-        container.innerHTML = '<p class="text-center d-lg-flex justify-content-lg-center" style="font-size: 26px;margin: 0;padding: 0;height: 39px;width: 971px;">Список учеников</p>'; // Очищаем старый список
-        if (students.length > 0) {
-        students.forEach(student => {
-            const studentHTML = `
-            <div class="row" style="height: 42px;width: 971px;margin: 0;padding: 0;margin-top: 10px;">
-                <div class="col-lg-11 col-xl-12 col-xxl-12 d-lg-flex justify-content-lg-start align-items-lg-center" style="height: 42px;width: 971px;padding: 0;margin: 0;margin-top: 0px;">
-                 <p style="width: 253px;margin: 0px;padding: 0px;height: 24px;">${student.name}</p>
-                 <button class="btn link-dark my-btn view-tasks" data-id="${student.id}" style="width: 296.2734px;">Посмотреть выполненные задания</button>
-                 <button class="btn my-btn edit-account" data-id="${student.id}" style="margin: 0px;margin-left: 11px;">Изменить логин и пароль</button>
-                 <button class="btn my-btn delete-student" data-id="${student.id}" style="margin: 200px;margin-left: 9px;margin-bottom: 0px;margin-right: 0px;margin-top: 0px;">Удалить ученика</button>
-                </div>
-            </div>`;
+        // const lessonsList = container.querySelector('.row'); // Секция для отображения уроков
+        container.innerHTML = ''; // Очищаем старые уроки
 
-            container.insertAdjacentHTML('beforeend', studentHTML);
-        });
+        if (students.students.length > 0) {
+
+            students.students.forEach(student => {
+                const row = document.createElement('div');
+                row.className = 'row';
+                row.style.cssText = 'margin: 10px 0; padding: 0;';
+
+                row.innerHTML = `
+        <div class="col d-lg-flex justify-content-start align-items-center"
+             style="padding: 0;">
+            <p style="width: 250px; margin: 0;">${student.login}</p>
+            <button class="btn link-dark my-btn view-tasks" data-id="${student.id}" style="margin-left: 10px;">Посмотреть выполненные задания</button>
+            <button class="btn my-btn edit-account" data-id="${student.id}" style="margin-left: 10px;">Изменить логин и пароль</button>
+            <button class="btn my-btn delete-student" data-id="${student.id}" style="margin-left: 10px;">Удалить ученика</button>
+        </div>
+    `;
+
+                // Добавление обработчиков
+                row.querySelector('.view-tasks').addEventListener('click', () => viewStudentTasks(student.id));
+                row.querySelector('.edit-account').addEventListener('click', () => editStudentAccount(student.id));
+                row.querySelector('.delete-student').addEventListener('click', () => deleteStudent(student.id));
+
+                container.appendChild(row);
+            });
+
+
         }
 
-        // Добавляем обработчики событий
-        document.querySelectorAll('.view-tasks').forEach(button => {
-            button.addEventListener('click', (event) => {
-                const studentId = event.target.getAttribute('data-id');
-                viewStudentTasks(studentId);
-            });
-        });
-
-        document.querySelectorAll('.edit-account').forEach(button => {
-            button.addEventListener('click', (event) => {
-                const studentId = event.target.getAttribute('data-id');
-                editStudentAccount(studentId);
-            });
-        });
-
-        document.querySelectorAll('.delete-student').forEach(button => {
-            button.addEventListener('click', (event) => {
-                const studentId = event.target.getAttribute('data-id');
-                deleteStudent(studentId);
-            });
-        });
-
-    } catch (error) {
+    } catch
+        (error) {
         console.error('Ошибка загрузки списка учеников:', error);
     }
 }
@@ -75,10 +66,94 @@ function viewStudentTasks(studentId) {
 }
 
 // Функция для изменения аккаунта ученика
-function editStudentAccount(studentId) {
-    console.log('Изменение аккаунта ученика с ID:', studentId);
-    // Здесь можно открыть модальное окно для редактирования
+async function editStudentAccount(studentId) {
+    try {
+        // Получаем текущие данные ученика
+        const response = await fetch(`/api/v0/students/${studentId}`);
+        const student = await response.json();
+        console.trace(student)
+        // Заполняем поля модального окна
+        document.getElementById('studentId').value = studentId;
+        document.getElementById('studentLogin').value = student.result.login;
+        document.getElementById('studentPassword').value = student.result.password; // Пароль не отображаем
+        
+        // Показываем модальное окно
+        const modal = new bootstrap.Modal(document.getElementById('editStudentModal'));
+        modal.show();
+    } catch (error) {
+        console.error('Ошибка при получении данных ученика:', error);
+        alert('Ошибка при получении данных ученика');
+    }
 }
+
+// Обработчик сохранения изменений
+document.getElementById('saveChangesBtn').addEventListener('click', async () => {
+    const studentId = document.getElementById('studentId').value;
+    const newLogin = document.getElementById('studentLogin').value;
+    const newPassword = document.getElementById('studentPassword').value;
+
+    try {
+        const response = await fetch(`/api/v0/students/${studentId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                login: newLogin,
+                password: newPassword
+            })
+        });
+
+        if (response.ok) {
+            alert('Данные ученика успешно обновлены');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editStudentModal'));
+            modal.hide();
+            loadStudents(); // Перезагружаем список учеников
+        } else {
+            alert('Ошибка при обновлении данных ученика');
+        }
+    } catch (error) {
+        console.error('Ошибка при обновлении данных ученика:', error);
+        alert('Произошла ошибка при обновлении данных');
+    }
+});
+
+// Обработчик добавления нового ученика
+document.getElementById('addStudentBtn').addEventListener('click', async () => {
+    const login = document.getElementById('newStudentLogin').value;
+    const password = document.getElementById('newStudentPassword').value;
+
+    try {
+        const response = await fetch('/api/v0/students/add_student', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                login: login,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+            alert('Ученик успешно добавлен');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addStudentModal'));
+            modal.hide();
+            // Очищаем поля формы
+            document.getElementById('newStudentLogin').value = '';
+            document.getElementById('newStudentPassword').value = '';
+            // Обновляем список учеников
+            loadStudents();
+        } else {
+            alert(data.msg || 'Ошибка при добавлении ученика');
+        }
+    } catch (error) {
+        console.error('Ошибка при добавлении ученика:', error);
+        alert('Произошла ошибка при добавлении ученика');
+    }
+});
 
 // Функция для удаления ученика
 async function deleteStudent(studentId) {

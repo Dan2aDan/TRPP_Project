@@ -28,3 +28,14 @@ class Response(BaseModel):
     result: Result | None
     msg: str
     code: int
+
+
+class StudentUpdate(BaseModel):
+    login: str
+    password: str
+
+
+class ResponseStudent(BaseModel):
+    result: StudentResponse | None
+    msg: str
+    code: int
