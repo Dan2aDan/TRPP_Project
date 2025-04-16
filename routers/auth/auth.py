@@ -1,15 +1,11 @@
-from http.server import HTTPServer
 from uuid import UUID
 
-import sqlalchemy
-import uvicorn
-from fastapi import FastAPI, Depends, Response, APIRouter
+from fastapi import Depends, Response, APIRouter
 from fastapi.responses import JSONResponse
-from starlette.responses import HTMLResponse
 
 from DataBaseManager.UserManager import user_manager
-from DataBaseManager.models import Students as Users, Teachers
-from routers.auth.auntefication import SessionData, get_session_data, create_session_user, backend, cookie
+from DataBaseManager.models import Teachers
+from routers.auth.auntefication import create_session_user, backend, cookie
 from routers.auth.schems import UserAuth, Response as AnswerResponse
 from utils.utils import generate_json
 

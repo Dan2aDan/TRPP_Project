@@ -14,13 +14,14 @@ from utils.utils import singleton
 @singleton
 class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, UserManager):
     def __init__(self, db_=db):
+        self.db = db
         super().__init__(db_)
 
     def get_obj_unique(self, cls, **kwargs):
-        return db.select(sqlalchemy.select(cls).filter_by(**kwargs), types=db.any_)
+        return self.db.select(sqlalchemy.select(cls).filter_by(**kwargs), types=self.db.any_)
 
     def clear_all_data(self):
-        with db.create_session() as conn:
+        with self.db.create_session() as conn:
             conn.execute(Files.__table__.delete())
             conn.execute(Tasks.__table__.delete())
             conn.execute(LessonsDepends.__table__.delete())
