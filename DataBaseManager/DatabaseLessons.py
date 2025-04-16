@@ -14,9 +14,18 @@ class DatabaseLessons:
         return self.db.select(query, types=self.db.any_)
 
     def get_student_lessons(self, student_id):
-        query = sqlalchemy.select(Lessons).join(Teachers).join(Students).where(
+        # Получаем teacher_id студента
+        student = self.db.select(
+            sqlalchemy.select(Students).where(Students.id == student_id),
+            self.db.any_
+        )
+        
+        if not student:
+            return []
+        
+        query = sqlalchemy.select(Lessons).where(
             or_(
-                Students.id == student_id,  # Уроки преподавателя студента
+                Lessons.teacher_id == student.teacher_id,  # Уроки преподавателя
                 Lessons.id.in_(
                     sqlalchemy.select(LessonsDepends.lesson_id)
                     .where(LessonsDepends.student_id == student_id)
@@ -29,7 +38,8 @@ class DatabaseLessons:
         query = sqlalchemy.select(Lessons).where(Lessons.teacher_id == teacher_id)
         return self.db.select(query, types=self.db.all_)
 
-    def add_lesson(self, title, content, teacher_id, file_id=None):
+    def add_lesson(self, title, content, teacher_id, file_id=None, student_ids=None):
+        # Создаем сам урок
         self.db.execute_commit(
             sqlalchemy.insert(Lessons).values(
                 title=title,
@@ -39,7 +49,9 @@ class DatabaseLessons:
                 created_at=sqlalchemy.func.now()
             )
         )
-        return self.db.select(
+        
+        # Получаем созданный урок
+        lesson = self.db.select(
             sqlalchemy.select(Lessons).where(
                 and_(
                     Lessons.title == title,
@@ -48,6 +60,18 @@ class DatabaseLessons:
             ),
             self.db.any_
         )
+        
+        # Добавляем зависимости для студентов, если они указаны
+        if student_ids:
+            for student_id in student_ids:
+                self.db.execute_commit(
+                    sqlalchemy.insert(LessonsDepends).values(
+                        lesson_id=lesson.id,
+                        student_id=student_id
+                    )
+                )
+        
+        return lesson
 
     def update_lesson(self, lesson_id, title=None, content=None, file_id=None):
         update_data = {}
@@ -74,14 +98,18 @@ class DatabaseLessons:
     def delete_lesson(self, lesson_id):
         with self.db.create_session() as session:
             try:
-                # First delete related tasks and solutions
+                # Удаляем решения и задачи
                 tasks = session.execute(sqlalchemy.select(Tasks).where(Tasks.lesson_id == lesson_id)).scalars().all()
                 for task in tasks:
                     session.execute(delete(Solutions).where(Solutions.task_id == task.id))
                 session.execute(delete(Tasks).where(Tasks.lesson_id == lesson_id))
                 
-                # Then delete the lesson
+                # Удаляем зависимости урока
+                session.execute(delete(LessonsDepends).where(LessonsDepends.lesson_id == lesson_id))
+                
+                # Удаляем сам урок
                 session.execute(delete(Lessons).where(Lessons.id == lesson_id))
+                
                 session.commit()
                 return True
             except Exception as e:
