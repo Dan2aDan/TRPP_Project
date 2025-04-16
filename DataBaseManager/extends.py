@@ -37,5 +37,5 @@ class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, UserManager):
         teacher2 = self.register_teacher("teacher2", "password2")
         student1 = self.register_student("student1", "password1", teacher1.id)
         student2 = self.register_student("student2", "password2", teacher1.id)
-        # lesson1 = self.add_lesson("lesson1", "content lesson 1", teacher1.id, None)
-        # lesson2 = self.add_lesson("lesson2", "content lesson 2", teacher1.id, None)
+        lesson1 = self.add_lesson("lesson1", "content lesson 1", teacher1.id, None)
+        lesson2 = self.add_lesson("lesson2", "content lesson 2", teacher1.id, None)

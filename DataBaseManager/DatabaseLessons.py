@@ -1,3 +1,4 @@
+import logging
 from requests import Session
 import sqlalchemy
 from sqlalchemy import and_, delete, or_
@@ -9,9 +10,11 @@ class DatabaseLessons:
     def __init__(self, db):
         self.db = db
 
+
     def get_lesson_by_id(self, lesson_id):
         query = sqlalchemy.select(Lessons).where(Lessons.id == lesson_id)
         return self.db.select(query, types=self.db.any_)
+
 
     def get_student_lessons(self, student_id):
         # Получаем teacher_id студента
@@ -24,7 +27,7 @@ class DatabaseLessons:
             return []
         
         query = sqlalchemy.select(Lessons).where(
-            or_(
+            and_(
                 Lessons.teacher_id == student.teacher_id,  # Уроки преподавателя
                 Lessons.id.in_(
                     sqlalchemy.select(LessonsDepends.lesson_id)
@@ -34,44 +37,40 @@ class DatabaseLessons:
         )
         return self.db.select(query, types=self.db.all_)
 
+
     def get_teacher_lessons(self, teacher_id):
         query = sqlalchemy.select(Lessons).where(Lessons.teacher_id == teacher_id)
         return self.db.select(query, types=self.db.all_)
 
-    def add_lesson(self, title, content, teacher_id, file_id=None, student_ids=None):
-        # Создаем сам урок
-        self.db.execute_commit(
-            sqlalchemy.insert(Lessons).values(
+
+    def add_lesson(self, title, content, teacher_id, file_id=None):
+        with self.db.create_session() as session:
+            # Создаем новый урок
+            lesson = Lessons(
                 title=title,
                 content=content,
                 teacher_id=teacher_id,
                 file_id=file_id,
                 created_at=sqlalchemy.func.now()
             )
-        )
-        
-        # Получаем созданный урок
-        lesson = self.db.select(
-            sqlalchemy.select(Lessons).where(
-                and_(
-                    Lessons.title == title,
-                    Lessons.teacher_id == teacher_id
+            session.add(lesson)
+            session.commit()
+            session.refresh(lesson)  # Получаем ID
+            return lesson
+    
+
+    def add_lesson_dependencies(self, lesson_id, student_ids):
+        if not student_ids:
+            return
+            
+        for student_id in student_ids:
+            self.db.execute_commit(
+                sqlalchemy.insert(LessonsDepends).values(
+                    lesson_id=lesson_id,
+                    student_id=student_id
                 )
-            ),
-            self.db.any_
-        )
-        
-        # Добавляем зависимости для студентов, если они указаны
-        if student_ids:
-            for student_id in student_ids:
-                self.db.execute_commit(
-                    sqlalchemy.insert(LessonsDepends).values(
-                        lesson_id=lesson.id,
-                        student_id=student_id
-                    )
-                )
-        
-        return lesson
+            )
+
 
     def update_lesson(self, lesson_id, title=None, content=None, file_id=None):
         update_data = {}
@@ -95,6 +94,7 @@ class DatabaseLessons:
             session.close()
             return lesson
 
+
     def delete_lesson(self, lesson_id):
         with self.db.create_session() as session:
             try:
@@ -114,29 +114,29 @@ class DatabaseLessons:
                 return True
             except Exception as e:
                 session.rollback()
-                print(f"Error deleting lesson: {e}")
+                logging.error(f"Error deleting lesson: {e}")
                 return False
             finally:
                 session.close()
 
     
-    def add_task(self, lesson_id, description):
-        self.db.execute_commit(
-            sqlalchemy.insert(Tasks).values(
-                lesson_id=lesson_id,
-                description=description,
-                created_at=sqlalchemy.func.now()
-            )
-        )
-        return self.db.select(
-            sqlalchemy.select(Tasks).where(
-                and_(
-                    Tasks.lesson_id == lesson_id,
-                    Tasks.description == description
-                )
-            ),
-            self.db.any_
-        )
+    # def add_task(self, lesson_id, description):
+    #     self.db.execute_commit(
+    #         sqlalchemy.insert(Tasks).values(
+    #             lesson_id=lesson_id,
+    #             description=description,
+    #             created_at=sqlalchemy.func.now()
+    #         )
+    #     )
+    #     return self.db.select(
+    #         sqlalchemy.select(Tasks).where(
+    #             and_(
+    #                 Tasks.lesson_id == lesson_id,
+    #                 Tasks.description == description
+    #             )
+    #         ),
+    #         self.db.any_
+    #     )
 
 
 db_lessons = DatabaseLessons(db)

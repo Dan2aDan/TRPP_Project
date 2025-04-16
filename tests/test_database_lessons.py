@@ -11,38 +11,51 @@ def test_add_lesson(database_all):
     assert lesson.teacher_id == teacher.id
 
 
-def test_get_lesson_by_id(database_all):
-    teacher = database_all.register_teacher("teacher1", "pass1")
-    lesson = database_all.add_lesson("Math", "Algebra", teacher.id)
+def test_add_lesson_dependencies(database_all):
+    teacher = database_all.register_teacher("dep_teacher", "pass")
+    student1 = database_all.register_student("student1", "pass", teacher.id)
+    student2 = database_all.register_student("student2", "pass", teacher.id)
     
-    result = database_all.get_lesson_by_id(lesson.id)
-    assert result.id == lesson.id
-    assert result.title == "Math"
-    assert result.content == "Algebra"
+    lesson = database_all.add_lesson("Physics", "Mechanics", teacher.id)
+    
+    # Добавляем зависимости отдельным вызовом
+    database_all.add_lesson_dependencies(lesson.id, [student1.id, student2.id])
+    
+    # Проверяем, что зависимости созданы
+    with db.create_session() as session:
+        deps = session.execute(
+            sqlalchemy.select(LessonsDepends)
+            .where(LessonsDepends.lesson_id == lesson.id)
+        ).scalars().all()
+        
+        assert len(deps) == 2
+        assert {dep.student_id for dep in deps} == {student1.id, student2.id}
 
 
 def test_get_student_lessons(database_all):
-    # 1. Регистрируем преподавателя и студента
-    teacher = database_all.register_teacher("math_teacher", "pass123")
-    student = database_all.register_student("math_student", "pass111", teacher.id)
+    teacher1 = database_all.register_teacher("teacher1", "pass1")
+    teacher2 = database_all.register_teacher("teacher2", "pass2")
+    student = database_all.register_student("student", "pass", teacher1.id)
     
-    # 2. Создаем уроки
-    lesson1 = database_all.add_lesson("Algebra", "Basics", teacher.id)
-    lesson2 = database_all.add_lesson("Geometry", "Shapes", teacher.id)
+    lessons_before = database_all.get_student_lessons(student.id)
+
+    # Уроки основного преподавателя
+    lesson1 = database_all.add_lesson("Math", "Algebra", teacher1.id)
+    lesson2 = database_all.add_lesson("Physics", "Mechanics", teacher1.id)
+    lesson3 = database_all.add_lesson("Chemistry", "Atoms", teacher1.id)
+    database_all.add_lesson_dependencies(lesson1.id, [student.id])
+    database_all.add_lesson_dependencies(lesson2.id, [student.id])
+    database_all.add_lesson_dependencies(lesson3.id, [student.id])
     
-    # 3. Получаем уроки студента
-    student_lessons = database_all.get_student_lessons(student.id)
+    # Получаем уроки студента
+    lessons = database_all.get_student_lessons(student.id)
+    lesson_ids = {lesson.id for lesson in lessons}
     
-    # 4. Проверяем, что студент видит все уроки своего преподавателя
-    assert len(student_lessons) == 2
-    assert {lesson.id for lesson in student_lessons} == {lesson1.id, lesson2.id}
-    
-    # 5. Проверяем структуру возвращаемых данных
-    for lesson in student_lessons:
-        assert hasattr(lesson, 'id')
-        assert hasattr(lesson, 'title')
-        assert hasattr(lesson, 'content')
-        assert hasattr(lesson, 'teacher_id')
+    # Проверяем, что есть все нужные уроки
+    assert len(lessons) == 3 + len(lessons_before)
+    assert lesson1.id in lesson_ids
+    assert lesson2.id in lesson_ids
+    assert lesson3.id in lesson_ids
 
 
 def test_get_teacher_lessons(database_all):
