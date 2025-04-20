@@ -27,7 +27,7 @@ async def get_lessons(request: Request):
         id=lesson.id,
         title=lesson.title,
         description=lesson.content,
-        teacher={"id": lesson.teacher_id, "name": "Ibragim"}, #тут имя учителя нужно вернуть
+        teacher={"id": lesson.teacher_id, "name": DBALL().get_teacher_bio(lesson.teacher_id)}, #тут имя учителя нужно вернуть
         created_at=lesson.created_at.isoformat()
     ) for lesson in lessons]
 
@@ -63,7 +63,7 @@ async def create_lesson(data: LessonCreate, request: Request):
         id=lesson.id,
         title=lesson.title,
         description=lesson.content,
-        teacher={"id": lesson.teacher_id, "name": "Ibragim"}, #тут имя учителя нужно вернуть
+        teacher={"id": lesson.teacher_id, "name": DBALL().get_teacher_bio(lesson.teacher_id)}, #тут имя учителя нужно вернуть
         created_at=lesson.created_at.isoformat()
     )
 
@@ -72,33 +72,33 @@ async def create_lesson(data: LessonCreate, request: Request):
     }))
 
 
-@router.get("/lessons/{lesson_id}", response_class=JSONResponse)
-async def get_lesson(lesson_id: int, request: Request):
-    session_data = request.state.session_data
-
-
-    if not session_data or not session_data.state:
-        return RedirectResponse(url="/")
-    user_id = session_data.id
-
-    lesson = DBALL().get_lesson_by_id(lesson_id)
-    if not lesson or lesson.teacher_id != user_id:
-        raise HTTPException(status_code=404, detail={
-            "error": "Lesson not found",
-            "message": f"Lesson with ID {lesson_id} does not exist"
-        })
-
-    students = DBALL().get_lesson_students(lesson_id)
-
-    return generate_json(LessonDetailResponse.model_validate({
-        "id": lesson.id,
-        "title": lesson.title,
-        "description": lesson.content,
-        "date": lesson.date,
-        "teacher": {"id": lesson.teacher_id, "name": lesson.teacher_name},
-        "students": [{"id": s.id, "full_name": s.full_name} for s in students],
-        "created_at": lesson.created_at
-    }))
+# @router.get("/lessons/{lesson_id}", response_class=JSONResponse)
+# async def get_lesson(lesson_id: int, request: Request):
+#     session_data = request.state.session_data
+#
+#
+#     if not session_data or not session_data.state:
+#         return RedirectResponse(url="/")
+#     user_id = session_data.id
+#
+#     lesson = DBALL().get_lesson_by_id(lesson_id)
+#     if not lesson or lesson.teacher_id != user_id:
+#         raise HTTPException(status_code=404, detail={
+#             "error": "Lesson not found",
+#             "message": f"Lesson with ID {lesson_id} does not exist"
+#         })
+#
+#     students = DBALL().get_lesson_students(lesson_id)
+#
+#     return generate_json(LessonDetailResponse.model_validate({
+#         "id": lesson.id,
+#         "title": lesson.title,
+#         "description": lesson.content,
+#         "date": lesson.date,
+#         "teacher": {"id": lesson.teacher_id, "name": lesson.teacher_name},
+#         "students": [{"id": s.id, "full_name": s.full_name} for s in students],
+#         "created_at": lesson.created_at
+#     }))
 
 
 @router.put("/lessons/{lesson_id}", response_class=JSONResponse)
@@ -126,7 +126,7 @@ async def update_lesson(lesson_id: int, data: LessonUpdate, request: Request):
         id=lesson.id,
         title=lesson.title,
         description=lesson.content,
-        teacher={"id": lesson.teacher_id, "name": "Ibragim"}, #тут имя учителя нужно вернуть
+        teacher={"id": lesson.teacher_id, "name": DBALL().get_teacher_bio(lesson.teacher_id)}, #тут имя учителя нужно вернуть
         created_at=lesson.created_at.isoformat()
     )
 
