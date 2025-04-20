@@ -55,15 +55,6 @@
   border-radius: 50%;
 }
 
-.my-btn:hover {
-  background-color: #a4b7d3;
-  transition: 0.1s ease;
-}
-
-.my-btn {
-  background-color: #bacfee;
-}
-
 .my-btn:active:hover {
   background-color: #a4b7d3;
 }
@@ -87,17 +78,9 @@
   background: #06799f;
 }
 
-.go-btns {
-  background-color: #06799f;
-}
-
 .go-btns:hover {
   background-color: #024e68;
   transition: 0.1s ease;
-}
-
-.go-btns:active:hover {
-  background-color: #024e68;
 }
 
 .active-btn-students {
@@ -107,13 +90,5 @@
 .active-btn:hover {
   background-color: #00685A;
   transition: 0.1s ease;
-}
-
-.active-btn:active:hover {
-  background-color: #00685a;
-}
-
-.active-btn {
-  background-color: #00a08a;
 }
 

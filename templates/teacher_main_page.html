@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-bs-theme="light" lang="ru">
+<html data-bs-theme="light" lang="ru" data-bss-forced-theme="light">
 
 <head>
     <meta charset="utf-8">
@@ -7,124 +7,71 @@
     <title>ТРППСайт</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/Login-Form-Basic-icons.css">
+    <link rel="stylesheet" href="assets/css/styles.min.css">
 </head>
 
-<body style="background: linear-gradient(0deg, #024e68 0%, #ceedff 50%, white 100%), #ffffff;height: 982px;">
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1 class="text-center">Личный кабинет учителя</h1>
+<body style="background:linear-gradient(0deg, #024e68 0%, #ceedff 50%, white 100%), #ffffff;height:982px;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-center">Личный кабинет учителя</h1>
+            </div>
+        </div>
+        <div class="row d-flex d-xl-flex justify-content-md-center justify-content-xl-center">
+            <div class="col-md-4 d-flex d-sm-flex d-md-flex d-lg-flex justify-content-center justify-content-sm-center justify-content-md-center align-items-md-center justify-content-lg-end align-items-lg-center" style="width:320px;height:132px;margin:0px;padding:0px;"><button class="btn link-light active-btn" id="btn_students" type="button" style="height:66px;width:186px;box-shadow:0px 0px 20px #212529;">Ученики </button></div>
+            <div class="col-md-4 d-flex d-sm-flex d-lg-flex justify-content-center justify-content-sm-center align-items-md-center justify-content-lg-center align-items-lg-center" style="width:320px;height:132px;margin:0px;padding:0px;"><button class="btn link-light go-btns" id="btn_lsns" type="button" style="width:186px;height:66px;box-shadow:0px 0px 20px #212529;">Уроки </button></div>
+            <div class="col-md-4 d-flex d-sm-flex d-md-flex d-lg-flex justify-content-center justify-content-sm-center justify-content-md-center align-items-md-center justify-content-lg-start align-items-lg-center" style="text-align:center;display:block;width:320px;height:132px;margin:0px;padding:0px;"><button class="btn link-light d-lg-flex justify-content-lg-center align-items-lg-center me-0 pb-0 mb-0 go-btns" id="btn_tsks" type="button" style="width:186px;height:66px;margin:0;padding:0;position:static;transform:translate(0px);text-align:center;padding-top:0px;box-shadow:0px 0 20px #212529;"> Задачи </button></div>
         </div>
     </div>
-    <div class="row d-flex d-xl-flex justify-content-md-center justify-content-xl-center">
-        <div class="col-md-4 d-flex d-sm-flex d-md-flex d-lg-flex justify-content-center justify-content-sm-center justify-content-md-center align-items-md-center justify-content-lg-end align-items-lg-center"
-             style="width: 320px;height: 132px;margin: 0px;padding: 0px;">
-            <button class="btn link-light active-btn" id="btn_students" type="button"
-                    style="height: 66px;width: 186px;box-shadow: 0px 0px 20px #212529;">Ученики
-            </button>
-        </div>
-        <div class="col-md-4 d-flex d-sm-flex d-lg-flex justify-content-center justify-content-sm-center align-items-md-center justify-content-lg-center align-items-lg-center"
-             style="width: 320px;height: 132px;margin: 0px;padding: 0px;">
-            <button class="btn link-light go-btns" id="btn_lsns" type="button"
-                    style="width: 186px;height: 66px;box-shadow: 0px 0px 20px #212529;">Уроки
-            </button>
-        </div>
-        <div class="col-md-4 d-flex d-sm-flex d-md-flex d-lg-flex justify-content-center justify-content-sm-center justify-content-md-center align-items-md-center justify-content-lg-start align-items-lg-center"
-             style="text-align: center;display: block;width: 320px;height: 132px;margin: 0px;padding: 0px;">
-            <button class="btn link-light d-lg-flex justify-content-lg-center align-items-lg-center me-0 pb-0 mb-0 go-btns"
-                    id="btn_tsks" type="button"
-                    style="width: 186px;height: 66px;margin: 0;padding: 0;position: static;transform: translate(0px);text-align: center;padding-top: 0px;box-shadow: 0px 0 20px #212529;">
-                Задачи
-            </button>
-        </div>
-    </div>
-</div>
-<div class="container">
-    <div class="row d-lg-flex justify-content-lg-center">
-        <div class="col-md-12 col-lg-12 col-xl-10 col-xxl-8"
-             style="position: relative; height: 700px; width: 971px; margin: 0; padding: 0; text-align: center; border-radius: 40px; border-width: 1px; border-style: solid; box-shadow: 0px 0px 20px 0px rgb(33, 37, 41); background: #ffffff;">
-            <p class="text-center d-lg-flex justify-content-lg-center"
-               style="font-size: 26px; margin: 0; padding: 0; height: 39px; width: 971px;">Список учеников</p>
-            <div style="height: calc(100% - 100px); overflow-y: auto; margin-top: 10px;">
-                <div class="row" id="students-container" style="margin: 0; padding: 0;">
-                    <div class="col-lg-11 col-xl-12 col-xxl-12 d-lg-flex justify-content-lg-start align-items-lg-center"
-                         style="padding: 0; margin: 0;">
-                        <p style="width: 253px; margin: 0; padding: 0; height: 24px;">Должно быть имя ученика</p>
-                        <button class="btn link-dark my-btn" type="button" style="width: 296px;">Посмотреть выполненные задания</button>
-                        <button class="btn my-btn" type="button" style="margin-left: 11px;" data-bs-toggle="modal" data-bs-target="#editStudentModal">Изменить логин и пароль</button>
-                        <button class="btn my-btn" type="button" style="margin-left: 9px;">Удалить ученика</button>
+    <div class="container">
+        <div class="row d-lg-flex justify-content-lg-center">
+            <div class="col-md-12 col-lg-12 col-xl-10 col-xxl-8" style="position: relative;width: 971px;margin: 0;text-align: center;border-radius: 40px;border-width: 1px;border-style: solid;box-shadow: 0px 0px 20px 0px rgb(33, 37, 41);background: #ffffff;height: 239px;padding: 0;">
+                <p class="text-center d-lg-flex justify-content-lg-center" style="font-size:26px;margin:0;padding:0;height:39px;width:971px;">Список учеников</p>
+                <div style="margin-top: 10px;">
+                    <div class="row" id="students-container" style="margin: 0;padding: 0;">
+                        <div class="col-lg-11 col-xl-12 col-xxl-12 d-lg-flex justify-content-lg-start align-items-lg-center" style="padding:0;margin:0;">
+                            <p style="width:253px;margin:0;padding:0;height:24px;">Должно быть имя ученика</p><button class="btn link-dark my-btn" type="button" style="width:296px;">Посмотреть выполненные задания</button><button class="btn my-btn" type="button" style="margin-left:11px;" data-bs-toggle="modal" data-bs-target="#editStudentModal">Изменить логин и пароль</button><button class="btn my-btn" type="button" style="margin-left:9px;">Удалить ученика</button>
+                        </div>
                     </div>
+                </div><button class="btn my-btn" id="new_student_btn" type="button" style="position: absolute;bottom: 20px;right: 20px;font-size: 14px;box-shadow: 0 0 10px rgba(0,0,0,0.1);height: 51px;width: 145.9453px;margin-top: 100px;margin-left: 722px;margin-bottom: 23px;" data-bs-toggle="modal" data-bs-target="#addStudentModal"> Добавить ученика </button>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" role="dialog" tabindex="-1" id="addStudentModal" aria-labelledby="addStudentModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addStudentModalLabel">Добавление нового ученика</h5><button class="btn-close" aria-label="Close" data-bs-dismiss="modal" type="button"></button>
                 </div>
-            </div>
-            <button class="btn btn-sm btn-light" id="new_student_btn" type="button"
-                    style="position: absolute; bottom: 20px; right: 20px; padding: 15px 60px; font-size: 14px; box-shadow: 0 0 10px rgba(0,0,0,0.1);"
-                    data-bs-toggle="modal" data-bs-target="#addStudentModal">
-                Добавить ученика
-            </button>
-        </div>
-
-    </div>
-</div>
-
-<!-- Модальное окно для добавления нового ученика -->
-<div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addStudentModalLabel">Добавление нового ученика</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="addStudentForm">
-                    <div class="mb-3">
-                        <label for="newStudentLogin" class="form-label">Логин</label>
-                        <input type="text" class="form-control" id="newStudentLogin" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="newStudentPassword" class="form-label">Пароль</label>
-                        <input type="text" class="form-control" id="newStudentPassword" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-primary" id="addStudentBtn">Добавить</button>
+                <div class="modal-body">
+                    <form id="addStudentForm">
+                        <div class="mb-3"><label class="form-label" for="newStudentLogin">Логин</label><input class="form-control form-control" type="text" id="newStudentLogin" required=""></div>
+                        <div class="mb-3"><label class="form-label" for="newStudentPassword">Пароль</label><input class="form-control form-control" type="text" id="newStudentPassword" required=""></div>
+                    </form>
+                </div>
+                <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Отмена</button><button class="btn btn-primary" id="addStudentBtn" type="button">Добавить</button></div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- Модальное окно для изменения логина и пароля -->
-<div class="modal fade" id="editStudentModal" tabindex="-1" aria-labelledby="editStudentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editStudentModalLabel">Изменение данных ученика</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editStudentForm">
-                    <input type="hidden" id="studentId">
-                    <div class="mb-3">
-                        <label for="studentLogin" class="form-label">Логин</label>
-                        <input type="text" class="form-control" id="studentLogin" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="studentPassword" class="form-label">Новый пароль</label>
-                        <input type="text" class="form-control" id="studentPassword" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                <button type="button" class="btn btn-primary" id="saveChangesBtn">Изменить</button>
+    <div class="modal fade" role="dialog" tabindex="-1" id="editStudentModal" aria-labelledby="editStudentModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editStudentModalLabel">Изменение данных ученика</h5><button class="btn-close" aria-label="Close" data-bs-dismiss="modal" type="button"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editStudentForm"><input type="hidden" id="studentId">
+                        <div class="mb-3"><label class="form-label" for="studentLogin">Логин</label><input class="form-control form-control" type="text" id="studentLogin" required=""></div>
+                        <div class="mb-3"><label class="form-label" for="studentPassword">Новый пароль</label><input class="form-control form-control" type="text" id="studentPassword" required=""></div>
+                    </form>
+                </div>
+                <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Отмена</button><button class="btn btn-primary" id="saveChangesBtn" type="button">Изменить</button></div>
             </div>
         </div>
     </div>
-</div>
-
-<script src="assets/bootstrap/js/bootstrap.min.js"></script>
-<script src="assets/js/teacher_main_page.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/script.min.js"></script>
+    <script src="assets/js/teacher_main_page.js"></script>
 </body>
 
 </html>
