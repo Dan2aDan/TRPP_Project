@@ -1,22 +1,13 @@
-from typing import Any, Coroutine
-
-from fastapi_sessions.session_verifier import SessionVerifier
-from ggshield.core.client import create_session
-from pydantic import BaseModel
-from fastapi import HTTPException, FastAPI, Response, Depends, Request
 from uuid import UUID, uuid4
 
+from fastapi import HTTPException, Depends, Request
 from fastapi_sessions.backends.implementations import InMemoryBackend
 from fastapi_sessions.frontends.implementations import SessionCookie, CookieParameters
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import RedirectResponse
 
-from utils.variable_environment import VarEnv
-
 from routers.auth.schems import SessionData
-
-
-
+from utils.variable_environment import VarEnv
 
 cookie_params = CookieParameters()
 

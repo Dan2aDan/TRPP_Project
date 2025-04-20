@@ -9,11 +9,12 @@ from DataBaseManager.models import Students, Teachers, Lessons, Tasks, Solutions
 class DatabaseStudents:
     def __init__(self, db):
         self.db = db
-    
+
     def register_student(self, login, password, teacher_id):
-        self.db.execute_commit(sqlalchemy.insert(Students).values(login=login, password_hash=password, bio="", teacher_id=teacher_id))
+        self.db.execute_commit(
+            sqlalchemy.insert(Students).values(login=login, password_hash=password, bio="", teacher_id=teacher_id))
         return self.db.select(sqlalchemy.select(Students).where(Students.login == login), self.db.any_)
-    
+
     def get_student_by_id(self, student_id):
         query = sqlalchemy.select(Students).where(Students.id == student_id)
         return self.db.select(query, types=db.any_)
