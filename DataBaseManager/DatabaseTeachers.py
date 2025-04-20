@@ -13,9 +13,12 @@ class DatabaseTeachers:
         query = sqlalchemy.select(Students).where(Students.teacher_id == teacher_id)
         return self.db.select(query, types=db.all_)
 
-    def register_teacher(self, login, password):
-        self.db.execute_commit(sqlalchemy.insert(Teachers).values(login=login, password_hash=password, bio=""))
+    def register_teacher(self, login, password, bio):
+        self.db.execute_commit(sqlalchemy.insert(Teachers).values(login=login, password_hash=password, bio=bio))
         return self.db.select(sqlalchemy.select(Teachers).where(Teachers.login == login), self.db.any_)
 
+    def get_teacher_bio(self, teacher_id):
+        query = sqlalchemy.select(Teachers.bio).where(Teachers.id == teacher_id)
+        return self.db.select(query, types=db.any_)
 
 db_teachers = DatabaseTeachers(db)
