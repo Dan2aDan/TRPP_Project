@@ -2,9 +2,10 @@ from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse, RedirectResponse
 from datetime import datetime
 from DataBaseManager.extends import DBALL
+from DataBaseManager.models import Lessons
 from routers.lessons.schems import (
     LessonCreate, LessonUpdate, LessonDetailResponse,
-    LessonShortResponse, LessonsListResponse, ErrorResponse
+    LessonShortResponse, LessonsListResponse, ErrorResponse, ResponseLesson
 )
 from utils.utils import generate_json
 
@@ -14,68 +15,78 @@ router = APIRouter()
 @router.get("/lessons", response_class=JSONResponse)
 async def get_lessons(request: Request):
     session_data = request.state.session_data
+    print(session_data)
     user_id = session_data.id
-    user_role = session_data.role
+    user_state = session_data.state
 
-    if user_role == "teacher":
-        lessons = DBALL().get_lessons_by_teacher(user_id)
+    if user_state:
+        lessons = DBALL().get_teacher_lessons(user_id)
     else:
-        lessons = DBALL().get_lessons_by_student(user_id)
-
+        lessons = DBALL().get_student_lessons(user_id)
     result = [LessonShortResponse(
         id=lesson.id,
         title=lesson.title,
         description=lesson.content,
-        date=lesson.date,
-        teacher={"id": lesson.teacher_id, "name": lesson.teacher_name},
-        students_count=lesson.students_count,
-        created_at=lesson.created_at
+        teacher={"id": lesson.teacher_id, "name": "Ibragim"}, #тут имя учителя нужно вернуть
+        created_at=lesson.created_at.isoformat()
     ) for lesson in lessons]
 
     return generate_json(LessonsListResponse.model_validate({
-        "lessons": result
+        "lessons": result, "msg": "ok", "code": 200
     }))
 
 
 @router.post("/lessons", response_class=JSONResponse, status_code=201)
 async def create_lesson(data: LessonCreate, request: Request):
     session_data = request.state.session_data
-    teacher_id = session_data.id
 
-    if not data.title or not data.date:
+
+    if not session_data or not session_data.state:
+        return RedirectResponse(url="/")
+
+    if not data.title or not data.description:
         raise HTTPException(status_code=400, detail={
             "error": "Invalid data",
-            "message": "Title and date are required"
+            "message": "Title and description are required"
         })
 
-    lesson_id = DBALL().create_lesson(data.title, data.description, data.date, teacher_id, data.students)
-    lesson = DBALL().get_lesson_by_id(lesson_id)
+    teacher_id = session_data.id
 
-    return JSONResponse(status_code=201, content={
-        "id": lesson.id,
-        "title": lesson.title,
-        "description": lesson.content,
-        "date": lesson.date,
-        "students_count": len(data.students),
-        "created_at": lesson.created_at
-    })
+
+    lesson = DBALL().add_lesson(data.title, data.description, teacher_id, data.file_id)
+    # print(lesson_id)
+    # lesson = DBALL().get_lesson_by_id(lesson_id)
+
+
+
+    result = LessonShortResponse(
+        id=lesson.id,
+        title=lesson.title,
+        description=lesson.content,
+        teacher={"id": lesson.teacher_id, "name": "Ibragim"}, #тут имя учителя нужно вернуть
+        created_at=lesson.created_at.isoformat()
+    )
+
+    return generate_json(ResponseLesson.model_validate({
+        "result": result, "msg": "ok", "code": 201
+    }))
 
 
 @router.get("/lessons/{lesson_id}", response_class=JSONResponse)
 async def get_lesson(lesson_id: int, request: Request):
     session_data = request.state.session_data
+
+
+    if not session_data or not session_data.state:
+        return RedirectResponse(url="/")
     user_id = session_data.id
-    user_role = session_data.role
 
     lesson = DBALL().get_lesson_by_id(lesson_id)
-    if not lesson:
+    if not lesson or lesson.teacher_id != user_id:
         raise HTTPException(status_code=404, detail={
             "error": "Lesson not found",
             "message": f"Lesson with ID {lesson_id} does not exist"
         })
-
-    if user_role == "teacher" and lesson.teacher_id != user_id:
-        return RedirectResponse(url="/")
 
     students = DBALL().get_lesson_students(lesson_id)
 
@@ -93,6 +104,9 @@ async def get_lesson(lesson_id: int, request: Request):
 @router.put("/lessons/{lesson_id}", response_class=JSONResponse)
 async def update_lesson(lesson_id: int, data: LessonUpdate, request: Request):
     session_data = request.state.session_data
+
+    if not session_data or not session_data.state:
+        return RedirectResponse(url="/")
     teacher_id = session_data.id
 
     lesson = DBALL().get_lesson_by_id(lesson_id)
@@ -102,22 +116,31 @@ async def update_lesson(lesson_id: int, data: LessonUpdate, request: Request):
             "message": f"Lesson with ID {lesson_id} does not exist"
         })
 
-    DBALL().update_lesson(lesson_id, data.title, data.description, data.date, data.students)
 
-    return JSONResponse(content={
-        "id": lesson_id,
-        "title": data.title,
-        "description": data.description,
-        "date": data.date,
-        "students_count": len(data.students),
-        "updated_at": datetime.utcnow().isoformat()
-    })
+
+    lesson = DBALL().update_lesson(lesson_id, data.title, data.description, data.file_id)
+    # print(lesson_id)
+    # lesson = DBALL().get_lesson_by_id(lesson_id)
+
+    result = LessonShortResponse(
+        id=lesson.id,
+        title=lesson.title,
+        description=lesson.content,
+        teacher={"id": lesson.teacher_id, "name": "Ibragim"}, #тут имя учителя нужно вернуть
+        created_at=lesson.created_at.isoformat()
+    )
+
+    return generate_json(ResponseLesson.model_validate({
+        "result": result, "msg": "ok", "code": 201
+    }))
 
 
 @router.delete("/lessons/{lesson_id}", response_class=JSONResponse)
 async def delete_lesson(lesson_id: int, request: Request):
     session_data = request.state.session_data
     teacher_id = session_data.id
+    if not session_data or not session_data.state:
+        return RedirectResponse(url="/")
 
     lesson = DBALL().get_lesson_by_id(lesson_id)
     if not lesson or lesson.teacher_id != teacher_id:

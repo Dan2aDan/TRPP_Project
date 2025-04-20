@@ -17,14 +17,14 @@ class LessonShortResponse(BaseModel):
     id: int
     title: str
     description: str
-    date: datetime
     teacher: TeacherInfo
-    students_count: int
-    created_at: datetime
+    created_at: str
 
 
 class LessonsListResponse(BaseModel):
     lessons: List[LessonShortResponse]
+    msg: str
+    code: int
 
 
 class LessonDetailResponse(BaseModel):
@@ -38,19 +38,22 @@ class LessonDetailResponse(BaseModel):
 
 
 class LessonCreate(BaseModel):
+    file_id: int | None
     title: str
     description: str
-    date: datetime
-    students: List[int]
 
 
 class LessonUpdate(BaseModel):
-    title: str
-    description: str
-    date: datetime
-    students: List[int]
+    file_id: int | None
+    title: str | None
+    description: str | None
 
 
 class ErrorResponse(BaseModel):
     error: str
     message: str
+
+class ResponseLesson(BaseModel):
+    result: LessonShortResponse
+    msg: str
+    code: int

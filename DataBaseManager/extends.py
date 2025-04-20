@@ -22,11 +22,12 @@ class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, UserManager):
 
     def clear_all_data(self):
         with self.db.create_session() as conn:
-            conn.execute(Files.__table__.delete())
+
             conn.execute(Tasks.__table__.delete())
             conn.execute(LessonsDepends.__table__.delete())
             conn.execute(Lessons.__table__.delete())
             conn.execute(Students.__table__.delete())
+            conn.execute(Files.__table__.delete())
             conn.execute(Solutions.__table__.delete())
 
             conn.execute(Teachers.__table__.delete())
