@@ -2,7 +2,7 @@ from tests import *
 
 
 def test_add_lesson(database_all):
-    teacher = database_all.register_teacher("test_teacher", "pass")
+    teacher = database_all.register_teacher("test_teacher", "pass", "Коваленко Кирилл")
     lesson = database_all.add_lesson("Math", "Algebra", teacher.id)
     
     # Проверяем создание урока
@@ -12,7 +12,7 @@ def test_add_lesson(database_all):
 
 
 def test_add_lesson_dependencies(database_all):
-    teacher = database_all.register_teacher("dep_teacher", "pass")
+    teacher = database_all.register_teacher("dep_teacher", "pass", "Коваленко Кирилл")
     student1 = database_all.register_student("student1", "pass", teacher.id)
     student2 = database_all.register_student("student2", "pass", teacher.id)
     
@@ -33,8 +33,8 @@ def test_add_lesson_dependencies(database_all):
 
 
 def test_get_student_lessons(database_all):
-    teacher1 = database_all.register_teacher("teacher1", "pass1")
-    teacher2 = database_all.register_teacher("teacher2", "pass2")
+    teacher1 = database_all.register_teacher("teacher1", "pass1", "Коваленко Кирилл")
+    teacher2 = database_all.register_teacher("teacher2", "pass2", "Абубакаров Турпал")
     student = database_all.register_student("student", "pass", teacher1.id)
     
     lessons_before = database_all.get_student_lessons(student.id)
@@ -59,7 +59,7 @@ def test_get_student_lessons(database_all):
 
 
 def test_get_teacher_lessons(database_all):
-    teacher = database_all.register_teacher("teacher3", "pass3")
+    teacher = database_all.register_teacher("teacher3", "pass3", "Коваленко Кирилл")
     
     # Create lessons for the teacher
     lesson1 = database_all.add_lesson("Biology", "Cells", teacher.id)
@@ -72,7 +72,7 @@ def test_get_teacher_lessons(database_all):
 
 
 def test_update_lesson(database_all):
-    teacher = database_all.register_teacher("teacher4", "pass4")
+    teacher = database_all.register_teacher("teacher4", "pass4", "Коваленко Кирилл")
     lesson = database_all.add_lesson("History", "Ancient", teacher.id)
     
     # Update lesson
@@ -83,7 +83,7 @@ def test_update_lesson(database_all):
 
 
 def test_delete_lesson_with_dependencies(database_all):
-    teacher = database_all.register_teacher("del_teacher", "pass")
+    teacher = database_all.register_teacher("del_teacher", "pass", "Коваленко Кирилл")
     student = database_all.register_student("del_student", "pass", teacher.id)
     lesson = database_all.add_lesson("History", "Ancient", teacher.id)
     

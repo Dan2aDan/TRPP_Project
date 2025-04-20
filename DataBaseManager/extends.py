@@ -35,8 +35,8 @@ class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, UserManager):
 
     def create_data(self):
         pass
-        teacher1 = self.register_teacher("teacher1", "password1")
-        teacher2 = self.register_teacher("teacher2", "password2")
+        teacher1 = self.register_teacher("teacher1", "password1", "Коваленко Кирилл")
+        teacher2 = self.register_teacher("teacher2", "password2", "Абубакаров Турпал")
         student1 = self.register_student("student1", "password1", teacher1.id)
         student2 = self.register_student("student2", "password2", teacher1.id)
         lesson1 = self.add_lesson("lesson1", "content lesson 1", teacher1.id, None)
