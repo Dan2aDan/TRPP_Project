@@ -14,7 +14,7 @@ class DatabaseLessons:
         query = sqlalchemy.select(Lessons).where(Lessons.id == lesson_id)
         return self.db.select(query, types=self.db.any_)
 
-    def get_lesson_from_student(self, lesson_id):
+    def get_students_from_lesson(self, lesson_id):
         query = sqlalchemy.select(LessonsDepends).where(LessonsDepends.lesson_id == lesson_id)
         return [node.student_id for node in self.db.select(query, types=self.db.all_)]
 

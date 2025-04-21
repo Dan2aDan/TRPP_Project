@@ -5,7 +5,7 @@ from DataBaseManager.extends import DBALL
 from DataBaseManager.models import Lessons
 from routers.lessons.schems import (
     LessonCreate, LessonUpdate, LessonDetailResponse,
-    LessonShortResponse, LessonsListResponse, ErrorResponse, ResponseLesson
+    LessonShortResponse, LessonsListResponse, ErrorResponse, ResponseLesson, LongResponseLesson
 )
 from utils.utils import generate_json
 
@@ -69,33 +69,33 @@ async def create_lesson(data: LessonCreate, request: Request):
     }))
 
 
-# @router.get("/lessons/{lesson_id}", response_class=JSONResponse)
-# async def get_lesson(lesson_id: int, request: Request):
-#     session_data = request.state.session_data
-#
-#
-#     if not session_data or not session_data.state:
-#         return RedirectResponse(url="/")
-#     user_id = session_data.id
-#
-#     lesson = DBALL().get_lesson_by_id(lesson_id)
-#     if not lesson or lesson.teacher_id != user_id:
-#         raise HTTPException(status_code=404, detail={
-#             "error": "Lesson not found",
-#             "message": f"Lesson with ID {lesson_id} does not exist"
-#         })
-#
-#     students = DBALL().get_lesson_students(lesson_id)
-#
-#     return generate_json(LessonDetailResponse.model_validate({
-#         "id": lesson.id,
-#         "title": lesson.title,
-#         "description": lesson.content,
-#         "date": lesson.date,
-#         "teacher": {"id": lesson.teacher_id, "name": lesson.teacher_name},
-#         "students": [{"id": s.id, "full_name": s.full_name} for s in students],
-#         "created_at": lesson.created_at
-#     }))
+@router.get("/lessons/{lesson_id}", response_class=JSONResponse)
+async def get_lesson(lesson_id: int, request: Request):
+    session_data = request.state.session_data
+
+    user_id = session_data.id
+
+    lesson = DBALL().get_lesson_by_id(lesson_id)
+    if not lesson or lesson.teacher_id != user_id:
+        raise HTTPException(status_code=404, detail={
+            "error": "Lesson not found",
+            "message": f"Lesson with ID {lesson_id} does not exist"
+        })
+
+    students = DBALL().get_students_from_lesson(lesson_id)
+
+    result = LessonDetailResponse(
+        id = lesson.id,
+        title = lesson.title,
+        description =  lesson.content,
+        teacher = {"id": lesson.teacher_id, "name": DBALL().get_teacher_bio(lesson.teacher_id)},
+        students =  [{"id": s, "full_name": DBALL().get_student_by_id(s).bio} for s in students],
+        created_at= lesson.created_at.isoformat()
+    )
+
+    return generate_json(LongResponseLesson.model_validate({
+        "result": result, "msg": "ok", "code": 201
+    }))
 
 
 @router.put("/lessons/{lesson_id}", response_class=JSONResponse)

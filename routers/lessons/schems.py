@@ -31,10 +31,9 @@ class LessonDetailResponse(BaseModel):
     id: int
     title: str
     description: str
-    date: datetime
     teacher: TeacherInfo
     students: List[StudentInfo]
-    created_at: datetime
+    created_at: str
 
 
 class LessonCreate(BaseModel):
@@ -55,5 +54,11 @@ class ErrorResponse(BaseModel):
 
 class ResponseLesson(BaseModel):
     result: LessonShortResponse
+    msg: str
+    code: int
+
+
+class LongResponseLesson(BaseModel):
+    result: LessonDetailResponse
     msg: str
     code: int
