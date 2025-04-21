@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from fastapi.responses import RedirectResponse
 
 from DataBaseManager.extends import DBALL
+from routers.auth.schems import SessionData
 from routers.students.schems import Response as AnswerResponse, ResponseStudent, StudentAdd, StudentUpdate
 from routers.students.schems import StudentResponse, StudentsListResponse
 from utils.utils import generate_json
@@ -49,7 +50,7 @@ async def add_student(item: StudentAdd, request: Request):
 
 @router.get("/students", response_class=JSONResponse)
 async def get_students(request: Request):
-    session_data = request.state.session_data
+    session_data: SessionData = request.state.session_data
 
     if not session_data or not session_data.state:
         return RedirectResponse(url="/")
@@ -147,7 +148,7 @@ async def update_student(student_id: int, item: StudentUpdate, request: Request)
 async def delete_student(student_id: int, request: Request):
     teacher_id = request.state.session_data.id
     
-    # Получаем студента из базы данных
+    # Получаем студента из  базы данных
     student = DBALL().get_student_by_id(student_id)
     
     # Проверяем, существует ли студент и принадлежит ли он данному учителю
