@@ -41,9 +41,6 @@ async def create_lesson(data: LessonCreate, request: Request):
     session_data = request.state.session_data
 
 
-    if not session_data or not session_data.state:
-        return RedirectResponse(url="/")
-
     if not data.title or not data.description:
         raise HTTPException(status_code=400, detail={
             "error": "Invalid data",
@@ -139,8 +136,6 @@ async def update_lesson(lesson_id: int, data: LessonUpdate, request: Request):
 async def delete_lesson(lesson_id: int, request: Request):
     session_data = request.state.session_data
     teacher_id = session_data.id
-    if not session_data or not session_data.state:
-        return RedirectResponse(url="/")
 
     lesson = DBALL().get_lesson_by_id(lesson_id)
     if not lesson or lesson.teacher_id != teacher_id:
