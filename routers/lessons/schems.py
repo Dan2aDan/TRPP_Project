@@ -48,9 +48,6 @@ class LessonUpdate(BaseModel):
     description: str | None
 
 
-class ErrorResponse(BaseModel):
-    error: str
-    message: str
 
 class ResponseLesson(BaseModel):
     result: LessonShortResponse

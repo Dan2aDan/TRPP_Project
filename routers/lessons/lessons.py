@@ -5,7 +5,7 @@ from DataBaseManager.extends import DBALL
 from DataBaseManager.models import Lessons
 from routers.lessons.schems import (
     LessonCreate, LessonUpdate, LessonDetailResponse,
-    LessonShortResponse, LessonsListResponse, ErrorResponse, ResponseLesson, LongResponseLesson
+    LessonShortResponse, LessonsListResponse,  ResponseLesson, LongResponseLesson
 )
 from utils.utils import generate_json
 
