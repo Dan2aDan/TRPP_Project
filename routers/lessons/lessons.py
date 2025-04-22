@@ -5,7 +5,7 @@ from DataBaseManager.extends import DBALL
 from DataBaseManager.models import Lessons
 from routers.lessons.schems import (
     LessonCreate, LessonUpdate, LessonDetailResponse,
-    LessonShortResponse, LessonsListResponse,  ResponseLesson, LongResponseLesson
+    LessonShortResponse, LessonsListResponse, ResponseLesson, LongResponseLesson
 )
 from utils.utils import generate_json
 
@@ -27,9 +27,10 @@ async def get_lessons(request: Request):
         id=lesson.id,
         title=lesson.title,
         description=lesson.content,
-        teacher={"id": lesson.teacher_id, "name": DBALL().get_teacher_bio(lesson.teacher_id)}, #тут имя учителя нужно вернуть
+        teacher={"id": lesson.teacher_id, "name": DBALL().get_teacher_bio(lesson.teacher_id)},
+        # тут имя учителя нужно вернуть
         created_at=lesson.created_at.isoformat()
-    ) for lesson in lessons]
+    ) for lesson in sorted(lessons, key=lambda x: x.id, reverse=True)]
 
     return generate_json(LessonsListResponse.model_validate({
         "lessons": result, "msg": "ok", "code": 200
@@ -40,7 +41,6 @@ async def get_lessons(request: Request):
 async def create_lesson(data: LessonCreate, request: Request):
     session_data = request.state.session_data
 
-
     if not data.title or not data.description:
         raise HTTPException(status_code=400, detail={
             "error": "Invalid data",
@@ -49,18 +49,16 @@ async def create_lesson(data: LessonCreate, request: Request):
 
     teacher_id = session_data.id
 
-
     lesson = DBALL().add_lesson(data.title, data.description, teacher_id, None)
     # print(lesson_id)
     # lesson = DBALL().get_lesson_by_id(lesson_id)
-
-
 
     result = LessonShortResponse(
         id=lesson.id,
         title=lesson.title,
         description=lesson.content,
-        teacher={"id": lesson.teacher_id, "name": DBALL().get_teacher_bio(lesson.teacher_id)}, #тут имя учителя нужно вернуть
+        teacher={"id": lesson.teacher_id, "name": DBALL().get_teacher_bio(lesson.teacher_id)},
+        # тут имя учителя нужно вернуть
         created_at=lesson.created_at.isoformat()
     )
 
@@ -69,7 +67,7 @@ async def create_lesson(data: LessonCreate, request: Request):
     }))
 
 
-@router.get("/lessons/{lesson_id}", response_class=JSONResponse)
+@router.get("/lesson/{lesson_id}", response_class=JSONResponse)
 async def get_lesson(lesson_id: int, request: Request):
     session_data = request.state.session_data
 
@@ -85,12 +83,12 @@ async def get_lesson(lesson_id: int, request: Request):
     students = DBALL().get_students_from_lesson(lesson_id)
 
     result = LessonDetailResponse(
-        id = lesson.id,
-        title = lesson.title,
-        description =  lesson.content,
-        teacher = {"id": lesson.teacher_id, "name": DBALL().get_teacher_bio(lesson.teacher_id)},
-        students =  [{"id": s, "full_name": DBALL().get_student_by_id(s).bio} for s in students],
-        created_at= lesson.created_at.isoformat()
+        id=lesson.id,
+        title=lesson.title,
+        description=lesson.content,
+        teacher={"id": lesson.teacher_id, "name": DBALL().get_teacher_bio(lesson.teacher_id)},
+        students=[{"id": s, "full_name": DBALL().get_student_by_id(s).bio} for s in students],
+        created_at=lesson.created_at.isoformat()
     )
 
     return generate_json(LongResponseLesson.model_validate({
@@ -98,7 +96,7 @@ async def get_lesson(lesson_id: int, request: Request):
     }))
 
 
-@router.put("/lessons/{lesson_id}", response_class=JSONResponse)
+@router.put("/lesson/{lesson_id}", response_class=JSONResponse)
 async def update_lesson(lesson_id: int, data: LessonUpdate, request: Request):
     session_data = request.state.session_data
 
@@ -113,9 +111,7 @@ async def update_lesson(lesson_id: int, data: LessonUpdate, request: Request):
             "message": f"Lesson with ID {lesson_id} does not exist"
         })
 
-
-
-    lesson = DBALL().update_lesson(lesson_id, data.title, data.description, data.file_id)
+    lesson = DBALL().update_lesson(lesson_id, content=data.description, file_id=None if data.file_id == -1 else data.file_id)
     # print(lesson_id)
     # lesson = DBALL().get_lesson_by_id(lesson_id)
 
@@ -123,7 +119,8 @@ async def update_lesson(lesson_id: int, data: LessonUpdate, request: Request):
         id=lesson.id,
         title=lesson.title,
         description=lesson.content,
-        teacher={"id": lesson.teacher_id, "name": DBALL().get_teacher_bio(lesson.teacher_id)}, #тут имя учителя нужно вернуть
+        teacher={"id": lesson.teacher_id, "name": DBALL().get_teacher_bio(lesson.teacher_id)},
+        # тут имя учителя нужно вернуть
         created_at=lesson.created_at.isoformat()
     )
 
@@ -132,7 +129,7 @@ async def update_lesson(lesson_id: int, data: LessonUpdate, request: Request):
     }))
 
 
-@router.delete("/lessons/{lesson_id}", response_class=JSONResponse)
+@router.delete("/lesson/{lesson_id}", response_class=JSONResponse)
 async def delete_lesson(lesson_id: int, request: Request):
     session_data = request.state.session_data
     teacher_id = session_data.id

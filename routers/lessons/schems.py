@@ -42,10 +42,8 @@ class LessonCreate(BaseModel):
 
 
 class LessonUpdate(BaseModel):
-    file_id: int | None
-    title: str | None
-    description: str | None
-
+    file_id: int
+    description: str
 
 
 class ResponseLesson(BaseModel):

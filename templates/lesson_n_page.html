@@ -26,7 +26,8 @@
     <div class="container">
         <div class="row d-lg-flex justify-content-lg-center">
             <div class="col-md-12 col-lg-12 col-xl-10 col-xxl-8" id="students-container" style="text-align:center;border-radius:40px;border-width:1px;border-style:solid;box-shadow:0px 0px 20px 0px rgb(33, 37, 41);width:971px;background:#ffffff;height:auto;">
-                <p class="text-center d-lg-flex justify-content-lg-center" style="font-size:26px;margin:0;padding:0;height:39px;width:971px;">Урок n</p><textarea style="width:674px;height:156px;margin-top:24px;margin-left:0px;border-radius:14px;border-width:1px;"></textarea>
+                <p id="lesson-title" class="text-center d-lg-flex justify-content-lg-center" style="font-size:26px;margin:0;padding:0;height:39px;width:971px;">Урок n</p>
+                <textarea id="lesson-description" style="width:674px;height:156px;margin-top:24px;margin-left:0px;border-radius:14px;border-width:1px;"></textarea>
                 <div class="table-responsive d-lg-flex align-items-lg-center">
                     <table class="table">
                         <thead>
@@ -51,12 +52,14 @@
                             </div>
                         </div>
                     </div>
-                </div><button class="btn my-btn" type="button" style="height: 45px;width: 165px;padding: 0px;margin-top: -25px;margin-right: 460px;margin-bottom: 25px;">Прикрепить задачу</button><button class="btn my-btn" type="button" style="height: 45px;width: 165px;padding: 0px;margin-top: 67px;margin-bottom: 0px;">Сохранить урок</button><button class="btn my-btn" type="button" style="height: 45px;width: 165px;padding: 0px;margin-top: -47px;margin-right: 0px;margin-bottom: 25px;margin-left: 258px;">Удалить урок</button>
+                </div><button class="btn my-btn" type="button" style="height: 45px;width: 165px;padding: 0px;margin-top: -25px;margin-right: 460px;margin-bottom: 25px;">Прикрепить задачу</button>
+                <button id="save-lesson" class="btn my-btn" type="button" style="height: 45px;width: 165px;padding: 0px;margin-top: 67px;margin-bottom: 0px;">Сохранить урок</button>
+                <button id="delete-lesson" class="btn my-btn" type="button" style="height: 45px;width: 165px;padding: 0px;margin-top: -47px;margin-right: 0px;margin-bottom: 25px;margin-left: 258px;">Удалить урок</button>
             </div>
         </div>
     </div>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/script.min.js"></script>
+    <script src="assets/js/lesson_page_n.js"></script>
 </body>
 
 </html>
