@@ -37,7 +37,6 @@ class LessonDetailResponse(BaseModel):
 
 
 class LessonCreate(BaseModel):
-    file_id: int | None
     title: str
     description: str
 

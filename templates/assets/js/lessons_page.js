@@ -2,28 +2,28 @@
 async function loadLessons() {
     try {
         // Загружаем список уроков с сервера
-        const response = await fetch('api/v0/lessons'); // Замените на ваш эндпоинт
+        const response = await fetch('/api/v0/lessons/lessons', {method: 'GET'});
         const lessons = await response.json();
 
         const container = document.getElementById('students-container'); // Контейнер на странице
-        const lessonsList = container.querySelector('.row'); // Секция для отображения уроков
-        lessonsList.innerHTML = ''; // Очищаем старые уроки
+        container.innerHTML = ''; // Очищаем старые уроки
 
-        lessons.forEach(lesson => {
+        lessons.lessons.forEach(lesson => {
             const lessonHTML = `
-            <div class="row" style="height: 51px;width: 501px;margin: 0;padding: 0;margin-top: 10px;margin-left: 230px;">
-                <div class="col-lg-11 col-xl-12 col-xxl-12 d-lg-flex justify-content-lg-start align-items-lg-center" style="height: 51px;width: 500px;padding: 0;margin: 0;margin-left: 0;">
-                    <button class="btn link-dark my-btn view-lesson" data-id="${lesson.id}" type="button" style="width: 500px;height: 50px;">${lesson.name}</button>
-                </div>
-            </div>`;
-            
-            lessonsList.insertAdjacentHTML('beforeend', lessonHTML);
+        <div class="col-lg-11 col-xl-12 col-xxl-12 d-lg-flex justify-content-lg-start align-items-lg-center" style="height: 51px;width: 500px;padding: 5px;">
+            <button class="btn link-dark my-btn lesson-btn" type="button" style="width: 500px;height: 50px;padding: 1px;" data-id="${lesson.id}">
+                ${lesson.title}
+            </button>
+        </div>`;
+
+            container.insertAdjacentHTML('beforeend', lessonHTML);
         });
 
-        // Добавляем обработчики событий для кнопок "Посмотреть урок"
-        document.querySelectorAll('.view-lesson').forEach(button => {
+// Добавляем обработчики событий для кнопок "Посмотреть урок"
+        document.querySelectorAll('.lesson-btn').forEach(button => {
             button.addEventListener('click', (event) => {
-                const lessonId = event.target.getAttribute('data-id');
+                console.trace('Клик по уроку');
+                const lessonId = event.currentTarget.getAttribute('data-id');
                 viewLesson(lessonId);
             });
         });
@@ -51,7 +51,7 @@ document.getElementById('btn_tsks').addEventListener('click', () => {
 // Функция для просмотра подробностей урока
 function viewLesson(lessonId) {
     console.log('Просмотр урока с ID:', lessonId);
-    window.location.href = `/lesson/details?id=${lessonId}`;
+    window.location.href = `lesson_n_page.html?id=${lessonId}`;
 }
 
 // Функция для добавления нового урока
@@ -59,10 +59,10 @@ async function addLesson() {
     const lessonName = prompt("Введите название нового урока");
     if (lessonName) {
         try {
-            const response = await fetch('/api/v0/lessons', {
+            const response = await fetch('/api/v0/lessons/lessons', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: lessonName })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({title: lessonName, description: "Новый урок"})
             });
             if (response.ok) {
                 alert('Урок добавлен');

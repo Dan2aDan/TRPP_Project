@@ -50,7 +50,7 @@ async def create_lesson(data: LessonCreate, request: Request):
     teacher_id = session_data.id
 
 
-    lesson = DBALL().add_lesson(data.title, data.description, teacher_id, data.file_id)
+    lesson = DBALL().add_lesson(data.title, data.description, teacher_id, None)
     # print(lesson_id)
     # lesson = DBALL().get_lesson_by_id(lesson_id)
 
