@@ -8,11 +8,12 @@ from DataBaseManager.models import Base, Students, Teachers, Lessons, Tasks, Sol
 from DataBaseManager.__init__ import db
 from DataBaseManager.DatabaseLessons import DatabaseLessons
 from DataBaseManager.DatabaseStudents import DatabaseStudents
+from DataBaseManager.DatabaseTasks import DatabaseTasks
 from utils.utils import singleton
 
 
 @singleton
-class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, UserManager):
+class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, DatabaseTasks, UserManager):
     def __init__(self, db_=db):
         self.db = db
         super().__init__(db_)

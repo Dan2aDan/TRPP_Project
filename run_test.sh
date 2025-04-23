@@ -1,5 +1,5 @@
 #!/bin/bash
-
+source .venv/bin/activate
 # --- 1. Загрузка переменных из .env ---
 if [ -f ".env" ]; then
     export $(grep -v '^#' .env | xargs)
