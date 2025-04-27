@@ -4,16 +4,19 @@ from sqlalchemy.orm import sessionmaker
 
 from DataBaseManager.DatabaseTeachers import DatabaseTeachers
 from DataBaseManager.UserManager import UserManager
-from DataBaseManager.models import Base, Students, Teachers, Lessons, Tasks, Solutions, LessonsDepends, Files
+from DataBaseManager.models import Base, Students, Teachers, Lessons, Tasks, LessonsDepends, Files, TeacherSolutions, StudentSolutions
 from DataBaseManager.__init__ import db
 from DataBaseManager.DatabaseLessons import DatabaseLessons
 from DataBaseManager.DatabaseStudents import DatabaseStudents
 from DataBaseManager.DatabaseTasks import DatabaseTasks
+from DataBaseManager.DbTeacherSolutions import DbTeacherSolutions
+from DataBaseManager.DbStudentSolutions import DbStudentSolutions
 from utils.utils import singleton
 
 
 @singleton
-class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, DatabaseTasks, UserManager):
+class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, DatabaseTasks,
+            UserManager, DbTeacherSolutions, DbStudentSolutions):
     def __init__(self, db_=db):
         self.db = db
         super().__init__(db_)
@@ -29,7 +32,8 @@ class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, DatabaseTasks, 
             conn.execute(Lessons.__table__.delete())
             conn.execute(Students.__table__.delete())
             conn.execute(Files.__table__.delete())
-            conn.execute(Solutions.__table__.delete())
+            conn.execute(StudentSolutions.__table__.delete())
+            conn.execute(TeacherSolutions.__table__.delete())
 
             conn.execute(Teachers.__table__.delete())
             conn.commit()

@@ -18,6 +18,9 @@ class Teachers(Base):
 
     # Связь с таблицей Students
     students = relationship("Students", back_populates="teacher")
+    
+    # Связь с таблицей TeacherSolutions
+    teacher_solutions = relationship("TeacherSolutions", back_populates="teacher")
 
 
 class Files(Base):
@@ -62,7 +65,8 @@ class Tasks(Base):
 
     # Связи
     lesson = relationship("Lessons", back_populates="tasks")
-    solutions = relationship("Solutions", back_populates="task")
+    teacher_solutions = relationship("TeacherSolutions", back_populates="task")
+    student_solutions = relationship("StudentSolutions", back_populates="task")
 
 
 class Students(Base):
@@ -75,17 +79,34 @@ class Students(Base):
 
     # Связи
     teacher = relationship("Teachers", back_populates="students")
-    solutions = relationship("Solutions", back_populates="student")
+    student_solutions = relationship("StudentSolutions", back_populates="student")
 
 
-class Solutions(Base):
-    __tablename__ = 'solutions'
+class TeacherSolutions(Base):
+    __tablename__ = 'teacher_solutions'
     id: int = Column(Integer, primary_key=True)
+    teacher_id: int = Column(Integer, ForeignKey('teachers.id'), nullable=False)
     task_id: int = Column(Integer, ForeignKey('tasks.id'), nullable=False)
-    student_id: int = Column(Integer, ForeignKey('students.id'), nullable=False)
-    solution_text: str = Column(String, nullable=False)
-    submitted_at: date = Column(Date)
+    text: str = Column(String, nullable=False)
+    result: str = Column(String)
+    state: int = Column(Integer, default=1)  # 1 - получено, 2 - проверка, 3 - правильно, 4 - неправильно
+    created_at: date = Column(Date)
 
     # Связи
-    task = relationship("Tasks", back_populates="solutions")
-    student = relationship("Students", back_populates="solutions")
+    teacher = relationship("Teachers", back_populates="teacher_solutions")
+    task = relationship("Tasks", back_populates="teacher_solutions")
+
+
+class StudentSolutions(Base):
+    __tablename__ = 'student_solutions'
+    id: int = Column(Integer, primary_key=True)
+    student_id: int = Column(Integer, ForeignKey('students.id'), nullable=False)
+    task_id: int = Column(Integer, ForeignKey('tasks.id'), nullable=False)
+    text: str = Column(String, nullable=False)
+    result: str = Column(String)
+    state: int = Column(Integer, default=1)  # 1 - получено, 2 - проверка, 3 - правильно, 4 - неправильно
+    created_at: date = Column(Date)
+    
+    # Связи
+    student = relationship("Students", back_populates="student_solutions")
+    task = relationship("Tasks", back_populates="student_solutions")
