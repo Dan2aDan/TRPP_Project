@@ -1,7 +1,7 @@
 import sqlalchemy
 from sqlalchemy import and_, delete
 from DataBaseManager.__init__ import db
-from DataBaseManager.models import StudentSolutions, Tasks, Lessons
+from DataBaseManager.models import StudentSolutions, Tasks
 import logging
 
 
@@ -37,6 +37,19 @@ class DbStudentSolutions:
             and_(
                 StudentSolutions.student_id == student_id,
                 StudentSolutions.task_id == task_id
+            )
+        )
+        return self.db.select(query, types=self.db.all_)
+    
+    def get_student_solutions_by_states(self, student_id, states):
+        """Получить решения ученика с указанными статусами"""
+        if not states:
+            return []
+            
+        query = sqlalchemy.select(StudentSolutions).where(
+            and_(
+                StudentSolutions.student_id == student_id,
+                StudentSolutions.state.in_(states)
             )
         )
         return self.db.select(query, types=self.db.all_)
@@ -79,19 +92,6 @@ class DbStudentSolutions:
                 session.refresh(solution)
             return solution
 
-    def get_student_solutions_by_states(self, student_id, states):
-        """Получить решения ученика с указанными статусами"""
-        if not states:
-            return []
-            
-        query = sqlalchemy.select(StudentSolutions).where(
-            and_(
-                StudentSolutions.student_id == student_id,
-                StudentSolutions.state.in_(states)
-            )
-        )
-        return self.db.select(query, types=self.db.all_)
-
     def delete_student_solution(self, solution_id):
         """Удалить решение ученика"""
         with self.db.create_session() as session:
@@ -103,8 +103,6 @@ class DbStudentSolutions:
                 session.rollback()
                 logging.error(f"Error deleting student solution: {e}")
                 return False
-            finally:
-                session.close()
 
 
 db_student_solutions = DbStudentSolutions(db)

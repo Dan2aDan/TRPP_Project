@@ -1,7 +1,7 @@
-from sqlalchemy import create_engine, Column, Integer, String, Date, Boolean, ForeignKey
+from sqlalchemy import DateTime, create_engine, Column, Integer, String, Date, Boolean, ForeignKey
 from sqlalchemy.orm import sessionmaker, declarative_base, relationship
 from pydantic import BaseModel
-from datetime import date
+from datetime import date, datetime
 
 Base = declarative_base()
 
@@ -39,9 +39,9 @@ class Lessons(Base):
     id: int = Column(Integer, primary_key=True)
     title: str = Column(String(64), nullable=False)
     content: str = Column(String, nullable=False)
-    created_at: date = Column(Date)
+    created_at: datetime = Column(DateTime, default=datetime.utcnow)
     teacher_id: int = Column(Integer, ForeignKey('teachers.id'), nullable=False)
-    file_id: int = Column(Integer, ForeignKey('files.id'))
+    file_id: int = Column(Integer, ForeignKey('files.id'), nullable=False)
 
     # Связи
     teacher = relationship("Teachers", back_populates="lessons")
@@ -61,12 +61,15 @@ class Tasks(Base):
     id: int = Column(Integer, primary_key=True)
     lesson_id: int = Column(Integer, ForeignKey('lessons.id'), nullable=False)
     description: str = Column(String, nullable=False)
-    created_at: date = Column(Date)
+    created_at: datetime = Column(DateTime, default=datetime.utcnow)
+    test: str = Column(String, nullable=False)
+    # compl_solution_id: int = Column(Integer, ForeignKey('teacher_solutions.id'), nullable=False)
 
     # Связи
     lesson = relationship("Lessons", back_populates="tasks")
     teacher_solutions = relationship("TeacherSolutions", back_populates="task")
     student_solutions = relationship("StudentSolutions", back_populates="task")
+    # compl_solution = relationship("TeacherSolutions", foreign_keys=[compl_solution_id])
 
 
 class Students(Base):
@@ -90,7 +93,7 @@ class TeacherSolutions(Base):
     text: str = Column(String, nullable=False)
     result: str = Column(String)
     state: int = Column(Integer, default=1)  # 1 - получено, 2 - проверка, 3 - правильно, 4 - неправильно
-    created_at: date = Column(Date)
+    created_at: datetime = Column(DateTime, default=datetime.utcnow)
 
     # Связи
     teacher = relationship("Teachers", back_populates="teacher_solutions")
@@ -105,7 +108,7 @@ class StudentSolutions(Base):
     text: str = Column(String, nullable=False)
     result: str = Column(String)
     state: int = Column(Integer, default=1)  # 1 - получено, 2 - проверка, 3 - правильно, 4 - неправильно
-    created_at: date = Column(Date)
+    created_at: datetime = Column(DateTime, default=datetime.utcnow)
     
     # Связи
     student = relationship("Students", back_populates="student_solutions")

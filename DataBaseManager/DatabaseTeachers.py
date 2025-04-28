@@ -2,7 +2,7 @@ from requests import Session
 import sqlalchemy
 from sqlalchemy import and_, delete
 from DataBaseManager.__init__ import db
-from DataBaseManager.models import Students, Teachers, Lessons, Tasks, Solutions
+from DataBaseManager.models import Students, Teachers
 
 
 class DatabaseTeachers:

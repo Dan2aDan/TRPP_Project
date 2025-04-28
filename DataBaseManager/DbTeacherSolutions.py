@@ -1,7 +1,7 @@
 import sqlalchemy
 from sqlalchemy import and_, delete
 from DataBaseManager.__init__ import db
-from DataBaseManager.models import TeacherSolutions
+from DataBaseManager.models import TeacherSolutions, Tasks
 import logging
 
 class DbTeacherSolutions:
@@ -16,6 +16,26 @@ class DbTeacherSolutions:
     def get_all_teacher_solutions(self, teacher_id):
         """Получить все решения учителей"""
         query = sqlalchemy.select(TeacherSolutions).where(TeacherSolutions.teacher_id == teacher_id)
+        return self.db.select(query, types=self.db.all_)
+    
+    def get_teacher_lesson_solutions(self, teacher_id, lesson_id):
+        """Получить все решения ученика по конкретному уроку"""
+        query = sqlalchemy.select(TeacherSolutions).join(Tasks).where(
+            and_(
+                TeacherSolutions.teacher_id == teacher_id,
+                Tasks.lesson_id == lesson_id
+            )
+        )
+        return self.db.select(query, types=self.db.all_)
+    
+    def get_teacher_task_solutions(self, teacher_id, task_id):
+        """Получить все решения ученика по конкретной задаче"""
+        query = sqlalchemy.select(TeacherSolutions).where(
+            and_(
+                TeacherSolutions.teacher_id == teacher_id,
+                TeacherSolutions.task_id == task_id
+            )
+        )
         return self.db.select(query, types=self.db.all_)
 
     def create_teacher_solution(self, teacher_id, task_id, text, result=None, state=1):
@@ -67,8 +87,6 @@ class DbTeacherSolutions:
                 session.rollback()
                 logging.error(f"Error deleting teacher solution: {e}")
                 return False
-            finally:
-                session.close()
 
 
 db_teacher_solutions = DbTeacherSolutions(db)

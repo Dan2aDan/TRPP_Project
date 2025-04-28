@@ -26,15 +26,14 @@ class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, DatabaseTasks,
 
     def clear_all_data(self):
         with self.db.create_session() as conn:
-
+            # Порядок удаления важен из-за foreign key constraints
+            conn.execute(StudentSolutions.__table__.delete())
+            conn.execute(TeacherSolutions.__table__.delete())
             conn.execute(Tasks.__table__.delete())
             conn.execute(LessonsDepends.__table__.delete())
             conn.execute(Lessons.__table__.delete())
             conn.execute(Students.__table__.delete())
             conn.execute(Files.__table__.delete())
-            conn.execute(StudentSolutions.__table__.delete())
-            conn.execute(TeacherSolutions.__table__.delete())
-
             conn.execute(Teachers.__table__.delete())
             conn.commit()
 
