@@ -15,7 +15,7 @@ class DatabaseTasks:
                 lesson_id=lesson_id,
                 description=description,
                 test=test,
-                # compl_solution_id=compl_solution_id,
+                compl_solution_id=None,
                 created_at=sqlalchemy.func.now()
             )
             session.add(task)
@@ -40,13 +40,15 @@ class DatabaseTasks:
                 logging.error(f"Error deleting task: {e}")
                 return False
 
-    def update_task(self, task_id, description=None, test=None):  # Добавлен параметр test
+    def update_task(self, task_id, description=None, test=None, solution=None):  # Добавлен параметр test
         """Редактирует описание задачи и тестовые данные"""
         update_data = {}
         if description is not None:
             update_data['description'] = description
         if test is not None:  # Добавлено обновление тестовых данных
             update_data['test'] = test
+        if solution is not None:  # Добавлено обновление тестовых данных
+            update_data['compl_solution_id'] = solution
 
         if not update_data:
             return None

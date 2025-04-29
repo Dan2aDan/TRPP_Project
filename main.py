@@ -13,6 +13,7 @@ from routers.auth.auntefication import SessionData, get_session_data, create_ses
 from routers.auth.auth import router as auth_router
 from routers.students.students import router as student_router
 from routers.lessons.lessons import router as lessons_router
+from routers.tasks.tasks import router as tasks_router
 from utils.variable_environment import VarEnv
 
 app = FastAPI()
@@ -24,6 +25,7 @@ router = APIRouter()
 router.include_router(auth_router, prefix="/auth")
 router.include_router(student_router, prefix="/students")
 router.include_router(lessons_router, prefix="/lessons")
+router.include_router(tasks_router, prefix="/tasks")
 app.include_router(router, prefix="/api/v0")
 app.mount("/templates", StaticFiles(directory="templates"), name="templates")
 

@@ -36,7 +36,7 @@ class DbTeacherSolutions:
                 TeacherSolutions.task_id == task_id
             )
         )
-        return self.db.select(query, types=self.db.all_)
+        return self.db.select(query, types=self.db.any_)
 
     def create_teacher_solution(self, teacher_id, task_id, text, result=None, state=1):
         """Создать решение учителя"""

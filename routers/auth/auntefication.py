@@ -51,10 +51,10 @@ class AuthMiddleware(BaseHTTPMiddleware):
         except Exception as e:
             print(f"Auth error: {e}")
             return RedirectResponse('/templates/login_page.html')
-
+        request.state.session_data = session_data
         if session_data is None:
             return RedirectResponse('/templates/login_page.html')
-
+        elif VarEnv.TESTER_API and request.url.path.startswith("/templates/teacher_main_page.html"):
+            return RedirectResponse('/docs#/default')
             # Сохраняем session_data в request.state
-        request.state.session_data = session_data
         return await call_next(request)
