@@ -6,7 +6,8 @@ from sqlalchemy.orm import sessionmaker
 
 from DataBaseManager.DatabaseTeachers import DatabaseTeachers
 from DataBaseManager.UserManager import UserManager
-from DataBaseManager.models import Base, Students, Teachers, Lessons, Tasks, LessonsDepends, Files, TeacherSolutions, StudentSolutions
+from DataBaseManager.models import Base, Students, Teachers, Lessons, Tasks, LessonsDepends, Files, TeacherSolutions, \
+    StudentSolutions
 from DataBaseManager.__init__ import db
 from DataBaseManager.DatabaseLessons import DatabaseLessons
 from DataBaseManager.DatabaseStudents import DatabaseStudents
@@ -52,7 +53,6 @@ class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, DatabaseTasks,
         student2 = self.register_student("student2", "password2", teacher1.id)
         lesson1 = self.add_lesson("lesson1", "content lesson 1", teacher1.id, None)
         lesson2 = self.add_lesson("lesson2", "content lesson 2", teacher1.id, None)
-        task1 = self.add_task(lesson1.id,"task1", "content task 1")
-        teacher_solution = self.create_teacher_solution(teacher1.id, task1.id, "teacher solution 1")
+        task1 = self.add_task(lesson1.id, "task1", "content task 1")
+        teacher_solution = self.create_teacher_solution("teacher solution 1")
         self.update_task(task1.id, solution=teacher_solution.id)
-

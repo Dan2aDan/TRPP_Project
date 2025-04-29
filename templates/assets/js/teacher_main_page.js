@@ -20,6 +20,7 @@ async function loadStudents() {
         <div class="col d-lg-flex justify-content-start align-items-center"
              style="padding: 0;">
             <p style="width: 250px; margin: 0;">${student.login}</p>
+            <button class="btn link-dark my-btn add-lesson" type="button" style="width:296px;">Открыть урок</button>
             <button class="btn link-dark my-btn view-tasks" data-id="${student.id}" style="margin-left: 10px;">Посмотреть выполненные задания</button>
             <button class="btn my-btn edit-account" data-id="${student.id}" style="margin-left: 10px;">Изменить логин и пароль</button>
             <button class="btn my-btn delete-student" data-id="${student.id}" style="margin-left: 10px;">Удалить ученика</button>
@@ -27,6 +28,7 @@ async function loadStudents() {
     `;
 
                 // Добавление обработчиков
+                row.querySelector('.add-lesson').addEventListener('click', () => addLessonp(student.id));
                 row.querySelector('.view-tasks').addEventListener('click', () => viewStudentTasks(student.id));
                 row.querySelector('.edit-account').addEventListener('click', () => editStudentAccount(student.id));
                 row.querySelector('.delete-student').addEventListener('click', () => deleteStudent(student.id));
@@ -58,11 +60,14 @@ document.getElementById('btn_lsns').addEventListener('click', () => {
 document.getElementById('btn_tsks').addEventListener('click', () => {
     window.location.href = 'tasks_page.html';
 });
-
+function addLessonp(studentId) {
+    console.log('Просмотр заданий ученика с ID:', studentId);
+    window.location.href = `lessons_page(frm_tsk_n).html?id=${studentId}`;
+}
 // Функция для просмотра заданий ученика
 function viewStudentTasks(studentId) {
     console.log('Просмотр заданий ученика с ID:', studentId);
-    window.location.href = `/student/tasks?id=${studentId}`;
+    window.location.href = `completed_tasks.html?id=${studentId}`;
 }
 
 // Функция для изменения аккаунта ученика

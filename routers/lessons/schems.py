@@ -56,3 +56,7 @@ class LongResponseLesson(BaseModel):
     result: LessonDetailResponse
     msg: str
     code: int
+
+class LessonDependencyRequest(BaseModel):
+    lesson_id: int
+    student_ids: List[int]

@@ -12,7 +12,8 @@ document.getElementById('btn_tsks').addEventListener('click', () => {
 });
 
 function viewTask(id_task) {
-    window.location.href = `tasks_n_page.html?state=${id_task}`;
+    if  (id_task !== -1)
+        window.location.href = `tasks_n_page.html?state=${id_task}`;
 }
 
 
