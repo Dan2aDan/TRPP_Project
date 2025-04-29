@@ -56,7 +56,7 @@ document.getElementById('delete-lesson').addEventListener('click', () => {
             fetch(`/api/v0/lessons/lesson/${lessonId}`,
                 {
                     method: 'DELETE',
-                }).then(()=> window.location.href = 'lessons_page.html');
+                }).then(() => window.location.href = 'lessons_page.html');
 
         } catch
             (error) {

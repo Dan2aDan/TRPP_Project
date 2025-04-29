@@ -24,26 +24,26 @@ document.addEventListener("DOMContentLoaded", () => {
         // Отправляем запрос на сервер
         fetch("/api/v0/auth/login", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ "login": login, "password":password }),
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({"login": login, "password": password}),
         })
-        .then((response) => {
-            if (response.ok) {
-                // Переход на новую страницу после успешного входа
-                window.location.href = "teacher_main_page.html";  // Переходим на нужную страницу
-            } else {
-                errorMessage.textContent = "Неверный логин или пароль";
+            .then((response) => {
+                if (response.ok) {
+                    // Переход на новую страницу после успешного входа
+                    window.location.href = "teacher_main_page.html";  // Переходим на нужную страницу
+                } else {
+                    errorMessage.textContent = "Неверный логин или пароль";
+                    errorMessage.style.display = "block";
+                }
+            })
+            .catch(() => {
+                errorMessage.textContent = "Ошибка сервера.";
                 errorMessage.style.display = "block";
-            }
-        })
-        .catch(() => {
-            errorMessage.textContent = "Ошибка сервера.";
-            errorMessage.style.display = "block";
-        })
-        .finally(() => {
-            // Возвращаем кнопку обратно
-            loginButton.disabled = false;
-            loginButton.innerHTML = "Войти";
-        });
+            })
+            .finally(() => {
+                // Возвращаем кнопку обратно
+                loginButton.disabled = false;
+                loginButton.innerHTML = "Войти";
+            });
     });
 });

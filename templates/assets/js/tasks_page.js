@@ -12,7 +12,7 @@ document.getElementById('btn_tsks').addEventListener('click', () => {
 });
 
 function viewTask(id_task) {
-
+    window.location.href = `tasks_n_page.html?state=${id_task}`;
 }
 
 
@@ -23,7 +23,7 @@ async function loadTasks() {
     console.trace(tasks)
     tasks.tasks.forEach(task => {
         const lessonHTML = `<div class="col-lg-11 col-xl-12 col-xxl-12 d-lg-flex justify-content-lg-start align-items-lg-center" style="height:51px;width:500px;padding:0;margin:0;margin-left:0;">
-                        <button class="btn link-dark my-btn lesson-btn" type="button" style="width:350px;height:50px;">Задача 1</button>
+                        <button class="btn link-dark my-btn lesson-btn" type="button" data-id=${task.id} style="width:350px;height:50px;">Задача ${task.id}</button>
                         <div class="card" style="width:38px;height:38px;margin-left:75px;border-radius:32px;background:rgb(255,0,0);"></div>
                     </div>`;
 
@@ -41,5 +41,5 @@ async function loadTasks() {
 loadTasks();
 
 document.getElementById('btn_new_tsk').addEventListener('click',() => {
-    window.location.href = 'tasks_n_page.html';
+    viewTask(-1)
 });

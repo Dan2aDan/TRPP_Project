@@ -11,42 +11,68 @@
 </head>
 
 <body style="background:linear-gradient(0deg, #024e68 0%, #ceedff 50%, white 100%), #ffffff;height:982px;">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h1 class="text-center">Личный кабинет учителя</h1>
-            </div>
-        </div>
-        <div class="row d-flex d-xl-flex justify-content-md-center justify-content-xl-center">
-            <div class="col-md-4 d-flex d-sm-flex d-md-flex d-lg-flex justify-content-center justify-content-sm-center justify-content-md-center align-items-md-center justify-content-lg-end align-items-lg-center" style="width:320px;height:132px;margin:0px;padding:0px;"><button class="btn link-light active-btn" id="btn_students" type="button" style="height:66px;width:186px;box-shadow:0px 0px 20px #212529;">Ученики</button></div>
-            <div class="col-md-4 d-flex d-sm-flex d-lg-flex justify-content-center justify-content-sm-center align-items-md-center justify-content-lg-center align-items-lg-center" style="width:320px;height:132px;margin:0px;padding:0px;"><button class="btn link-light go-btns" id="btn_lsns" type="button" style="width:186px;height:66px;box-shadow:0px 0px 20px #212529;">Уроки</button></div>
-            <div class="col-md-4 d-flex d-sm-flex d-md-flex d-lg-flex justify-content-center justify-content-sm-center justify-content-md-center align-items-md-center justify-content-lg-start align-items-lg-center" style="text-align:center;display:block;width:320px;height:132px;margin:0px;padding:0px;"><button class="btn link-light d-lg-flex justify-content-lg-center align-items-lg-center me-0 pb-0 mb-0 go-btns" id="btn_tsks" type="button" style="width:186px;height:66px;margin:0;padding:0;position:static;transform:translate(0px);text-align:center;padding-top:0px;box-shadow:0px 0px 20px #212529;">Задачи</button></div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="text-center">Личный кабинет учителя</h1>
         </div>
     </div>
-    <div class="container">
-        <div class="row d-lg-flex justify-content-lg-center" style="height:477px;">
-            <div class="col-md-12 col-lg-12 col-xl-10 col-xxl-8" id="students-container" style="text-align:center;border-radius:40px;border-width:1px;border-style:solid;box-shadow:0px 0px 20px 0px rgb(33, 37, 41);height:auto;width:971px;background:#ffffff;">
-                <p class="text-center d-lg-flex justify-content-lg-center" id="student_name" style="font-size:26px;margin:0;padding:0;height:39px;width:956px;margin-left:-11px;">Имя ученика</p>
-                <p style="margin-top:20px;">Программа ученика</p><textarea style="height:121px;width:796px;margin-left:9px;border-style:solid;border-radius:22px;margin-top:-4px;"></textarea>
-                <div class="row" style="height:154px;width:799px;margin:0;padding:0;margin-top:14px;margin-left:77px;border-width:1px;border-style:solid;border-radius:23px;margin-bottom:33px;">
-                    <div class="col-lg-12 col-xl-12 col-xxl-12 d-lg-flex justify-content-lg-center" id="student_tsks" style="width:800px;margin:0;margin-left:0;margin-top:9px;padding:0px;height:auto;">
-                        <p style="height:auto;width:777px;border-radius:0px;">Результат тестирования&nbsp;</p>
-                    </div>
-                </div><button class="btn my-btn" type="button" style="margin-bottom:14px;margin-left:0px;">Засчитать задание</button>
-            </div>
+    <div class="row d-flex d-xl-flex justify-content-md-center justify-content-xl-center">
+        <div class="col-md-4 d-flex d-sm-flex d-md-flex d-lg-flex justify-content-center justify-content-sm-center justify-content-md-center align-items-md-center justify-content-lg-end align-items-lg-center"
+             style="width:320px;height:132px;margin:0px;padding:0px;">
+            <button class="btn link-light active-btn" id="btn_students" type="button"
+                    style="height:66px;width:186px;box-shadow:0px 0px 20px #212529;">Ученики
+            </button>
         </div>
-    </div><script src="assets/bootstrap/js/bootstrap.min.js"></script><script src="assets/js/script.min.js"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/lesson_page_n.js"></script>
-    <script src="assets/js/lessons_page.js"></script>
-    <script src="assets/js/login_page.js"></script>
-    <script src="assets/js/script.min.js"></script>
-    <script src="assets/js/student_lesson_n_page.js"></script>
-    <script src="assets/js/student_main_page.js"></script>
-    <script src="assets/js/student_tasks_n_page.js"></script>
-    <script src="assets/js/student_tasks_page.js"></script>
-    <script src="assets/js/tasks_page.js"></script>
-    <script src="assets/js/teacher_main_page.js"></script>
+        <div class="col-md-4 d-flex d-sm-flex d-lg-flex justify-content-center justify-content-sm-center align-items-md-center justify-content-lg-center align-items-lg-center"
+             style="width:320px;height:132px;margin:0px;padding:0px;">
+            <button class="btn link-light go-btns" id="btn_lsns" type="button"
+                    style="width:186px;height:66px;box-shadow:0px 0px 20px #212529;">Уроки
+            </button>
+        </div>
+        <div class="col-md-4 d-flex d-sm-flex d-md-flex d-lg-flex justify-content-center justify-content-sm-center justify-content-md-center align-items-md-center justify-content-lg-start align-items-lg-center"
+             style="text-align:center;display:block;width:320px;height:132px;margin:0px;padding:0px;">
+            <button class="btn link-light d-lg-flex justify-content-lg-center align-items-lg-center me-0 pb-0 mb-0 go-btns"
+                    id="btn_tsks" type="button"
+                    style="width:186px;height:66px;margin:0;padding:0;position:static;transform:translate(0px);text-align:center;padding-top:0px;box-shadow:0px 0px 20px #212529;">
+                Задачи
+            </button>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row d-lg-flex justify-content-lg-center" style="height:477px;">
+        <div class="col-md-12 col-lg-12 col-xl-10 col-xxl-8" id="students-container"
+             style="text-align:center;border-radius:40px;border-width:1px;border-style:solid;box-shadow:0px 0px 20px 0px rgb(33, 37, 41);height:auto;width:971px;background:#ffffff;">
+            <p class="text-center d-lg-flex justify-content-lg-center" id="student_name"
+               style="font-size:26px;margin:0;padding:0;height:39px;width:956px;margin-left:-11px;">Имя ученика</p>
+            <p style="margin-top:20px;">Программа ученика</p><textarea
+                style="height:121px;width:796px;margin-left:9px;border-style:solid;border-radius:22px;margin-top:-4px;"></textarea>
+            <div class="row"
+                 style="height:154px;width:799px;margin:0;padding:0;margin-top:14px;margin-left:77px;border-width:1px;border-style:solid;border-radius:23px;margin-bottom:33px;">
+                <div class="col-lg-12 col-xl-12 col-xxl-12 d-lg-flex justify-content-lg-center" id="student_tsks"
+                     style="width:800px;margin:0;margin-left:0;margin-top:9px;padding:0px;height:auto;">
+                    <p style="height:auto;width:777px;border-radius:0px;">Результат тестирования&nbsp;</p>
+                </div>
+            </div>
+            <button class="btn my-btn" type="button" style="margin-bottom:14px;margin-left:0px;">Засчитать задание
+            </button>
+        </div>
+    </div>
+</div>
+<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="assets/js/script.min.js"></script>
+<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="assets/js/lesson_page_n.js"></script>
+<script src="assets/js/lessons_page.js"></script>
+<script src="assets/js/login_page.js"></script>
+<script src="assets/js/script.min.js"></script>
+<script src="assets/js/student_lesson_n_page.js"></script>
+<script src="assets/js/student_main_page.js"></script>
+<script src="assets/js/student_tasks_n_page.js"></script>
+<script src="assets/js/student_tasks_page.js"></script>
+<script src="assets/js/tasks_page.js"></script>
+<script src="assets/js/teacher_main_page.js"></script>
 </body>
 
 </html>

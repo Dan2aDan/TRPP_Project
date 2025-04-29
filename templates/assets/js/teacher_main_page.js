@@ -76,7 +76,7 @@ async function editStudentAccount(studentId) {
         document.getElementById('studentId').value = studentId;
         document.getElementById('studentLogin').value = student.result.login;
         document.getElementById('studentPassword').value = student.result.password; // Пароль не отображаем
-        
+
         // Показываем модальное окно
         const modal = new bootstrap.Modal(document.getElementById('editStudentModal'));
         modal.show();
@@ -136,7 +136,7 @@ document.getElementById('addStudentBtn').addEventListener('click', async () => {
         });
 
         const data = await response.json();
-        
+
         if (response.ok) {
             alert('Ученик успешно добавлен');
             const modal = bootstrap.Modal.getInstance(document.getElementById('addStudentModal'));
