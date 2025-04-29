@@ -12,7 +12,6 @@ from DataBaseManager.extends import *
 def setup_and_teardown():
     Base.metadata.create_all(bind=db.engine)
     DBALL().clear_all_data()
-    DBALL().create_data()
     yield
     DBALL().clear_all_data()
 
