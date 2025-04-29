@@ -1,19 +1,21 @@
 import sqlalchemy
 from sqlalchemy import and_, delete
 from DataBaseManager.__init__ import db
-from DataBaseManager.models import Tasks, Lessons, Students, Teachers, Solutions, LessonsDepends
+from DataBaseManager.models import Tasks, Lessons, LessonsDepends, TeacherSolutions, StudentSolutions
 import logging
 
 class DatabaseTasks:
     def __init__(self, db):
         self.db = db
 
-    def add_task(self, lesson_id, description):
+    def add_task(self, lesson_id, description, test=None):#, test=None, compl_solution_id=None):
         """Добавляет новую задачу к уроку"""
         with self.db.create_session() as session:
             task = Tasks(
                 lesson_id=lesson_id,
                 description=description,
+                test=test,
+                # compl_solution_id=compl_solution_id,
                 created_at=sqlalchemy.func.now()
             )
             session.add(task)
@@ -22,11 +24,13 @@ class DatabaseTasks:
             return task
 
     def delete_task(self, task_id):
-        """Удаляет задачу и связанные с ней решения"""
+        """Удаляет задачу и связанные с ней решения (как учеников, так и учителей)"""
         with self.db.create_session() as session:
             try:
-                # Удаляем связанные решения
-                session.execute(delete(Solutions).where(Solutions.task_id == task_id))
+                # Удаляем связанные решения учеников
+                session.execute(delete(StudentSolutions).where(StudentSolutions.task_id == task_id))
+                # Удаляем связанные решения учителей
+                session.execute(delete(TeacherSolutions).where(TeacherSolutions.task_id == task_id))
                 # Удаляем саму задачу
                 session.execute(delete(Tasks).where(Tasks.id == task_id))
                 session.commit()
@@ -36,13 +40,22 @@ class DatabaseTasks:
                 logging.error(f"Error deleting task: {e}")
                 return False
 
-    def update_task(self, task_id, description=None):
-        """Редактирует описание задачи"""
+    def update_task(self, task_id, description=None, test=None):  # Добавлен параметр test
+        """Редактирует описание задачи и тестовые данные"""
+        update_data = {}
+        if description is not None:
+            update_data['description'] = description
+        if test is not None:  # Добавлено обновление тестовых данных
+            update_data['test'] = test
+
+        if not update_data:
+            return None
+
         with self.db.create_session() as session:
             task = session.get(Tasks, task_id)
             if task:
-                if description is not None:
-                    task.description = description
+                for key, value in update_data.items():
+                    setattr(task, key, value)
                 session.commit()
                 session.refresh(task)
             return task

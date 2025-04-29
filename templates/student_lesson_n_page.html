@@ -14,13 +14,12 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h1 class="text-center">Личный кабинет учителя</h1>
+                <h1 class="text-center">Личный кабинет ученика</h1>
             </div>
         </div>
-        <div class="row d-flex d-xl-flex justify-content-md-center justify-content-xl-center">
-            <div class="col-md-4 d-flex d-sm-flex d-md-flex d-lg-flex justify-content-center justify-content-sm-center justify-content-md-center align-items-md-center justify-content-lg-end align-items-lg-center" style="width:320px;height:132px;margin:0px;padding:0px;"><button class="btn link-light go-btns" id="btn_students" type="button" style="height:66px;width:186px;box-shadow:0px 0px 20px #212529;">Ученики</button></div>
-            <div class="col-md-4 d-flex d-sm-flex d-lg-flex justify-content-center justify-content-sm-center align-items-md-center justify-content-lg-center align-items-lg-center" style="width:320px;height:132px;margin:0px;padding:0px;"><button class="btn link-light active-btn" id="btn_lsns" type="button" style="width:186px;height:66px;box-shadow:0px 0px 20px #212529;">Уроки</button></div>
-            <div class="col-md-4 d-flex d-sm-flex d-md-flex d-lg-flex justify-content-center justify-content-sm-center justify-content-md-center align-items-md-center justify-content-lg-start align-items-lg-center" style="text-align:center;display:block;width:320px;height:132px;margin:0px;padding:0px;"><button class="btn link-light d-lg-flex justify-content-lg-center align-items-lg-center me-0 pb-0 mb-0 go-btns" id="btn_tsks" type="button" style="width:186px;height:66px;margin:0;padding:0;position:static;transform:translate(0px);text-align:center;padding-top:0px;box-shadow:0px 0px 20px #212529;">Задачи</button></div>
+        <div class="row d-flex d-xl-flex justify-content-xl-center">
+            <div class="col-md-4 d-flex d-sm-flex d-lg-flex justify-content-center justify-content-sm-center align-items-md-center justify-content-lg-center align-items-lg-center" style="width: 480px;height: 132px;margin: 0px;padding: 0px;"><button class="btn link-light active-btn" id="btn_lsns" type="button" style="width: 310px;height: 66px;box-shadow: 0px 0px 20px #212529;">Уроки</button></div>
+            <div class="col-md-4 d-flex d-sm-flex d-md-flex d-lg-flex justify-content-center justify-content-sm-center justify-content-md-center align-items-md-center justify-content-lg-center align-items-lg-center" style="text-align: center;display: block;width: 480px;height: 132px;margin: 0px;padding: 0px;"><button class="btn link-light d-lg-flex justify-content-lg-center align-items-lg-center me-0 pb-0 mb-0 go-btns" id="btn_tsks" type="button" style="width: 310px;height: 66px;margin: 0;padding: 0;position: static;transform: translate(0px);text-align: center;padding-top: 0px;box-shadow: 0px 0px 20px #212529;">Задачи</button></div>
         </div>
     </div>
     <div class="container">
@@ -35,19 +34,20 @@
                         <tbody>
                             <tr class="d-lg-flex align-items-lg-center" style="width:932px;">
                                 <td class="d-lg-flex" style="border-style:none;width:501.156px;"><button class="btn my-btn" style="margin-left:126px;" type="button">Скачать файлы</button></td>
-                                <td class="d-lg-flex" style="border-style:none;width:505.844px;height:54px;"><button class="btn my-btn" style="margin-left:185px;" type="button">Загрузить файлы</button></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <p>Список заданий</p>
-                <div class="row">
+                <div class="row" style="margin-bottom: 67px;">
                     <div class="col">
                         <div class="card" style="border-radius:28px;width:811px;margin-left:72px;height:auto;min-height:50px;">
-                            <div class="card-body" style="border-radius:0px;"><button class="btn my-btn" type="button" style="width:250px;margin-right:220px;">Задание n</button><button class="btn my-btn" type="button" style="width:250px;">Открепить задачу</button></div>
+                            <div class="card-body" style="border-radius:0px;"><button class="btn d-lg-flex justify-content-lg-center my-btn" id="task_n_btn" type="button" style="width: 250px;margin-left: 88px;">Задание n</button>
+                                <div class="card" style="width: 38px;height: 38px;border-radius: 32px;background: rgb(255,0,0);margin-top: -38px;margin-left: 536px;"></div>
+                            </div>
                         </div>
                     </div>
-                </div><button class="btn my-btn" type="button" style="height:45px;width:165px;padding:0px;margin-top:-25px;margin-right:460px;margin-bottom:25px;">Прикрепить задачу</button><button class="btn my-btn" id="save-lesson" type="button" style="height:45px;width:165px;padding:0px;margin-top:67px;margin-bottom:0px;">Сохранить урок</button><button class="btn my-btn" id="delete-lesson" type="button" style="height:45px;width:165px;padding:0px;margin-top:-47px;margin-right:0px;margin-bottom:25px;margin-left:258px;">Удалить урок</button>
+                </div>
             </div>
         </div>
     </div><script src="assets/bootstrap/js/bootstrap.min.js"></script><script src="assets/js/lesson_page_n.js"></script>
