@@ -46,7 +46,7 @@ async def create_task(data: TaskCreate, request: Request):
             "message": "Title and description are required"
         })
     task = DBALL().add_task(data.lesson_id, data.description, data.test)
-    solution = DBALL().create_teacher_solution(session_data.id, task.id, data.text_program)
+    solution = DBALL().create_teacher_solution(data.text_program)
     DBALL().update_task(task.id, solution=solution.id)
 
     result = TaskShortResponse(
@@ -72,7 +72,7 @@ async def get_task(task_id: int, request: Request):
             "error": "Task not found",
             "message": f"Task with ID {task_id} does not exist"
         })
-    teacher_solution = DBALL().get_teacher_task_solutions(request.state.session_data.id, task.id)
+    teacher_solution = DBALL().get_teacher_solution_by_id(task.compl_solution_id)
     result = TaskBigResponse(
         id=task.id,
         lesson_id=task.lesson_id,
@@ -124,7 +124,7 @@ async def update_task(task_id: int, data: TaskUpdate, request: Request):
             "message": f"Task with ID {task_id} does not exist"
         })
 
-    updated_task = DBALL().update_task(task_id, data.description)
+    task = DBALL().update_task(task_id, data.description)
 
     result = TaskShortResponse(
         id=task.id,
@@ -151,7 +151,8 @@ async def delete_task(task_id: int, request: Request):
             "error": "Task not found",
             "message": f"Task with ID {task_id} does not exist"
         })
-
     DBALL().delete_task(task_id)
+
+    DBALL().delete_teacher_solution(task.compl_solution_id)
 
     return JSONResponse(content={"message": "Task deleted successfully"})

@@ -4,11 +4,12 @@ from DataBaseManager.__init__ import db
 from DataBaseManager.models import Tasks, Lessons, LessonsDepends, TeacherSolutions, StudentSolutions
 import logging
 
+
 class DatabaseTasks:
     def __init__(self, db):
         self.db = db
 
-    def add_task(self, lesson_id, description, test=None):#, test=None, compl_solution_id=None):
+    def add_task(self, lesson_id, description, test=None):  # , test=None, compl_solution_id=None):
         """Добавляет новую задачу к уроку"""
         with self.db.create_session() as session:
             task = Tasks(
@@ -28,11 +29,14 @@ class DatabaseTasks:
         with self.db.create_session() as session:
             try:
                 # Удаляем связанные решения учеников
+                task: Tasks = session.query(Tasks).filter(Tasks.id == task_id).one()
+
                 session.execute(delete(StudentSolutions).where(StudentSolutions.task_id == task_id))
-                # Удаляем связанные решения учителей
-                session.execute(delete(TeacherSolutions).where(TeacherSolutions.task_id == task_id))
-                # Удаляем саму задачу
                 session.execute(delete(Tasks).where(Tasks.id == task_id))
+
+                # Удаляем связанные решения учителей
+                session.execute(delete(TeacherSolutions).where(TeacherSolutions.id == task.compl_solution_id))
+                # Удаляем саму задачу
                 session.commit()
                 return True
             except Exception as e:
@@ -72,7 +76,7 @@ class DatabaseTasks:
         query = sqlalchemy.select(Tasks).where(Tasks.lesson_id == lesson_id)
         return self.db.select(query, types=self.db.all_)
 
-    def get_task_by_id(self, task_id):
+    def get_task_by_id(self, task_id) -> Tasks:
         """Получает задачу по ID"""
         query = sqlalchemy.select(Tasks).where(Tasks.id == task_id)
         return self.db.select(query, types=self.db.any_)

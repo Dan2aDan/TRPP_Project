@@ -20,7 +20,7 @@ class Teachers(Base):
     students = relationship("Students", back_populates="teacher")
 
     # Связь с таблицей TeacherSolutions
-    teacher_solutions = relationship("TeacherSolutions", back_populates="teacher")
+    # teacher_solutions = relationship("TeacherSolutions", back_populates="teacher")
 
 
 class Files(Base):
@@ -59,20 +59,14 @@ class LessonsDepends(Base):
 class TeacherSolutions(Base):
     __tablename__ = 'teacher_solutions'
     id: int = Column(Integer, primary_key=True)
-    teacher_id: int = Column(Integer, ForeignKey('teachers.id'), nullable=False)
-    task_id: int = Column(Integer, ForeignKey('tasks.id'), nullable=False)
     text: str = Column(String, nullable=False)
     result: str = Column(String)
     state: int = Column(Integer, default=1)  # 1 - получено, 2 - проверка, 3 - правильно, 4 - неправильно
     created_at: datetime = Column(DateTime, default=datetime.utcnow)
 
     # Связи
-    teacher = relationship("Teachers", back_populates="teacher_solutions")
-    task__ = relationship(
-        "Tasks",
-        back_populates="teacher_solution",
-        foreign_keys=[task_id]
-    )
+    # teacher = relationship("Teachers", back_populates="teacher_solutions")
+    task__ = relationship("Tasks", back_populates="teacher_solution")
 
 
 class Tasks(Base):
@@ -86,11 +80,7 @@ class Tasks(Base):
 
     # Связи
     lesson = relationship("Lessons", back_populates="tasks")
-    teacher_solution = relationship(
-        "TeacherSolutions",
-        back_populates="task__",
-        foreign_keys=[TeacherSolutions.task_id]
-    )
+    teacher_solution = relationship("TeacherSolutions", back_populates="task__")
     student_solutions = relationship("StudentSolutions", back_populates="task")
 
 

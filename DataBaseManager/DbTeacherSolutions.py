@@ -28,22 +28,22 @@ class DbTeacherSolutions:
         )
         return self.db.select(query, types=self.db.all_)
     
-    def get_teacher_task_solutions(self, teacher_id, task_id):
-        """Получить все решения ученика по конкретной задаче"""
-        query = sqlalchemy.select(TeacherSolutions).where(
-            and_(
-                TeacherSolutions.teacher_id == teacher_id,
-                TeacherSolutions.task_id == task_id
-            )
-        )
-        return self.db.select(query, types=self.db.any_)
+    # def get_teacher_task_solutions(self, teacher_id, task_id):
+    #     """Получить все решения ученика по конкретной задаче"""
+    #     query = sqlalchemy.select(TeacherSolutions).where(
+    #         and_(
+    #             TeacherSolutions.teacher_id == teacher_id,
+    #             TeacherSolutions.task_id == task_id
+    #         )
+    #     )
+    #     return self.db.select(query, types=self.db.any_)
 
-    def create_teacher_solution(self, teacher_id, task_id, text, result=None, state=1):
+    def create_teacher_solution(self, text, result=None, state=1):
         """Создать решение учителя"""
         with self.db.create_session() as session:
             solution = TeacherSolutions(
-                teacher_id=teacher_id,
-                task_id=task_id,
+                # teacher_id=teacher_id,
+                # task_id=task_id,
                 text=text,
                 result=result,
                 state=state,
