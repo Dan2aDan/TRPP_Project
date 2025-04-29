@@ -55,6 +55,23 @@ class LessonsDepends(Base):
     lesson_id: int = Column(Integer, ForeignKey('lessons.id'), nullable=False)
     student_id: int = Column(Integer, ForeignKey('students.id'), nullable=False)
 
+class TeacherSolutions(Base):
+    __tablename__ = 'teacher_solutions'
+    id: int = Column(Integer, primary_key=True)
+    teacher_id: int = Column(Integer, ForeignKey('teachers.id'), nullable=False)
+    task_id: int = Column(Integer, ForeignKey('tasks.id'), nullable=False)
+    text: str = Column(String, nullable=False)
+    result: str = Column(String)
+    state: int = Column(Integer, default=1)  # 1 - получено, 2 - проверка, 3 - правильно, 4 - неправильно
+    created_at: datetime = Column(DateTime, default=datetime.utcnow)
+
+    # Связи
+    teacher = relationship("Teachers", back_populates="teacher_solutions")
+    task__ = relationship(
+        "Tasks",
+        back_populates="teacher_solution",
+        foreign_keys=[task_id]
+    )
 
 class Tasks(Base):
     __tablename__ = 'tasks'
@@ -63,13 +80,16 @@ class Tasks(Base):
     description: str = Column(String, nullable=False)
     created_at: datetime = Column(DateTime, default=datetime.utcnow)
     test: str = Column(String, nullable=False)
-    # compl_solution_id: int = Column(Integer, ForeignKey('teacher_solutions.id'), nullable=False)
+    compl_solution_id: int = Column(Integer, ForeignKey('teacher_solutions.id'), nullable=True)
 
     # Связи
     lesson = relationship("Lessons", back_populates="tasks")
-    teacher_solutions = relationship("TeacherSolutions", back_populates="task")
+    teacher_solution = relationship(
+        "TeacherSolutions",
+        back_populates="task__",
+        foreign_keys=[TeacherSolutions.task_id]
+    )
     student_solutions = relationship("StudentSolutions", back_populates="task")
-    # compl_solution = relationship("TeacherSolutions", foreign_keys=[compl_solution_id])
 
 
 class Students(Base):
@@ -85,19 +105,6 @@ class Students(Base):
     student_solutions = relationship("StudentSolutions", back_populates="student")
 
 
-class TeacherSolutions(Base):
-    __tablename__ = 'teacher_solutions'
-    id: int = Column(Integer, primary_key=True)
-    teacher_id: int = Column(Integer, ForeignKey('teachers.id'), nullable=False)
-    task_id: int = Column(Integer, ForeignKey('tasks.id'), nullable=False)
-    text: str = Column(String, nullable=False)
-    result: str = Column(String)
-    state: int = Column(Integer, default=1)  # 1 - получено, 2 - проверка, 3 - правильно, 4 - неправильно
-    created_at: datetime = Column(DateTime, default=datetime.utcnow)
-
-    # Связи
-    teacher = relationship("Teachers", back_populates="teacher_solutions")
-    task = relationship("Tasks", back_populates="teacher_solutions")
 
 
 class StudentSolutions(Base):
