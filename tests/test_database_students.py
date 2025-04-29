@@ -1,7 +1,7 @@
 from tests import *
 
 def test_register_student(database_all):
-    teacher = database_all.get_obj_unique(Teachers)
+    teacher = database_all.register_teacher("teacher1", "password1", "bio")
     result = database_all.register_student("student20", "pass1", teacher.id)
     assert result
     assert result.login == "student20"
