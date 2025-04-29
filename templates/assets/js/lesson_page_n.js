@@ -87,7 +87,7 @@ async function loadTasks() {
 
             card.innerHTML = `
                 <div class="card-body" style="border-radius:0px;">
-                    <button class="btn my-btn" type="button" style="width:250px;margin-right:220px;">
+                    <button class="btn my-btn show-btn" type="button" data-task-id="${task.id}" style="width:250px;margin-right:220px;">
                         ${task.id}
                     </button>
                     <button class="btn my-btn delete-task-btn" type="button" style="width:250px;" data-task-id="${task.id}">
@@ -98,7 +98,13 @@ async function loadTasks() {
 
             container.appendChild(card);
         });
+        document.querySelectorAll('.show-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
 
+                const taskId = btn.getAttribute('data-task-id');
+                window.location.href = `/templates/tasks_n_page.html?state=${taskId}`
+            });
+        })
         // Навесим обработчики на кнопки удаления
         document.querySelectorAll('.delete-task-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
@@ -121,3 +127,7 @@ async function loadTasks() {
 
 // Загружаем задачи при старте
 loadTasks();
+
+document.getElementById('create').addEventListener('click',() => {
+    window.location.href = `tasks_n_page.html?state=-1&lesson=${lessonId}`;
+})

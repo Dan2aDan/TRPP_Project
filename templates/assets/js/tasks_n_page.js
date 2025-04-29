@@ -14,6 +14,7 @@ document.getElementById('btn_tsks').addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', async () => {
     const params = new URLSearchParams(window.location.search);
     const state = params.get('state'); // task_id или -1 для новой
+    const lesson_id = params.get('lesson');
 
     const descriptionTextarea = document.querySelectorAll('textarea')[0];
     const codeTextarea = document.querySelectorAll('textarea')[2];
@@ -51,7 +52,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const description = descriptionTextarea.value;
         const text = codeTextarea.value;
         const test = 'test_data_here'; // вставь реальные данные
-        const lesson_id = 1; // временно захардкожено
+        // const lesson_id = 1; // временно захардкожено
 
         if (state === '-1') {
             // Создание
