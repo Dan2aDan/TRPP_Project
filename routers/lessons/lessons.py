@@ -5,7 +5,7 @@ from DataBaseManager.extends import DBALL
 from DataBaseManager.models import Lessons
 from routers.lessons.schems import (
     LessonCreate, LessonUpdate, LessonDetailResponse,
-    LessonShortResponse, LessonsListResponse, ResponseLesson, LongResponseLesson
+    LessonShortResponse, LessonsListResponse, ResponseLesson, LongResponseLesson, LessonDependencyRequest
 )
 from utils.utils import generate_json
 
@@ -145,3 +145,16 @@ async def delete_lesson(lesson_id: int, request: Request):
     DBALL().delete_lesson(lesson_id)
 
     return JSONResponse(content={"message": "Lesson deleted successfully"})
+
+
+@router.post("/dependencies", response_class=JSONResponse)
+async def set_lesson_dependencies(data: LessonDependencyRequest, request: Request):
+    if not data.student_ids:
+        raise HTTPException(status_code=400, detail={
+            "error": "Missing student IDs",
+            "message": "Provide at least one student ID"
+        })
+
+    DBALL().add_lesson_dependencies(data.lesson_id, data.student_ids)
+
+    return JSONResponse(content={"message": "Dependencies created successfully", "code": 201})
