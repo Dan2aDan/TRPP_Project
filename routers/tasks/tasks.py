@@ -156,3 +156,24 @@ async def delete_task(task_id: int, request: Request):
     DBALL().delete_teacher_solution(task.compl_solution_id)
 
     return JSONResponse(content={"message": "Task deleted successfully"})
+
+@router.get("/student/{student_id}", response_class=JSONResponse)
+async def get_all_tasks_for_student(student_id: int, request: Request):
+    """
+    Получить все задачи ученика по всем урокам.
+    """
+    tasks = DBALL().get_student_tasks(student_id)
+    print(tasks)
+    result = [TaskShortResponse(
+        id=task.id,
+        lesson_id=task.lesson_id,
+        description=task.description,
+        created_at=task.created_at.isoformat() if task.created_at else None,
+        test=task.test
+    ) for task in tasks]
+
+    return generate_json(TasksListResponse.model_validate({
+        "tasks": result,
+        "msg": "ok",
+        "code": 200
+    }))

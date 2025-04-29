@@ -107,7 +107,7 @@ async function loadTasks() {
                     await fetch(`/api/v0/tasks/tasks/${taskId}`, {
                         method: 'DELETE',
                     });
-                    loadTasks(); // перезагрузим список задач
+                    await loadTasks(); // перезагрузим список задач
                 } catch (error) {
                     console.error('Ошибка при удалении задачи:', error);
                 }

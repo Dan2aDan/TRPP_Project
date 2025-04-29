@@ -62,7 +62,7 @@ document.getElementById('btn_tsks').addEventListener('click', () => {
 // Функция для просмотра заданий ученика
 function viewStudentTasks(studentId) {
     console.log('Просмотр заданий ученика с ID:', studentId);
-    window.location.href = `/student/tasks?id=${studentId}`;
+    window.location.href = `completed_tasks.html?id=${studentId}`;
 }
 
 // Функция для изменения аккаунта ученика

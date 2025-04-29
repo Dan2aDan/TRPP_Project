@@ -50,8 +50,9 @@ async def create_lesson(data: LessonCreate, request: Request):
     teacher_id = session_data.id
 
     lesson = DBALL().add_lesson(data.title, data.description, teacher_id, None)
-    # print(lesson_id)
-    # lesson = DBALL().get_lesson_by_id(lesson_id)
+    print(lesson, DBALL().get_students_by_teacher(teacher_id))
+    DBALL().add_lesson_dependencies(lesson.id, map(lambda x: x.id, DBALL().get_students_by_teacher(teacher_id)))
+    lesson = DBALL().get_lesson_by_id(lesson.id)
 
     result = LessonShortResponse(
         id=lesson.id,
