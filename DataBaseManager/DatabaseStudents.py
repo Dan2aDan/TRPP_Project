@@ -1,9 +1,8 @@
-# DatabaseQueries.py
 from requests import Session
 import sqlalchemy
 from sqlalchemy import and_, delete
 from DataBaseManager.__init__ import db
-from DataBaseManager.models import Students, Teachers, Lessons, Tasks, Solutions
+from DataBaseManager.models import Students, StudentSolutions
 
 
 class DatabaseStudents:
@@ -46,7 +45,7 @@ class DatabaseStudents:
     def delete_student(self, student_id):
         with self.db.create_session() as session:
             try:
-                session.execute(delete(Solutions).where(Solutions.student_id == student_id))
+                session.execute(delete(StudentSolutions).where(StudentSolutions.student_id == student_id))
                 session.execute(delete(Students).where(Students.id == student_id))
 
                 session.commit()

@@ -3,7 +3,7 @@ from requests import Session
 import sqlalchemy
 from sqlalchemy import and_, delete, or_
 from DataBaseManager.__init__ import db
-from DataBaseManager.models import Students, Teachers, Lessons, Tasks, Solutions, LessonsDepends
+from DataBaseManager.models import Students, Teachers, Lessons, Tasks, LessonsDepends, StudentSolutions, TeacherSolutions
 
 
 class DatabaseLessons:
@@ -98,7 +98,11 @@ class DatabaseLessons:
                 # Удаляем решения и задачи
                 tasks = session.execute(sqlalchemy.select(Tasks).where(Tasks.lesson_id == lesson_id)).scalars().all()
                 for task in tasks:
-                    session.execute(delete(Solutions).where(Solutions.task_id == task.id))
+                    # Удаляем решения учеников для задачи
+                    session.execute(delete(StudentSolutions).where(StudentSolutions.task_id == task.id))
+                    # Удаляем решения учителей для задачи
+                    session.execute(delete(TeacherSolutions).where(TeacherSolutions.task_id == task.id))
+                # Удаляем все задачи урока
                 session.execute(delete(Tasks).where(Tasks.lesson_id == lesson_id))
 
                 # Удаляем зависимости урока
@@ -113,26 +117,6 @@ class DatabaseLessons:
                 session.rollback()
                 logging.error(f"Error deleting lesson: {e}")
                 return False
-            finally:
-                session.close()
-
-    # def add_task(self, lesson_id, description):
-    #     self.db.execute_commit(
-    #         sqlalchemy.insert(Tasks).values(
-    #             lesson_id=lesson_id,
-    #             description=description,
-    #             created_at=sqlalchemy.func.now()
-    #         )
-    #     )
-    #     return self.db.select(
-    #         sqlalchemy.select(Tasks).where(
-    #             and_(
-    #                 Tasks.lesson_id == lesson_id,
-    #                 Tasks.description == description
-    #             )
-    #         ),
-    #         self.db.any_
-    #     )
 
 
 db_lessons = DatabaseLessons(db)
