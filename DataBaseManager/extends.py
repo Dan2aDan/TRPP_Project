@@ -1,5 +1,7 @@
+from ctypes.wintypes import HTASK
+
 import sqlalchemy
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
 from DataBaseManager.DatabaseTeachers import DatabaseTeachers
@@ -25,16 +27,21 @@ class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, DatabaseTasks,
         return self.db.select(sqlalchemy.select(cls).filter_by(**kwargs), types=self.db.any_)
 
     def clear_all_data(self):
+        from sqlalchemy import text
+
         with self.db.create_session() as conn:
-            # Порядок удаления важен из-за foreign key constraints
-            conn.execute(StudentSolutions.__table__.delete())
-            conn.execute(TeacherSolutions.__table__.delete())
-            conn.execute(Tasks.__table__.delete())
-            conn.execute(LessonsDepends.__table__.delete())
-            conn.execute(Lessons.__table__.delete())
-            conn.execute(Students.__table__.delete())
-            conn.execute(Files.__table__.delete())
-            conn.execute(Teachers.__table__.delete())
+            conn.execute(text("""
+                              TRUNCATE TABLE
+                                  student_solutions,
+                    teacher_solutions,
+                    tasks,
+                    lessonsdepends,
+                    lessons,
+                    students,
+                    files,
+                    teachers
+                RESTART IDENTITY CASCADE
+                              """))
             conn.commit()
 
     def create_data(self):
@@ -45,3 +52,7 @@ class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, DatabaseTasks,
         student2 = self.register_student("student2", "password2", teacher1.id)
         lesson1 = self.add_lesson("lesson1", "content lesson 1", teacher1.id, None)
         lesson2 = self.add_lesson("lesson2", "content lesson 2", teacher1.id, None)
+        task1 = self.add_task(lesson1.id,"task1", "content task 1")
+        teacher_solution = self.create_teacher_solution(teacher1.id, task1.id, "teacher solution 1")
+        self.update_task(task1.id, solution=teacher_solution.id)
+

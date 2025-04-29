@@ -3,12 +3,22 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
 
+class TaskBigResponse(BaseModel):
+    id: int
+    lesson_id: int
+    description: str
+    created_at: Optional[str] = None
+    test: Optional[str] = None
+    text: Optional[str] = None
+    result: Optional[str] = None
+
 
 class TaskShortResponse(BaseModel):
     id: int
     lesson_id: int
     description: str
     created_at: Optional[str] = None
+    test: str
 
 
 class TasksListResponse(BaseModel):
@@ -20,6 +30,8 @@ class TasksListResponse(BaseModel):
 class TaskCreate(BaseModel):
     description: str
     lesson_id: int
+    text_program: str
+    test: str
 
 
 class TaskUpdate(BaseModel):
@@ -27,6 +39,6 @@ class TaskUpdate(BaseModel):
 
 
 class ResponseTask(BaseModel):
-    result: TaskShortResponse
+    result: TaskShortResponse | TaskBigResponse
     msg: str
     code: int

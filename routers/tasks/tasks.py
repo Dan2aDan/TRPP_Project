@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from DataBaseManager.extends import DBALL
 from routers.tasks.schems import (
     TaskShortResponse, TasksListResponse, TaskCreate, TaskUpdate,
-    ResponseTask
+    ResponseTask, TaskBigResponse
 )
 from utils.utils import generate_json
 
@@ -25,7 +25,8 @@ async def get_tasks(request: Request):
         id=task.id,
         lesson_id=task.lesson_id,
         description=task.description,
-        created_at=task.created_at.isoformat()
+        created_at=task.created_at.isoformat(),
+        test=task.test
     ) for task in tasks]
 
     return generate_json(TasksListResponse.model_validate({
@@ -44,14 +45,16 @@ async def create_task(data: TaskCreate, request: Request):
             "error": "Invalid data",
             "message": "Title and description are required"
         })
-
-    task = DBALL().add_task(data.lesson_id,data.description)
+    task = DBALL().add_task(data.lesson_id, data.description, data.test)
+    solution = DBALL().create_teacher_solution(session_data.id, task.id, data.text_program)
+    DBALL().update_task(task.id, solution=solution.id)
 
     result = TaskShortResponse(
         id=task.id,
         lesson_id=task.lesson_id,
         description=task.description,
-        created_at=task.created_at.isoformat()
+        created_at=task.created_at.isoformat(),
+        test=task.test
     )
 
     return generate_json(ResponseTask.model_validate({
@@ -69,12 +72,15 @@ async def get_task(task_id: int, request: Request):
             "error": "Task not found",
             "message": f"Task with ID {task_id} does not exist"
         })
-
-    result = TaskShortResponse(
+    teacher_solution = DBALL().get_teacher_task_solutions(request.state.session_data.id, task.id)
+    result = TaskBigResponse(
         id=task.id,
         lesson_id=task.lesson_id,
         description=task.description,
-        created_at=task.created_at.isoformat()
+        created_at=task.created_at.isoformat(),
+        test=task.test,
+        text=teacher_solution.text,
+        result=teacher_solution.result,
     )
 
     return generate_json(ResponseTask.model_validate({
@@ -82,6 +88,7 @@ async def get_task(task_id: int, request: Request):
         "msg": "ok",
         "code": 201
     }))
+
 
 @router.get("/tasks/{lesson_id}/tasks", response_class=JSONResponse)
 async def get_task(lesson_id: int, request: Request):
@@ -91,7 +98,8 @@ async def get_task(lesson_id: int, request: Request):
         id=task.id,
         lesson_id=task.lesson_id,
         description=task.description,
-        created_at=task.created_at.isoformat()
+        created_at=task.created_at.isoformat(),
+        test=task.test,
     ) for task in tasks]
 
     return generate_json(TasksListResponse.model_validate({
@@ -122,7 +130,8 @@ async def update_task(task_id: int, data: TaskUpdate, request: Request):
         id=task.id,
         lesson_id=task.lesson_id,
         description=task.description,
-        created_at=task.created_at.isoformat()
+        created_at=task.created_at.isoformat(),
+        test=task.test,
     )
 
     return generate_json(ResponseTask.model_validate({
@@ -137,7 +146,7 @@ async def delete_task(task_id: int, request: Request):
     session_data = request.state.session_data
 
     task = DBALL().get_task_by_id(task_id)
-    if not task :
+    if not task:
         raise HTTPException(status_code=404, detail={
             "error": "Task not found",
             "message": f"Task with ID {task_id} does not exist"
@@ -146,4 +155,3 @@ async def delete_task(task_id: int, request: Request):
     DBALL().delete_task(task_id)
 
     return JSONResponse(content={"message": "Task deleted successfully"})
-
