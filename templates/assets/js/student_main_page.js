@@ -86,6 +86,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('Error loading student data:', error);
             showError('Ошибка при загрузке данных');
         }
+         // Добавляем обработчики событий
+    lessonsBtn.addEventListener('click', () => {
+        window.location.href = 'student_main_page.html';
+    });
+
+    tasksBtn.addEventListener('click', () => {
+        window.location.href = 'student_tasks_page.html';
+    });
+
     }
 
     // Функция для получения цвета статуса

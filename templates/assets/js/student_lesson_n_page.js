@@ -64,6 +64,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Отображаем содержимое урока
             lessonTitle.textContent = lesson.title;
             lessonDescription.value = lesson.description;
+            lessonDescription.classList.toggle('filled', !!lesson.description);
+
+            // Индикатор статуса
+            const statusIndicator = document.getElementById('lesson-status-indicator');
+            statusIndicator.className = 'status-indicator';
+            if (lesson.status === 'completed') statusIndicator.classList.add('status-completed');
+            else if (lesson.status === 'in_progress') statusIndicator.classList.add('status-in-progress');
+            else statusIndicator.classList.add('status-not-started');
 
             // Загружаем список задач урока
             await loadLessonTasks();
@@ -92,38 +100,35 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (tasks.length === 0) {
                 const noTasksDiv = document.createElement('div');
-                noTasksDiv.className = 'col-12';
-                noTasksDiv.innerHTML = '<p class="text-center">В этом уроке пока нет задач</p>';
+                noTasksDiv.className = 'task-card';
+                noTasksDiv.innerHTML = '<span class="task-title">В этом уроке пока нет задач</span>';
                 tasksContainer.appendChild(noTasksDiv);
                 return;
             }
 
             // Создаем элементы для каждой задачи
             tasks.forEach(task => {
-                const taskDiv = document.createElement('div');
-                taskDiv.className = 'col-12';
-                taskDiv.innerHTML = `
-                    <div class="card" style="border-radius:28px;width:811px;margin-left:72px;height:auto;min-height:50px;">
-                        <div class="card-body" style="border-radius:0px;">
-                            <button class="btn d-lg-flex justify-content-lg-center my-btn task-btn" 
-                                    data-task-id="${task.id}" 
-                                    style="width: 250px;margin-left: 88px;">
-                                ${task.title || `Задание ${task.id}`}
-                            </button>
-                            <div class="card status-indicator" 
-                                 style="width: 38px;height: 38px;border-radius: 32px;margin-top: -38px;margin-left: 536px;background: ${getStatusColor(task.status)};">
-                            </div>
-                        </div>
-                    </div>
-                `;
+                const taskCard = document.createElement('div');
+                taskCard.className = 'task-card';
 
-                // Добавляем обработчик клика на кнопку задачи
-                const taskButton = taskDiv.querySelector('.task-btn');
-                taskButton.addEventListener('click', () => {
+                const taskTitle = document.createElement('span');
+                taskTitle.className = 'task-title';
+                taskTitle.textContent = task.title || `Задание ${task.id}`;
+
+                const statusIndicator = document.createElement('div');
+                statusIndicator.className = 'task-status-indicator';
+                if (task.status === 'completed') statusIndicator.classList.add('task-status-completed');
+                else if (task.status === 'in_progress') statusIndicator.classList.add('task-status-in-progress');
+                else statusIndicator.classList.add('task-status-not-started');
+
+                taskCard.appendChild(taskTitle);
+                taskCard.appendChild(statusIndicator);
+
+                taskCard.addEventListener('click', () => {
                     window.location.href = `student_task_n_page.html?task_id=${task.id}&lesson_id=${lessonId}`;
                 });
 
-                tasksContainer.appendChild(taskDiv);
+                tasksContainer.appendChild(taskCard);
             });
         } catch (error) {
             console.error('Error loading lesson tasks:', error);

@@ -65,7 +65,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Заполняем форму данными задачи
             taskTitle.textContent = task.title || `Задание ${task.id}`;
             taskDescription.value = task.description;
+            if (task.description) taskDescription.classList.add('filled');
+            else taskDescription.classList.remove('filled');
             solutionTextarea.value = task.solution || '';
+            if (task.solution) solutionTextarea.classList.add('filled');
+            else solutionTextarea.classList.remove('filled');
 
             hideLoading();
         } catch (error) {

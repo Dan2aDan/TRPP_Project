@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Загрузка задач студента
     async function loadStudentTasks() {
-        showLoading();
+        tasksList.innerHTML = '';
         try {
             // Получаем информацию о текущем пользователе
             const currentUserResponse = await fetch('/api/v0/auth/current', {
@@ -77,12 +77,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             const tasksData = await tasksResponse.json();
             const tasks = tasksData.tasks || [];
 
-            hideLoading();
-            tasksList.innerHTML = '';
-
             if (tasks.length === 0) {
                 const noTasksDiv = document.createElement('div');
-                noTasksDiv.className = 'alert alert-info';
+                noTasksDiv.className = 'error-message';
                 noTasksDiv.textContent = 'У вас пока нет задач';
                 tasksList.appendChild(noTasksDiv);
                 return;
@@ -90,73 +87,61 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             // Создаем элементы для каждой задачи
             tasks.forEach(task => {
-                const taskDiv = document.createElement('div');
-                taskDiv.className = 'col-md-12 mb-3';
-                taskDiv.style.marginBottom = '20px';
+                const taskCard = document.createElement('div');
+                taskCard.className = 'task-card';
 
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.style.borderRadius = '28px';
-                card.style.width = '811px';
-                card.style.margin = '0 auto';
-                card.style.height = 'auto';
-                card.style.minHeight = '50px';
+                const leftBlock = document.createElement('div');
+                leftBlock.style.flex = '1';
 
-                const cardBody = document.createElement('div');
-                cardBody.className = 'card-body';
-                cardBody.style.borderRadius = '0px';
-
-                const title = document.createElement('h5');
-                title.className = 'card-title';
+                const title = document.createElement('div');
+                title.className = 'task-title';
                 title.textContent = task.title || `Задача ${task.id}`;
 
-                const description = document.createElement('p');
-                description.className = 'card-text';
+                const description = document.createElement('div');
+                description.className = 'task-desc';
                 description.textContent = task.description || 'Описание отсутствует';
+                if (task.description) description.classList.add('filled');
 
-                const lessonInfo = document.createElement('p');
-                lessonInfo.className = 'card-text';
-                lessonInfo.style.fontSize = '0.9em';
-                lessonInfo.style.color = '#666';
+                const lessonInfo = document.createElement('div');
+                lessonInfo.className = 'task-desc';
+                lessonInfo.style.fontSize = '0.95em';
+                lessonInfo.style.color = '#888';
                 lessonInfo.textContent = `Урок: ${task.lesson_title || 'Неизвестный урок'}`;
 
-                const statusBadge = document.createElement('span');
-                statusBadge.className = 'badge';
-                statusBadge.style.marginLeft = '10px';
-                statusBadge.style.float = 'right';
+                leftBlock.appendChild(title);
+                leftBlock.appendChild(description);
+                leftBlock.appendChild(lessonInfo);
 
-                if (task.status === 'completed') {
-                    statusBadge.className += ' bg-success';
-                    statusBadge.textContent = 'Выполнено';
-                } else if (task.status === 'in_progress') {
-                    statusBadge.className += ' bg-warning';
-                    statusBadge.textContent = 'В процессе';
-                } else {
-                    statusBadge.className += ' bg-danger';
-                    statusBadge.textContent = 'Не начато';
-                }
+                const rightBlock = document.createElement('div');
+                rightBlock.style.display = 'flex';
+                rightBlock.style.alignItems = 'center';
+
+                const statusIndicator = document.createElement('div');
+                statusIndicator.className = 'task-status-indicator';
+                if (task.status === 'completed') statusIndicator.classList.add('task-status-completed');
+                else if (task.status === 'in_progress') statusIndicator.classList.add('task-status-in-progress');
+                else statusIndicator.classList.add('task-status-not-started');
 
                 const openButton = document.createElement('button');
-                openButton.className = 'btn btn-primary';
-                openButton.textContent = 'Открыть задачу';
-                openButton.style.marginTop = '10px';
+                openButton.className = 'open-task-btn';
+                openButton.innerHTML = '<i class="fas fa-arrow-right"></i> Открыть';
                 openButton.addEventListener('click', () => {
                     window.location.href = `student_task_n_page.html?task_id=${task.id}`;
                 });
 
-                cardBody.appendChild(title);
-                cardBody.appendChild(statusBadge);
-                cardBody.appendChild(description);
-                cardBody.appendChild(lessonInfo);
-                cardBody.appendChild(openButton);
-                card.appendChild(cardBody);
-                taskDiv.appendChild(card);
-                tasksList.appendChild(taskDiv);
+                rightBlock.appendChild(statusIndicator);
+                rightBlock.appendChild(openButton);
+
+                taskCard.appendChild(leftBlock);
+                taskCard.appendChild(rightBlock);
+                tasksList.appendChild(taskCard);
             });
         } catch (error) {
             console.error('Ошибка при загрузке задач:', error);
-            hideLoading();
-            showError('Ошибка при загрузке списка задач');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = 'Ошибка при загрузке списка задач';
+            tasksList.appendChild(errorDiv);
         }
     }
 
