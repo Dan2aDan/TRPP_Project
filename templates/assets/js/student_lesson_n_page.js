@@ -2,27 +2,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Получаем элементы навигации и контейнеры
     const lessonsBtn = document.getElementById('btn_lsns');
     const tasksBtn = document.getElementById('btn_tsks');
-    const lessonContainer = document.getElementById('lesson-container');
+    const lessonTitle = document.getElementById('lesson-title');
+    const lessonDescription = document.getElementById('lesson-description');
     const tasksContainer = document.getElementById('tasks-container');
-    const errorMessage = document.getElementById('error-message');
     const loadingIndicator = document.getElementById('loading-indicator');
+    const errorMessage = document.getElementById('error-message');
 
     // Проверяем существование элементов
-    if (!lessonsBtn || !tasksBtn || !lessonContainer || !tasksContainer || !errorMessage || !loadingIndicator) {
+    if (!lessonsBtn || !tasksBtn || !lessonTitle || !lessonDescription || !tasksContainer || !loadingIndicator || !errorMessage) {
         console.error('Required elements not found');
-        return;
-    }
-
-    // Проверяем авторизацию
-    const authToken = localStorage.getItem('authToken');
-    if (!authToken) {
-        window.location.href = 'login_page.html';
         return;
     }
 
     // Получаем параметры из URL
     const params = new URLSearchParams(window.location.search);
-    const lessonId = params.get('lesson_id');
+    const lessonId = params.get('id');
 
     if (!lessonId) {
         showError('Ошибка: ID урока не указан');
@@ -56,10 +50,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function loadLessonData() {
         showLoading();
         try {
-            const response = await fetch(`/api/v0/lessons/${lessonId}`, {
-                headers: {
-                    'Authorization': `Bearer ${authToken}`
-                }
+            const response = await fetch(`/api/v0/lessons/lesson/${lessonId}`, {
+                credentials: 'include'
             });
 
             if (!response.ok) {
@@ -70,20 +62,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             const lesson = data.result;
 
             // Отображаем содержимое урока
-            lessonContainer.innerHTML = `
-                <div class="lesson-header">
-                    <h2>${lesson.title}</h2>
-                    <div class="lesson-meta">
-                        <span class="lesson-date">Создан: ${new Date(lesson.created_at).toLocaleDateString()}</span>
-                    </div>
-                </div>
-                <div class="lesson-content">
-                    ${lesson.content}
-                </div>
-            `;
+            lessonTitle.textContent = lesson.title;
+            lessonDescription.value = lesson.description;
 
             // Загружаем список задач урока
-            await loadLessonTasks(lesson.tasks || []);
+            await loadLessonTasks();
             hideLoading();
         } catch (error) {
             console.error('Error loading lesson data:', error);
@@ -92,40 +75,71 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Загружаем список задач урока
-    async function loadLessonTasks(tasks) {
+    async function loadLessonTasks() {
         try {
+            const response = await fetch(`/api/v0/tasks/tasks/${lessonId}/tasks`, {
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const tasks = data.tasks || [];
+
             tasksContainer.innerHTML = '';
 
             if (tasks.length === 0) {
-                tasksContainer.innerHTML = '<p class="no-tasks">В этом уроке пока нет задач</p>';
+                const noTasksDiv = document.createElement('div');
+                noTasksDiv.className = 'col-12';
+                noTasksDiv.innerHTML = '<p class="text-center">В этом уроке пока нет задач</p>';
+                tasksContainer.appendChild(noTasksDiv);
                 return;
             }
 
             // Создаем элементы для каждой задачи
             tasks.forEach(task => {
-                const taskElement = document.createElement('div');
-                taskElement.className = 'task-item';
-                taskElement.innerHTML = `
-                    <div class="task-header">
-                        <h3>${task.title}</h3>
-                        <span class="task-status ${task.status || 'pending'}">${task.status || 'Не начато'}</span>
+                const taskDiv = document.createElement('div');
+                taskDiv.className = 'col-12';
+                taskDiv.innerHTML = `
+                    <div class="card" style="border-radius:28px;width:811px;margin-left:72px;height:auto;min-height:50px;">
+                        <div class="card-body" style="border-radius:0px;">
+                            <button class="btn d-lg-flex justify-content-lg-center my-btn task-btn" 
+                                    data-task-id="${task.id}" 
+                                    style="width: 250px;margin-left: 88px;">
+                                ${task.title || `Задание ${task.id}`}
+                            </button>
+                            <div class="card status-indicator" 
+                                 style="width: 38px;height: 38px;border-radius: 32px;margin-top: -38px;margin-left: 536px;background: ${getStatusColor(task.status)};">
+                            </div>
+                        </div>
                     </div>
-                    <p class="task-description">${task.description}</p>
-                    <button class="btn btn-primary start-task" data-id="${task.id}">
-                        ${task.status === 'completed' ? 'Просмотреть' : 'Начать выполнение'}
-                    </button>
                 `;
 
-                const startButton = taskElement.querySelector('.start-task');
-                startButton.addEventListener('click', () => {
+                // Добавляем обработчик клика на кнопку задачи
+                const taskButton = taskDiv.querySelector('.task-btn');
+                taskButton.addEventListener('click', () => {
                     window.location.href = `student_task_n_page.html?task_id=${task.id}&lesson_id=${lessonId}`;
                 });
 
-                tasksContainer.appendChild(taskElement);
+                tasksContainer.appendChild(taskDiv);
             });
         } catch (error) {
             console.error('Error loading lesson tasks:', error);
             showError('Ошибка при загрузке списка задач');
+        }
+    }
+
+    // Функция для получения цвета статуса
+    function getStatusColor(status) {
+        switch (status) {
+            case 'completed':
+                return 'rgb(0, 255, 0)'; // Зеленый
+            case 'in_progress':
+                return 'rgb(255, 255, 0)'; // Желтый
+            default:
+                return 'rgb(255, 0, 0)'; // Красный
         }
     }
 

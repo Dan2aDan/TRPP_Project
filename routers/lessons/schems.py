@@ -13,6 +13,21 @@ class StudentInfo(BaseModel):
     full_name: str
 
 
+class StudentLessonResponse(BaseModel):
+    id: int
+    title: str
+    description: str
+    teacher: TeacherInfo
+    created_at: str
+    status: str  # completed, in_progress, not_started
+
+
+class StudentLessonsResponse(BaseModel):
+    result: List[StudentLessonResponse]
+    msg: str
+    code: int
+
+
 class LessonShortResponse(BaseModel):
     id: int
     title: str
@@ -57,6 +72,17 @@ class LongResponseLesson(BaseModel):
     msg: str
     code: int
 
+
 class LessonDependencyRequest(BaseModel):
     lesson_id: int
     student_ids: List[int]
+
+
+class LessonResponse(BaseModel):
+    id: int
+    title: str
+    content: str
+    created_at: datetime
+    teacher_id: int
+    file_id: int
+    status: Optional[str] = None  # completed, in_progress, not_started

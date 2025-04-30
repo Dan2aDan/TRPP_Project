@@ -2,34 +2,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Получаем элементы навигации и формы
     const lessonsBtn = document.getElementById('btn_lsns');
     const tasksBtn = document.getElementById('btn_tsks');
+    const taskTitle = document.getElementById('lesson-title');
+    const taskDescription = document.getElementById('lesson-description');
+    const solutionTextarea = document.getElementById('lesson-description-1');
     const sendBtn = document.getElementById('send_btn');
-    const taskForm = document.getElementById('taskForm');
-    const codeTextarea = document.getElementById('codeTextarea');
-    const errorMessage = document.getElementById('error-message');
     const loadingIndicator = document.getElementById('loading-indicator');
-    const taskDescription = document.getElementById('taskDescription');
-    const taskTitle = document.getElementById('taskTitle');
+    const errorMessage = document.getElementById('error-message');
 
     // Проверяем существование элементов
-    if (!lessonsBtn || !tasksBtn || !sendBtn || !taskForm || !codeTextarea || 
-        !errorMessage || !loadingIndicator || !taskDescription || !taskTitle) {
+    if (!lessonsBtn || !tasksBtn || !taskTitle || !taskDescription || !solutionTextarea || !sendBtn || !loadingIndicator || !errorMessage) {
         console.error('Required elements not found');
-        return;
-    }
-
-    // Проверяем авторизацию
-    const authToken = localStorage.getItem('authToken');
-    if (!authToken) {
-        window.location.href = 'login_page.html';
         return;
     }
 
     // Получаем параметры из URL
     const params = new URLSearchParams(window.location.search);
     const taskId = params.get('task_id');
-    const lessonId = params.get('lesson_id');
 
-    if (!taskId || !lessonId) {
+    if (!taskId) {
         showError('Ошибка: ID задачи или урока не указан');
         return;
     }
@@ -62,9 +52,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         showLoading();
         try {
             const response = await fetch(`/api/v0/tasks/tasks/${taskId}`, {
-                headers: {
-                    'Authorization': `Bearer ${authToken}`
-                }
+                credentials: 'include'
             });
 
             if (!response.ok) {
@@ -75,14 +63,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             const task = data.result;
 
             // Заполняем форму данными задачи
-            taskTitle.textContent = task.title;
-            taskDescription.textContent = task.description;
-            codeTextarea.value = task.text || '';
-
-            // Устанавливаем подсветку синтаксиса
-            if (task.language) {
-                codeTextarea.className = `language-${task.language}`;
-            }
+            taskTitle.textContent = task.title || `Задание ${task.id}`;
+            taskDescription.value = task.description;
+            solutionTextarea.value = task.solution || '';
 
             hideLoading();
         } catch (error) {
@@ -95,8 +78,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     async function handleTaskSubmit(event) {
         event.preventDefault();
 
-        const code = codeTextarea.value.trim();
-        if (!code) {
+        const solution = solutionTextarea.value.trim();
+        if (!solution) {
             showError('Пожалуйста, введите решение задачи');
             return;
         }
@@ -106,14 +89,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             const response = await fetch('/api/v0/tasks/submit', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     task_id: parseInt(taskId),
-                    lesson_id: parseInt(lessonId),
-                    solution: code
-                })
+                    solution: solution
+                }),
+                credentials: 'include'
             });
 
             if (!response.ok) {
@@ -142,7 +124,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = 'student_tasks_page.html';
     });
 
-    taskForm.addEventListener('submit', handleTaskSubmit);
+    sendBtn.addEventListener('click', handleTaskSubmit);
 
     // Загружаем данные задачи
     loadTaskData();

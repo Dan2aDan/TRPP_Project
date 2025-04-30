@@ -38,10 +38,16 @@
     <div class="row d-lg-flex justify-content-lg-center">
         <div class="col-md-12 col-lg-12 col-xl-10 col-xxl-8" id="students-container"
              style="text-align:center;border-radius:40px;border-width:1px;border-style:solid;box-shadow:0px 0px 20px 0px rgb(33, 37, 41);width:971px;background:#ffffff;height:auto;">
+            <div id="loading-indicator" class="text-center" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Загрузка...</span>
+                </div>
+            </div>
+            <div id="error-message" class="alert alert-danger" style="display: none;"></div>
             <p class="text-center d-lg-flex justify-content-lg-center" id="lesson-title"
-               style="font-size: 26px;padding: 0;height: 39px;width: 934px;">Задание n</p><textarea
-                id="lesson-description"
-                style="width:674px;height:156px;margin-top:24px;margin-left:0px;border-radius:14px;border-width:1px;"></textarea>
+               style="font-size: 26px;padding: 0;height: 39px;width: 934px;">Задание n</p>
+            <textarea id="lesson-description"
+                      style="width:674px;height:156px;margin-top:24px;margin-left:0px;border-radius:14px;border-width:1px;"></textarea>
             <div class="table-responsive d-lg-flex align-items-lg-center">
                 <table class="table">
                     <thead>
@@ -56,8 +62,9 @@
                     </tbody>
                 </table>
             </div>
-            <p>Ответ на задание</p><textarea id="lesson-description-1"
-                                             style="width: 674px;height: 156px;margin-left: 0px;border-radius: 14px;border-width: 1px;"></textarea>
+            <p>Ответ на задание</p>
+            <textarea id="lesson-description-1"
+                      style="width: 674px;height: 156px;margin-left: 0px;border-radius: 14px;border-width: 1px;"></textarea>
             <div class="row" style="margin-bottom: 37px;margin-top: 28px;">
                 <div class="col-md-12">
                     <button class="btn my-btn" id="send_btn" type="button"
@@ -69,16 +76,7 @@
     </div>
 </div>
 <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-<script src="assets/js/lesson_page_n.js"></script>
-<script src="assets/js/lessons_page.js"></script>
-<script src="assets/js/login_page.js"></script>
-<script src="assets/js/script.min.js"></script>
-<script src="assets/js/student_lesson_n_page.js"></script>
-<script src="assets/js/student_main_page.js"></script>
 <script src="assets/js/student_tasks_n_page.js"></script>
-<script src="assets/js/student_tasks_page.js"></script>
-<script src="assets/js/tasks_page.js"></script>
-<script src="assets/js/teacher_main_page.js"></script>
 </body>
 
 </html>

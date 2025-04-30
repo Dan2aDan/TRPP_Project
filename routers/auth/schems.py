@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional, Union
 
 
 class UserAuth(BaseModel):
@@ -7,18 +8,22 @@ class UserAuth(BaseModel):
 
 
 class Response(BaseModel):
-    class Result(BaseModel):
-        login: str
-        state: bool
-
-    result: Result | None
     msg: str
+    result: Optional[Union[dict, list, str, int, bool]] = None
     code: int
+
 
 class SessionData(BaseModel):
     login: str
     id: int
     state: bool
+
+
+class CurrentUserInfo(BaseModel):
+    id: int
+    login: str
+    is_teacher: bool
+    bio: Optional[str] = None
 
 
 

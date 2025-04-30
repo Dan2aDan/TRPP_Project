@@ -38,18 +38,16 @@
     <div class="row d-lg-flex justify-content-lg-center">
         <div class="col-md-12 col-lg-12 col-xl-10 col-xxl-8" id="students-container"
              style="text-align:center;border-radius:40px;border-width:1px;border-style:solid;box-shadow:0px 0px 20px 0px rgb(33, 37, 41);height:auto;width:971px;background:#ffffff;">
+            <div id="loading-indicator" class="text-center" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Загрузка...</span>
+                </div>
+            </div>
+            <div id="error-message" class="alert alert-danger" style="display: none;"></div>
             <p class="text-center d-lg-flex justify-content-lg-center"
                style="font-size:26px;margin:0;padding:0;height:39px;width:971px;">Список уроков</p>
-            <div class="row"
-                 style="height: 51px;width: 501px;margin: 0;padding: 0;margin-top: 10px;margin-left: 77px;margin-bottom: 50px;">
-                <div class="col-lg-11 col-xl-12 col-xxl-12 d-lg-flex justify-content-lg-start align-items-lg-center"
-                     style="height: 51px;width: 500px;padding: 0;margin: 0;margin-left: 0;margin-bottom: 0px;">
-                    <button class="btn link-dark my-btn" id="stud_lsn_btn" type="button"
-                            style="width: 350px;height: 50px;">урок 1
-                    </button>
-                    <div class="card"
-                         style="width:38px;height:38px;margin-left:75px;border-radius:32px;background:rgb(255,0,0);"></div>
-                </div>
+            <div id="lessons-container" class="row" style="margin-top: 10px; margin-left: 77px; margin-bottom: 50px;">
+                <!-- Уроки будут добавлены динамически через JavaScript -->
             </div>
         </div>
     </div>
