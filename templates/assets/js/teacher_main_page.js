@@ -17,38 +17,56 @@ async function loadStudents() {
 
         if (students.students && students.students.length > 0) {
             students.students.forEach(student => {
-                const row = document.createElement('div');
-                row.className = 'row';
-                row.style.cssText = 'margin: 10px 0; padding: 0;';
-
-                row.innerHTML = `
-                    <div class="col d-lg-flex justify-content-start align-items-center" style="padding: 0;">
-                        <p style="width: 250px; margin: 0;">${student.login}</p>
-                        <button class="btn link-dark my-btn add-lesson" type="button" style="width:296px;">Открыть урок</button>
-                        <button class="btn link-dark my-btn view-tasks" data-id="${student.id}" style="margin-left: 10px;">Посмотреть выполненные задания</button>
-                        <button class="btn my-btn edit-account" data-id="${student.id}" style="margin-left: 10px;">Изменить логин и пароль</button>
-                        <button class="btn my-btn delete-student" data-id="${student.id}" style="margin-left: 10px;">Удалить ученика</button>
-                    </div>
-                `;
-
+                const studentCard = document.createElement('div');
+                studentCard.className = 'student-card';
+                
+                const studentInfo = document.createElement('div');
+                studentInfo.className = 'student-info';
+                studentInfo.textContent = student.login;
+                
+                const actionsContainer = document.createElement('div');
+                actionsContainer.className = 'student-actions';
+                
+                const addLessonBtn = createActionButton('Открыть урок', 'add-lesson', 'fa-book');
+                const viewTasksBtn = createActionButton('Задания', 'view-tasks', 'fa-tasks', student.id);
+                const editAccountBtn = createActionButton('Изменить', 'edit-account', 'fa-edit', student.id);
+                const deleteStudentBtn = createActionButton('Удалить', 'delete-student', 'fa-trash', student.id);
+                
+                actionsContainer.append(addLessonBtn, viewTasksBtn, editAccountBtn, deleteStudentBtn);
+                studentCard.append(studentInfo, actionsContainer);
+                container.appendChild(studentCard);
+                
                 // Добавление обработчиков
-                const addLessonBtn = row.querySelector('.add-lesson');
-                const viewTasksBtn = row.querySelector('.view-tasks');
-                const editAccountBtn = row.querySelector('.edit-account');
-                const deleteStudentBtn = row.querySelector('.delete-student');
-
-                if (addLessonBtn) addLessonBtn.addEventListener('click', () => addLessonp(student.id));
-                if (viewTasksBtn) viewTasksBtn.addEventListener('click', () => viewStudentTasks(student.id));
-                if (editAccountBtn) editAccountBtn.addEventListener('click', () => editStudentAccount(student.id));
-                if (deleteStudentBtn) deleteStudentBtn.addEventListener('click', () => deleteStudent(student.id));
-
-                container.appendChild(row);
+                addLessonBtn.addEventListener('click', () => addLessonp(student.id));
+                viewTasksBtn.addEventListener('click', () => viewStudentTasks(student.id));
+                editAccountBtn.addEventListener('click', () => editStudentAccount(student.id));
+                deleteStudentBtn.addEventListener('click', () => deleteStudent(student.id));
             });
         }
     } catch (error) {
         console.error('Ошибка загрузки списка учеников:', error);
-        alert('Произошла ошибка при загрузке списка учеников');
+        showError('Произошла ошибка при загрузке списка учеников');
     }
+}
+
+// Вспомогательная функция для создания кнопок действий
+function createActionButton(text, className, iconClass, dataId = null) {
+    const button = document.createElement('button');
+    button.className = `btn action-btn ${className}`;
+    button.innerHTML = `<i class="fas ${iconClass} me-2"></i>${text}`;
+    if (dataId) {
+        button.dataset.id = dataId;
+    }
+    return button;
+}
+
+// Функция для отображения ошибки
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'alert alert-danger error-message';
+    errorDiv.textContent = message;
+    document.getElementById('students-container').prepend(errorDiv);
+    setTimeout(() => errorDiv.remove(), 5000);
 }
 
 // Инициализация страницы

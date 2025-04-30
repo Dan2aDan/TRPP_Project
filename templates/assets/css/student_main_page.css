@@ -1,0 +1,193 @@
+/* Основные стили для карточек уроков */
+.lessons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.lesson-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    cursor: pointer;
+}
+
+.lesson-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 1);
+}
+
+/* Стили для заголовка карточки */
+.lesson-header {
+    margin-bottom: 15px;
+    position: relative;
+    flex: 1;
+}
+
+.lesson-title {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.lesson-description {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+/* Стили для кнопок действий */
+.lesson-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    flex: 1;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--primary-color);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn i {
+    margin-right: 8px;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    background: var(--primary-color);
+    color: white;
+}
+
+.start-lesson {
+    background: var(--primary-color);
+    color: white;
+}
+
+.start-lesson:hover {
+    background: var(--primary-hover);
+}
+
+.view-tasks {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--primary-color);
+}
+
+.view-tasks:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Стили для индикатора статуса */
+.status-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+.status-completed {
+    background-color: #4CAF50;
+}
+
+.status-in-progress {
+    background-color: #FFC107;
+}
+
+.status-not-started {
+    background-color: #F44336;
+}
+
+/* Стили для сообщения об отсутствии уроков */
+.no-lessons-message {
+    text-align: center;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 1.5rem;
+    color: #666;
+    font-size: 1.1rem;
+    margin: 20px 0;
+    grid-column: 1 / -1;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для сообщений об ошибках */
+.error-message {
+    margin-bottom: 20px;
+    padding: 1rem;
+    border-radius: 1rem;
+    background: rgba(255, 235, 238, 0.95);
+    color: #c62828;
+    border: 1px solid rgba(244, 67, 54, 0.2);
+    grid-column: 1 / -1;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+    .lessons-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .lesson-card {
+        padding: 1rem;
+    }
+
+    .lesson-actions {
+        flex-direction: column;
+    }
+
+    .action-btn {
+        width: 100%;
+    }
+
+    .lesson-title {
+        font-size: 1.1rem;
+    }
+
+    .lesson-description {
+        font-size: 0.9rem;
+    }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.lesson-card {
+    animation: fadeIn 0.3s ease-out;
+} 

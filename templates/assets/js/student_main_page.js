@@ -74,37 +74,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (lessons.length === 0) {
                 const noLessonsDiv = document.createElement('div');
                 noLessonsDiv.className = 'col-12';
-                noLessonsDiv.innerHTML = '<p class="text-center">У вас пока нет доступных уроков</p>';
+                const noLessonsText = document.createElement('p');
+                noLessonsText.className = 'text-center';
+                noLessonsText.textContent = 'У вас пока нет доступных уроков';
+                noLessonsDiv.appendChild(noLessonsText);
                 lessonsContainer.appendChild(noLessonsDiv);
                 return;
             }
-
-            // Создаем элементы для каждого урока
-            lessons.forEach(lesson => {
-                const lessonDiv = document.createElement('div');
-                lessonDiv.className = 'col-12';
-                lessonDiv.innerHTML = `
-                    <div class="col-lg-11 col-xl-12 col-xxl-12 d-lg-flex justify-content-lg-start align-items-lg-center"
-                         style="height: 51px;width: 500px;padding: 0;margin: 0;margin-left: 0;margin-bottom: 20px;">
-                        <button class="btn link-dark my-btn lesson-btn" 
-                                data-lesson-id="${lesson.id}" 
-                                style="width: 350px;height: 50px;">
-                            ${lesson.title || `Урок ${lesson.id}`}
-                        </button>
-                        <div class="card status-indicator" 
-                             style="width:38px;height:38px;margin-left:75px;border-radius:32px;background: ${getStatusColor(lesson.status)};">
-                        </div>
-                    </div>
-                `;
-
-                // Добавляем обработчик клика на кнопку урока
-                const lessonButton = lessonDiv.querySelector('.lesson-btn');
-                lessonButton.addEventListener('click', () => {
-                    window.location.href = `student_lesson_n_page.html?id=${lesson.id}`;
-                });
-
-                lessonsContainer.appendChild(lessonDiv);
-            });
+            displayLessons(lessons);
         } catch (error) {
             console.error('Error loading student data:', error);
             showError('Ошибка при загрузке данных');
@@ -123,15 +100,84 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Добавляем обработчики навигации
-    lessonsBtn.addEventListener('click', () => {
-        window.location.href = 'student_main_page.html';
-    });
 
-    tasksBtn.addEventListener('click', () => {
-        window.location.href = 'student_tasks_page.html';
-    });
+   
 
     // Загружаем данные при загрузке страницы
     loadStudentData();
 });
+
+function displayLessons(lessons) {
+    function startLesson(lessonId) {
+        window.location.href = 'student_lesson_n_page.html?id=' + lessonId;
+    }
+    const container = document.getElementById('lessons-container');
+    if (!container) {
+        console.error('Container element not found');
+        return;
+    }
+
+    // Очищаем контейнер
+    container.innerHTML = '';
+
+    if (lessons && lessons.length > 0) {
+        lessons.forEach(lesson => {
+            // Создаем карточку урока
+            const lessonCard = document.createElement('div');
+            lessonCard.className = 'lesson-card';
+            
+            // Создаем заголовок карточки
+            const lessonHeader = document.createElement('div');
+            lessonHeader.className = 'lesson-header';
+            
+            // Создаем заголовок урока
+            const lessonTitle = document.createElement('h3');
+            lessonTitle.className = 'lesson-title';
+            lessonTitle.textContent = lesson.title || `Урок ${lesson.id}`
+            
+            // Создаем контейнер для кнопок
+            const lessonActions = document.createElement('div');
+            lessonActions.className = 'lesson-actions';
+            
+            // Создаем кнопки
+            const startLessonBtn = document.createElement('button');
+            startLessonBtn.className = 'btn action-btn start-lesson';
+            startLessonBtn.innerHTML = '<i class="fas fa-play"></i>Начать урок';
+            
+            // Создаем индикатор статуса
+            const statusIndicator = document.createElement('div');
+            statusIndicator.className = `status-indicator status-${lesson.status || 'not-started'}`;
+            
+            // Добавляем обработчики событий
+            startLessonBtn.addEventListener('click', () => startLesson(lesson.id));
+            
+            // Собираем структуру карточки
+            lessonActions.appendChild(startLessonBtn);
+            
+            lessonHeader.appendChild(lessonTitle);
+            lessonHeader.appendChild(statusIndicator);
+            
+            lessonCard.appendChild(lessonHeader);
+            lessonCard.appendChild(lessonActions);
+            
+            // Добавляем карточку в контейнер
+            container.appendChild(lessonCard);
+        });
+    } else {
+        // Создаем сообщение об отсутствии уроков
+        const noLessonsMessage = document.createElement('div');
+        noLessonsMessage.className = 'no-lessons-message';
+        noLessonsMessage.textContent = 'Нет доступных уроков';
+        container.appendChild(noLessonsMessage);
+    }
+}
+
+// Функция для отображения ошибки
+function showError(message) {
+    const container = document.getElementById('lessons-container');
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    container.insertBefore(errorDiv, container.firstChild);
+    setTimeout(() => errorDiv.remove(), 5000);
+}
