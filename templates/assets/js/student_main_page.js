@@ -23,13 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'student_lesson_n_page.html';
     });
 
-    // Проверяем авторизацию
-    const authToken = localStorage.getItem('authToken');
-    if (!authToken) {
-        window.location.href = 'login_page.html';
-        return;
-    }
-
     // Загружаем данные студента
     async function loadStudentData() {
         try {

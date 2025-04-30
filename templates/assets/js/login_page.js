@@ -81,15 +81,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Сохраняем токен авторизации
-            const data = await response.json();
-            if (data.token) {
-                localStorage.setItem('authToken', data.token);
-            }
 
             // Определяем тип пользователя и перенаправляем
-            const userType = data.user_type || 'teacher';
-            const redirectUrl = userType === 'student' 
+            const userType = (await response.json()).result.state;
+            const redirectUrl = !userType
                 ? 'student_main_page.html' 
                 : 'teacher_main_page.html';
             
