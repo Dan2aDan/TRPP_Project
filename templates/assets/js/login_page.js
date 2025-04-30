@@ -2,48 +2,107 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("loginForm");
     const loginButton = document.getElementById("log_btn");
     const errorMessage = document.getElementById("error-message");
+    const loginInput = document.getElementById("login");
+    const passwordInput = document.getElementById("password");
 
-    loginForm.addEventListener("submit", (event) => {
+    if (!loginForm || !loginButton || !errorMessage || !loginInput || !passwordInput) {
+        console.error('Required elements not found');
+        return;
+    }
+
+    // Функция для отображения сообщения об ошибке
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = "block";
+    }
+
+    // Функция для скрытия сообщения об ошибке
+    function hideError() {
+        errorMessage.style.display = "none";
+    }
+
+    // Функция для блокировки кнопки и показа спиннера
+    function setLoading(isLoading) {
+        loginButton.disabled = isLoading;
+        loginButton.innerHTML = isLoading 
+            ? '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Входим...'
+            : 'Войти';
+    }
+
+    // Функция для валидации ввода
+    function validateInput(login, password) {
+        if (!login || !password) {
+            showError("Введите логин и пароль!");
+            return false;
+        }
+
+        if (login.length < 3) {
+            showError("Логин должен содержать минимум 3 символа");
+            return false;
+        }
+
+        if (password.length < 6) {
+            showError("Пароль должен содержать минимум 6 символов");
+            return false;
+        }
+
+        return true;
+    }
+
+    loginForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
-        const login = document.getElementById("login").value.trim();
-        const password = document.getElementById("password").value.trim();
+        const login = loginInput.value.trim();
+        const password = passwordInput.value.trim();
 
-        if (!login || !password) {
-            errorMessage.textContent = "Введите логин и пароль!";
-            errorMessage.style.display = "block";
+        hideError();
+
+        if (!validateInput(login, password)) {
             return;
         }
 
-        errorMessage.style.display = "none";
+        setLoading(true);
 
-        // Добавляем спиннер и блокируем кнопку
-        loginButton.disabled = true;
-        loginButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Входим...';
-
-        // Отправляем запрос на сервер
-        fetch("/api/v0/auth/login", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({"login": login, "password": password}),
-        })
-            .then((response) => {
-                if (response.ok) {
-                    // Переход на новую страницу после успешного входа
-                    window.location.href = "teacher_main_page.html";  // Переходим на нужную страницу
-                } else {
-                    errorMessage.textContent = "Неверный логин или пароль";
-                    errorMessage.style.display = "block";
-                }
-            })
-            .catch(() => {
-                errorMessage.textContent = "Ошибка сервера.";
-                errorMessage.style.display = "block";
-            })
-            .finally(() => {
-                // Возвращаем кнопку обратно
-                loginButton.disabled = false;
-                loginButton.innerHTML = "Войти";
+        try {
+            const response = await fetch("/api/v0/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    login: login,
+                    password: password
+                })
             });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                showError(errorData.message || "Неверный логин или пароль");
+                return;
+            }
+
+            // Сохраняем токен авторизации
+            const data = await response.json();
+            if (data.token) {
+                localStorage.setItem('authToken', data.token);
+            }
+
+            // Определяем тип пользователя и перенаправляем
+            const userType = data.user_type || 'teacher';
+            const redirectUrl = userType === 'student' 
+                ? 'student_main_page.html' 
+                : 'teacher_main_page.html';
+            
+            window.location.href = redirectUrl;
+        } catch (error) {
+            console.error('Login error:', error);
+            showError("Ошибка сервера. Пожалуйста, попробуйте позже.");
+        } finally {
+            setLoading(false);
+        }
     });
+
+    // Очистка сообщения об ошибке при вводе
+    loginInput.addEventListener('input', hideError);
+    passwordInput.addEventListener('input', hideError);
 });
