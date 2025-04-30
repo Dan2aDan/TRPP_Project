@@ -1,70 +1,93 @@
 <!DOCTYPE html>
-<html data-bs-theme="light" lang="ru" data-bss-forced-theme="light">
-
+<html lang="ru">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>ТРППСайт</title>
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/Login-Form-Basic-icons.css">
-    <link rel="stylesheet" href="assets/css/styles.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Уроки учителя</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lessons_page.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Управление уроками</h1>
+            <button id="logoutBtn" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Выйти
+            </button>
+        </header>
 
-<body style="background:linear-gradient(0deg, #024e68 0%, #ceedff 50%, white 100%), #ffffff;height:982px;">
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1 class="text-center">Личный кабинет учителя</h1>
-        </div>
-    </div>
-    <div class="row d-flex d-xl-flex justify-content-md-center justify-content-xl-center">
-        <div class="col-md-4 d-flex d-sm-flex d-md-flex d-lg-flex justify-content-center justify-content-sm-center justify-content-md-center align-items-md-center justify-content-lg-end align-items-lg-center"
-             style="width:320px;height:132px;margin:0px;padding:0px;">
-            <button class="btn link-light go-btns" id="btn_students" type="button"
-                    style="height:66px;width:186px;box-shadow:0px 0px 20px #212529;">Ученики
-            </button>
-        </div>
-        <div class="col-md-4 d-flex d-sm-flex d-lg-flex justify-content-center justify-content-sm-center align-items-md-center justify-content-lg-center align-items-lg-center"
-             style="width:320px;height:132px;margin:0px;padding:0px;">
-            <button class="btn link-light active-btn" id="btn_lsns" type="button"
-                    style="width:186px;height:66px;box-shadow:0px 0px 20px #212529;">Уроки
-            </button>
-        </div>
-        <div class="col-md-4 d-flex d-sm-flex d-md-flex d-lg-flex justify-content-center justify-content-sm-center justify-content-md-center align-items-md-center justify-content-lg-start align-items-lg-center"
-             style="text-align:center;display:block;width:320px;height:132px;margin:0px;padding:0px;">
-            <button class="btn link-light d-lg-flex justify-content-lg-center align-items-lg-center me-0 pb-0 mb-0 go-btns"
-                    id="btn_tsks" type="button"
-                    style="width:186px;height:66px;margin:0;padding:0;position:static;transform:translate(0px);text-align:center;padding-top:0px;box-shadow:0px 0px 20px #212529;">
-                Задачи
-            </button>
-        </div>
-    </div>
-</div>
-<div class="container">
-    <div class="row d-lg-flex justify-content-lg-center" style="width:auto;height:auto;">
-        <div class="col-md-12 col-lg-12 col-xl-10 col-xxl-8"
-             style="text-align:center;border-radius:40px;border-width:1px;border-style:solid;box-shadow:0px 0px 20px 0px rgb(33, 37, 41);height:auto;width:971px;background:#ffffff;">
-            <p class="text-center d-lg-flex justify-content-lg-center"
-               style="font-size:26px;margin:0;padding:0;height:39px;width:971px;">Список уроков</p>
-            <div class="row" id="students-container"
-                 style="height:auto;width:500px;margin-left:230px;margin-top:10px;margin-right:0px;">
-                <div class="col-lg-11 col-xl-12 col-xxl-12 d-lg-flex justify-content-lg-start align-items-lg-center"
-                     style="height:51px;width:500px;padding:0px;">
-                    <button class="btn link-dark my-btn" type="button" style="width:500px;height:50px;padding:0px;">Урок
-                        1
+        <nav>
+            <ul>
+                <li><a href="/teacher/students" class="nav-link"><i class="fas fa-users"></i> Ученики</a></li>
+                <li><a href="/teacher/lessons" class="nav-link active"><i class="fas fa-book"></i> Уроки</a></li>
+                <li><a href="/teacher/tasks" class="nav-link"><i class="fas fa-tasks"></i> Задачи</a></li>
+            </ul>
+        </nav>
+
+        <main>
+            <section class="lessons-section">
+                <div class="lessons-header">
+                    <h2>Список уроков</h2>
+                    <button id="addLessonBtn" class="action-btn primary">
+                        <i class="fas fa-plus"></i> Добавить урок
                     </button>
                 </div>
+
+                <div class="lessons-filters">
+                    <div class="filter-group">
+                        <label for="statusFilter">Статус:</label>
+                        <select id="statusFilter" class="filter-select">
+                            <option value="all">Все</option>
+                            <option value="active">Активные</option>
+                            <option value="archived">Архивные</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="sortFilter">Сортировка:</label>
+                        <select id="sortFilter" class="filter-select">
+                            <option value="date">По дате</option>
+                            <option value="title">По названию</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="lessonsContainer" class="lessons-grid">
+                    <!-- Уроки будут добавлены динамически через JavaScript -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Модальное окно добавления/редактирования урока -->
+    <div id="lessonModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Добавить урок</h3>
+                <button class="close-btn">&times;</button>
             </div>
-            <button class="btn link-dark my-btn" id="btn_new_lsn" type="button"
-                    style="margin-top:100px;margin-left:722px;width:145.9453px;height:51px;margin-bottom:23px;">Добавить
-                урок
-            </button>
+            <div class="modal-body">
+                <form id="lessonForm">
+                    <div class="form-group">
+                        <label for="lessonTitle">Название урока</label>
+                        <input type="text" id="lessonTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lessonDescription">Описание</label>
+                        <textarea id="lessonDescription" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="lessonFiles">Файлы урока</label>
+                        <input type="file" id="lessonFiles" multiple>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="action-btn secondary" id="cancelBtn">Отмена</button>
+                <button class="action-btn primary" id="saveLessonBtn">Сохранить</button>
+            </div>
         </div>
     </div>
-</div>
-<script src="assets/bootstrap/js/bootstrap.min.js"></script>
-<script src="assets/js/lessons_page.js"></script>
-<script src="assets/js/script.min.js"></script>
-</body>
 
+    <script src="{{ url_for('static', filename='js/lessons_page.js') }}"></script>
+</body>
 </html>

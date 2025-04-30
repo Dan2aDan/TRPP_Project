@@ -19,24 +19,26 @@ async function loadStudents() {
             students.students.forEach(student => {
                 const studentCard = document.createElement('div');
                 studentCard.className = 'student-card';
-                
-                const studentInfo = document.createElement('div');
-                studentInfo.className = 'student-info';
-                studentInfo.textContent = student.login;
-                
-                const actionsContainer = document.createElement('div');
-                actionsContainer.className = 'student-actions';
-                
-                const addLessonBtn = createActionButton('Открыть урок', 'add-lesson', 'fa-book');
+                // Первая строка: login
+                const studentLoginRow = document.createElement('div');
+                studentLoginRow.className = 'student-login-row';
+                studentLoginRow.textContent = student.login;
+                // Вторая строка: 2 кнопки
+                const actionsRow1 = document.createElement('div');
+                actionsRow1.className = 'student-actions-row';
+                const addLessonBtn = createActionButton('Уроки', 'add-lesson', 'fa-book');
                 const viewTasksBtn = createActionButton('Задания', 'view-tasks', 'fa-tasks', student.id);
+                actionsRow1.append(addLessonBtn, viewTasksBtn);
+                // Третья строка: 2 кнопки
+                const actionsRow2 = document.createElement('div');
+                actionsRow2.className = 'student-actions-row';
                 const editAccountBtn = createActionButton('Изменить', 'edit-account', 'fa-edit', student.id);
                 const deleteStudentBtn = createActionButton('Удалить', 'delete-student', 'fa-trash', student.id);
-                
-                actionsContainer.append(addLessonBtn, viewTasksBtn, editAccountBtn, deleteStudentBtn);
-                studentCard.append(studentInfo, actionsContainer);
+                actionsRow2.append(editAccountBtn, deleteStudentBtn);
+                // Собираем карточку
+                studentCard.append(studentLoginRow, actionsRow1, actionsRow2);
                 container.appendChild(studentCard);
-                
-                // Добавление обработчиков
+                // Обработчики
                 addLessonBtn.addEventListener('click', () => addLessonp(student.id));
                 viewTasksBtn.addEventListener('click', () => viewStudentTasks(student.id));
                 editAccountBtn.addEventListener('click', () => editStudentAccount(student.id));
@@ -73,7 +75,20 @@ function showError(message) {
 document.addEventListener('DOMContentLoaded', () => {
     loadStudents();
 
-    // Добавляем обработчики навигации
+    // Кнопка выхода
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+            if (confirm('Вы действительно хотите выйти?')) {
+                try {
+                    await fetch('/api/v0/auth/logout', { method: 'POST', credentials: 'include' });
+                } catch (e) {}
+                window.location.href = 'login.html';
+            }
+        });
+    }
+
+    // Навигация
     const studentsBtn = document.getElementById('btn_students');
     const lessonsBtn = document.getElementById('btn_lsns');
     const tasksBtn = document.getElementById('btn_tsks');
@@ -88,6 +103,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (tasksBtn) tasksBtn.addEventListener('click', () => {
         window.location.href = 'tasks_page.html';
+    });
+
+    // Выделение заполненных полей
+    document.querySelectorAll('.form-control').forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.value.trim()) this.classList.add('filled');
+            else this.classList.remove('filled');
+        });
     });
 });
 

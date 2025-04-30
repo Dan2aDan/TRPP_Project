@@ -3,7 +3,20 @@
     min-height: 100vh;
     background: linear-gradient(135deg, #024e68 0%, #ceedff 50%, #ffffff 100%);
 }
-
+.logout-btn {
+    background: #fff;
+    color: #06799f;
+    border: 2px solid #06799f;
+    border-radius: 1rem;
+    font-weight: 600;
+    padding: 0.5rem 1.2rem;
+    margin-left: 1rem;
+    transition: background 0.2s, color 0.2s;
+}
+.logout-btn:hover {
+    background: #06799f;
+    color: #fff;
+}
 .task-main-card {
     background: rgba(255,255,255,0.97);
     border-radius: 1.5rem;

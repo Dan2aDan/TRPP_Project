@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tasksContainer = document.getElementById('tasks-container');
     const loadingIndicator = document.getElementById('loading-indicator');
     const errorMessage = document.getElementById('error-message');
+    const logoutBtn = document.getElementById('logout-btn');
 
     // Проверяем существование элементов
     if (!lessonsBtn || !tasksBtn || !lessonTitle || !lessonDescription || !tasksContainer || !loadingIndicator || !errorMessage) {
@@ -156,6 +157,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     tasksBtn.addEventListener('click', () => {
         window.location.href = 'student_tasks_page.html';
     });
+
+    // Добавляем обработчик для кнопки logout-btn
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+            if (confirm('Вы действительно хотите выйти?')) {
+                try {
+                    await fetch('/api/v0/auth/logout', { method: 'POST', credentials: 'include' });
+                } catch (e) {}
+                window.location.href = 'login.html';
+            }
+        });
+    }
 
     // Загружаем данные урока
     loadLessonData();

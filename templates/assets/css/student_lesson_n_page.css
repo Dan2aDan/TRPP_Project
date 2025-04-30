@@ -152,6 +152,21 @@
     text-align: center;
 }
 
+.logout-btn {
+    background: #fff;
+    color: #06799f;
+    border: 2px solid #06799f;
+    border-radius: 1rem;
+    font-weight: 600;
+    padding: 0.5rem 1.2rem;
+    margin-left: 1rem;
+    transition: background 0.2s, color 0.2s;
+}
+.logout-btn:hover {
+    background: #06799f;
+    color: #fff;
+}
+
 @media (max-width: 600px) {
     .lesson-main-card {
         padding: 1rem;

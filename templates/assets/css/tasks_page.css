@@ -1,24 +1,13 @@
-/* Градиентный фон */
-.tasks-bg {
+/* Градиентный фон для страницы задач учителя */
+.teacher-bg {
     min-height: 100vh;
     background: linear-gradient(135deg, #024e68 0%, #ceedff 50%, #ffffff 100%);
 }
-
-.tasks-main-card {
-    background: rgba(255,255,255,0.97);
-    border-radius: 1.5rem;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.10);
-    padding: 2rem 2rem 2.5rem 2rem;
-    max-width: 900px;
-    margin: 0 auto 2rem auto;
-}
-
 .tasks-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 18px;
 }
-
 .task-card {
     background: #f8fbff;
     border-radius: 1rem;
@@ -38,12 +27,6 @@
     font-weight: 500;
     color: #06799f;
 }
-.task-desc {
-    color: #555;
-    font-size: 0.98rem;
-    margin: 0.5rem 0 0.5rem 0;
-    flex: 1;
-}
 .task-status-indicator {
     width: 16px;
     height: 16px;
@@ -53,56 +36,22 @@
 .task-status-completed { background: #4CAF50; }
 .task-status-in-progress { background: #FFC107; }
 .task-status-not-started { background: #F44336; }
-
-.open-task-btn {
+.add-task-btn {
     background: var(--primary-color, #06799f);
-    color: #fff;
-    border-radius: 1rem;
-    font-weight: 600;
-    padding: 0.5rem 1.2rem;
-    box-shadow: 0 2px 8px rgba(6,121,159,0.08);
-    transition: background 0.2s, color 0.2s;
+    color: white;
     border: none;
-    margin-left: 1rem;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    margin-top: 1.5rem;
+    float: right;
 }
-.open-task-btn:hover {
+.add-task-btn:hover {
     background: var(--primary-hover, #056a8a);
     color: #fff;
+    transform: translateY(-2px);
 }
-
-/* Кнопки навигации */
-.nav-buttons {
-    margin-bottom: 2rem;
-}
-.nav-btn {
-    background: rgba(255,255,255,0.9);
-    border: none;
-    border-radius: 1rem;
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--primary-color, #06799f);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.10);
-    transition: all 0.3s;
-    margin: 0.5rem;
-    min-width: 180px;
-}
-.nav-btn:hover, .nav-btn.active {
-    background: var(--primary-color, #06799f);
-    color: #fff;
-}
-
-/* Сообщения */
-.error-message {
-    border-radius: 1rem;
-    padding: 1rem;
-    background: #ffebee;
-    color: #c62828;
-    margin-bottom: 1rem;
-    font-weight: 500;
-    text-align: center;
-}
-
 .logout-btn {
     background: #fff;
     color: #06799f;
@@ -117,21 +66,18 @@
     background: #06799f;
     color: #fff;
 }
-
 @media (max-width: 600px) {
-    .tasks-main-card {
+    .teacher-main-card {
         padding: 1rem;
-    }
-    .tasks-grid {
-        gap: 10px;
     }
     .task-card {
         flex-direction: column;
         align-items: flex-start;
         padding: 1rem;
     }
-    .open-task-btn {
+    .add-task-btn {
         width: 100%;
         margin: 1rem 0 0 0;
+        float: none;
     }
 } 

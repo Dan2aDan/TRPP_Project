@@ -19,6 +19,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = 'student_tasks_page.html';
     });
 
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+            if (confirm('Вы действительно хотите выйти?')) {
+                try {
+                    await fetch('/api/v0/auth/logout', { method: 'POST', credentials: 'include' });
+                } catch (e) {}
+                window.location.href = 'login.html';
+            }
+        });
+    }
+
     // Функция для отображения сообщения об ошибке
     function showError(message) {
         const errorDiv = document.createElement('div');
