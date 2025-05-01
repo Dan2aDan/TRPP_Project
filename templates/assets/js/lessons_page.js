@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = '/login';
         }
     });
+    document.getElementById('new_lesson_btn').addEventListener('click', () => {
+        window.location.href = 'lesson_n_page.html?id=-1';
+    });
 
     // Элементы
     const lessonsContainer = document.getElementById('lessons-container');
@@ -101,36 +104,37 @@ document.addEventListener('DOMContentLoaded', () => {
             showError('Ошибка при загрузке уроков');
         }
     }
+    // }});
 
-    // Добавление урока
-    if (addLessonForm && addLessonBtn) {
-        addLessonBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const title = addLessonForm.querySelector('#lessonTitle').value.trim();
-            const description = addLessonForm.querySelector('#lessonDescription').value.trim();
-            const date = addLessonForm.querySelector('#lessonDate').value;
-            // Файлы не реализованы
-            if (!title || !description || !date) {
-                showError('Пожалуйста, заполните все поля');
-                return;
-            }
-            showLoading();
-            try {
-                const response = await fetch('/api/v0/lessons/lessons', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ title, description, date })
-                });
-                if (!response.ok) throw new Error('Ошибка добавления');
-                if (modalInstance) modalInstance.hide();
-                addLessonForm.reset();
-                await loadLessons();
-            } catch (e) {
-                showError('Ошибка при добавлении урока');
-            }
-        });
-    }
+//     // Добавление урока
+//     if (addLessonForm && addLessonBtn) {
+//         addLessonBtn.addEventListener('click', async (e) => {
+//             e.preventDefault();
+//             const title = addLessonForm.querySelector('#lessonTitle').value.trim();
+//             const description = addLessonForm.querySelector('#lessonDescription').value.trim();
+//             const date = addLessonForm.querySelector('#lessonDate').value;
+//             // Файлы не реализованы
+//             if (!title || !description || !date) {
+//                 showError('Пожалуйста, заполните все поля');
+//                 return;
+//             }
+//             showLoading();
+//             try {
+//                 const response = await fetch('/api/v0/lessons/lessons', {
+//                     method: 'POST',
+//                     headers: { 'Content-Type': 'application/json' },
+//                     credentials: 'include',
+//                     body: JSON.stringify({ title, description, date })
+//                 });
+//                 if (!response.ok) throw new Error('Ошибка добавления');
+//                 if (modalInstance) modalInstance.hide();
+//                 addLessonForm.reset();
+//                 await loadLessons();
+//             } catch (e) {
+//                 showError('Ошибка при добавлении урока');
+//             }
+//         });
+//     }
 
     // Инициализация
     hideError();

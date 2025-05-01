@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Обработчик скачивания файлов
     downloadFilesBtn.addEventListener('click', async () => {
-        showLoading();
+        // showLoading();
         try {
             const response = await fetch(`/api/v0/lessons/lesson/${lessonId}/files`, {
                 method: 'GET',
@@ -314,6 +314,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Загружаем данные урока и задачи
+    if (lessonId !== '-1') {
     await loadLesson();
-    await loadTasks();
+    await loadTasks();}
 });
