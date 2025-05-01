@@ -1,0 +1,85 @@
+body, .teacher-bg {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #024e68 0%, #ceedff 50%, #ffffff 100%);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.header-bar {
+    margin-bottom: 2.5rem;
+}
+
+.main-card, .teacher-main-card {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto 2rem auto;
+    background: rgba(255, 255, 255, 0.97);
+    border-radius: 1.5rem;
+    box-shadow: 0 6px 24px rgba(6,121,159,0.10);
+    padding: 2.5rem 2rem 2rem 2rem;
+    box-sizing: border-box;
+}
+
+.form-label {
+    color: #06799f;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border-radius: 0.7rem;
+    border: 2px solid #e0e0e0;
+    padding: 0.9rem 1.2rem;
+    font-size: 1.08rem;
+    transition: border 0.2s, box-shadow 0.2s;
+    background: #f8fbff;
+    box-shadow: none;
+}
+.form-control:focus {
+    border-color: #06799f;
+    box-shadow: 0 0 0 0.15rem rgba(6,121,159,0.08);
+    background: #fff;
+}
+.form-control.filled {
+    border-color: #06799f;
+    background: #e6f7ff;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, #06799f 0%, #00b4d8 100%);
+    border: none;
+    border-radius: 0.7rem;
+    font-weight: 600;
+    padding: 0.7rem 2.2rem;
+    font-size: 1.1rem;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.btn-primary:hover, .btn-primary:focus {
+    background: linear-gradient(90deg, #00b4d8 0%, #06799f 100%);
+    box-shadow: 0 4px 16px rgba(6,121,159,0.13);
+}
+.btn-secondary {
+    border-radius: 0.7rem;
+    font-weight: 600;
+    padding: 0.7rem 2.2rem;
+    font-size: 1.1rem;
+}
+.logout-btn {
+    background: #fff;
+    color: #06799f;
+    border: 2px solid #06799f;
+    border-radius: 1rem;
+    font-weight: 600;
+    padding: 0.5rem 1.2rem;
+    margin-left: 1rem;
+    transition: background 0.2s, color 0.2s;
+}
+.logout-btn:hover {
+    background: #06799f;
+    color: #fff;
+}
+@media (max-width: 700px) {
+    .main-card, .teacher-main-card {
+        padding: 1rem;
+        max-width: 100%;
+    }
+} 
