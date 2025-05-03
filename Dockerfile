@@ -1,22 +1,19 @@
-FROM python:3.11
+FROM python:3.11-slim
 
-RUN mkdir "/usr/src/app/"
-EXPOSE 8000
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    TZ=Europe/Moscow
 
-WORKDIR /usr/src/app/
+RUN apt-get update && apt-get install -y python3-pip tzdata gcc libpq-dev && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
+    pip install --upgrade pip pipenv gunicorn && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-ENV TZ=Europe/Moscow
-RUN apt update
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+WORKDIR /usr/src/app
 
-RUN apt-get install python3-pip -y && pip install --upgrade pip && pip install pipenv
-RUN pip install gunicorn
-RUN mkdir -p /usr/src/app/
-COPY requirements.txt /usr/src/app/requirements.txt
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-RUN mkdir -p /usr/src/app/
-COPY . /usr/src/app/
+COPY . .
 
+EXPOSE 8000

@@ -1,0 +1,87 @@
+/* Градиентный фон для страницы задач учителя */
+.teacher-bg {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #024e68 0%, #ceedff 50%, #ffffff 100%);
+}
+.tasks-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+}
+.task-card {
+    background: #f8fbff;
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(6,121,159,0.07);
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+.task-card:hover {
+    box-shadow: 0 6px 18px rgba(6,121,159,0.13);
+    transform: translateY(-2px) scale(1.01);
+}
+.task-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #06799f;
+}
+.task-status-indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-left: 1rem;
+}
+.task-status-completed { background: #4CAF50; }
+.task-status-in-progress { background: #FFC107; }
+.task-status-not-started { background: #F44336; }
+.add-task-btn {
+    background: var(--primary-color, #06799f);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    margin: 2rem auto 0 auto;
+    display: block;
+    float: none;
+    width: fit-content;
+}
+.add-task-btn:hover {
+    background: var(--primary-hover, #056a8a);
+    color: #fff;
+    transform: translateY(-2px);
+}
+.logout-btn {
+    background: #fff;
+    color: #06799f;
+    border: 2px solid #06799f;
+    border-radius: 1rem;
+    font-weight: 600;
+    padding: 0.5rem 1.2rem;
+    margin-left: 1rem;
+    transition: background 0.2s, color 0.2s;
+}
+.logout-btn:hover {
+    background: #06799f;
+    color: #fff;
+}
+@media (max-width: 600px) {
+    .teacher-main-card {
+        padding: 1rem;
+        height: 100%;
+    }
+    .task-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+    }
+    .add-task-btn {
+        width: 100%;
+        margin: 1rem 0 0 0;
+        float: none;
+        display: block;
+    }
+} 

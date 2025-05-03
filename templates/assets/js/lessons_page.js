@@ -1,81 +1,142 @@
-// Функция для загрузки списка уроков с сервера
-async function loadLessons() {
-    try {
-        // Загружаем список уроков с сервера
-        const response = await fetch('/api/v0/lessons/lessons', {method: 'GET'});
-        const lessons = await response.json();
+document.addEventListener('DOMContentLoaded', () => {
+    // Навигация
+    document.getElementById('btn_students')?.addEventListener('click', () => {
+        window.location.href = 'teacher_main_page.html';
+    });
+    document.getElementById('btn_lsns')?.addEventListener('click', () => {
+        window.location.href = 'lessons_page.html';
+    });
+    document.getElementById('btn_tsks')?.addEventListener('click', () => {
+        window.location.href = 'tasks_page.html';
+    });
+    document.getElementById('logout-btn')?.addEventListener('click', async () => {
+        if (confirm('Вы уверены, что хотите выйти?')) {
+            await fetch('/api/v0/auth/logout', { method: 'POST', credentials: 'include' });
+            window.location.href = '/login';
+        }
+    });
+    document.getElementById('new_lesson_btn').addEventListener('click', () => {
+        window.location.href = 'lesson_n_page.html?id=-1';
+    });
 
-        const container = document.getElementById('students-container'); // Контейнер на странице
-        container.innerHTML = ''; // Очищаем старые уроки
-
-        lessons.lessons.forEach(lesson => {
-            const lessonHTML = `
-        <div class="col-lg-11 col-xl-12 col-xxl-12 d-lg-flex justify-content-lg-start align-items-lg-center" style="height: 51px;width: 500px;padding: 5px;">
-            <button class="btn link-dark my-btn lesson-btn" type="button" style="width: 500px;height: 50px;padding: 1px;" data-id="${lesson.id}">
-                ${lesson.title}
-            </button>
-        </div>`;
-
-            container.insertAdjacentHTML('beforeend', lessonHTML);
-        });
-
-// Добавляем обработчики событий для кнопок "Посмотреть урок"
-        document.querySelectorAll('.lesson-btn').forEach(button => {
-            button.addEventListener('click', (event) => {
-                console.trace('Клик по уроку');
-                const lessonId = event.currentTarget.getAttribute('data-id');
-                viewLesson(lessonId);
-            });
-        });
-    } catch (error) {
-        console.error('Ошибка загрузки списка уроков:', error);
+    // Элементы
+    const lessonsContainer = document.getElementById('lessons-container');
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const errorMessage = document.getElementById('error-message');
+    const addLessonModal = document.getElementById('addLessonModal');
+    const addLessonForm = document.getElementById('addLessonForm');
+    const addLessonBtn = document.getElementById('addLessonBtn');
+    let modalInstance = null;
+    if (addLessonModal && window.bootstrap) {
+        modalInstance = bootstrap.Modal.getOrCreateInstance(addLessonModal);
     }
-}
 
-// Вызываем функцию при загрузке страницы
-document.addEventListener('DOMContentLoaded', loadLessons);
+    // Вспомогательные функции
+    function showLoading() {
+        if (loadingIndicator) loadingIndicator.style.display = '';
+        if (errorMessage) errorMessage.style.display = 'none';
+    }
+    function hideLoading() {
+        if (loadingIndicator) loadingIndicator.style.display = 'none';
+    }
+    function showError(msg) {
+        if (errorMessage) {
+            errorMessage.textContent = msg;
+            errorMessage.style.display = '';
+        }
+        hideLoading();
+    }
+    function hideError() {
+        if (errorMessage) errorMessage.style.display = 'none';
+    }
 
-// Обработчики событий для кнопок навигации
-document.getElementById('btn_students').addEventListener('click', () => {
-    window.location.href = 'teacher_main_page.html';
-});
-
-document.getElementById('btn_lsns').addEventListener('click', () => {
-    window.location.href = 'lessons_page.html';
-});
-
-document.getElementById('btn_tsks').addEventListener('click', () => {
-    window.location.href = 'tasks_page.html';
-});
-
-// Функция для просмотра подробностей урока
-function viewLesson(lessonId) {
-    console.log('Просмотр урока с ID:', lessonId);
-    window.location.href = `lesson_n_page.html?id=${lessonId}`;
-}
-
-// Функция для добавления нового урока
-async function addLesson() {
-    const lessonName = prompt("Введите название нового урока");
-    if (lessonName) {
+    // Загрузка уроков
+    async function loadLessons() {
+        showLoading();
         try {
-            const response = await fetch('/api/v0/lessons/lessons', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({title: lessonName, description: "Новый урок"})
-            });
-            if (response.ok) {
-                alert('Урок добавлен');
-                loadLessons(); // Перезагружаем список уроков после добавления
-            } else {
-                alert('Ошибка при добавлении урока');
+            const response = await fetch('/api/v0/lessons/lessons', { method: 'GET', credentials: 'include' });
+            if (!response.ok) throw new Error('Ошибка загрузки');
+            const data = await response.json();
+            const lessons = data.lessons || [];
+            lessonsContainer.innerHTML = '';
+            if (lessons.length === 0) {
+                lessonsContainer.innerHTML = '<p class="text-center text-muted">Нет доступных уроков</p>';
+                hideLoading();
+                return;
             }
-        } catch (error) {
-            console.error('Ошибка при добавлении урока:', error);
-            alert('Произошла ошибка при добавлении урока');
+            lessons.forEach(lesson => {
+                const card = document.createElement('div');
+                card.className = 'lesson-card mb-3';
+
+                const title = document.createElement('h4');
+                title.className = 'lesson-title mb-2';
+                title.textContent = lesson.title;
+                card.appendChild(title);
+
+                const description = document.createElement('p');
+                description.className = 'lesson-description';
+                description.textContent = lesson.description || '';
+                card.appendChild(description);
+
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'lesson-actions mt-3';
+
+                const editButton = document.createElement('button');
+                editButton.className = 'btn action-btn edit-lesson';
+                editButton.dataset.id = lesson.id;
+                editButton.dataset.action = 'edit';
+
+                const icon = document.createElement('i');
+                icon.className = 'fas fa-edit me-2';
+                editButton.appendChild(icon);
+                editButton.appendChild(document.createTextNode('Редактировать'));
+
+                editButton.addEventListener('click', () => {
+                    window.location.href = `lesson_n_page.html?id=${lesson.id}`;
+                });
+
+                actionsDiv.appendChild(editButton);
+                card.appendChild(actionsDiv);
+                lessonsContainer.appendChild(card);
+            });
+            hideLoading();
+        } catch (e) {
+            showError('Ошибка при загрузке уроков');
         }
     }
-}
+    // }});
 
-// Добавляем обработчик для кнопки "Добавить урок"
-document.getElementById('btn_new_lsn').addEventListener('click', addLesson);
+//     // Добавление урока
+//     if (addLessonForm && addLessonBtn) {
+//         addLessonBtn.addEventListener('click', async (e) => {
+//             e.preventDefault();
+//             const title = addLessonForm.querySelector('#lessonTitle').value.trim();
+//             const description = addLessonForm.querySelector('#lessonDescription').value.trim();
+//             const date = addLessonForm.querySelector('#lessonDate').value;
+//             // Файлы не реализованы
+//             if (!title || !description || !date) {
+//                 showError('Пожалуйста, заполните все поля');
+//                 return;
+//             }
+//             showLoading();
+//             try {
+//                 const response = await fetch('/api/v0/lessons/lessons', {
+//                     method: 'POST',
+//                     headers: { 'Content-Type': 'application/json' },
+//                     credentials: 'include',
+//                     body: JSON.stringify({ title, description, date })
+//                 });
+//                 if (!response.ok) throw new Error('Ошибка добавления');
+//                 if (modalInstance) modalInstance.hide();
+//                 addLessonForm.reset();
+//                 await loadLessons();
+//             } catch (e) {
+//                 showError('Ошибка при добавлении урока');
+//             }
+//         });
+//     }
+
+    // Инициализация
+    hideError();
+    loadLessons();
+});

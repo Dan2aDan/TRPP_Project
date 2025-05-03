@@ -1,0 +1,194 @@
+:root {
+    --primary-color: #06799f;
+    --primary-hover: #056a8a;
+    --gradient-start: #024e68;
+    --gradient-middle: #ceedff;
+    --gradient-end: #ffffff;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-middle) 50%, var(--gradient-end) 100%);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.nav-buttons {
+    margin: 2rem 0;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 1rem;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+    margin: 0.5rem;
+}
+
+.nav-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+.student-actions-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 0.7rem;
+}
+.student-actions-row:last-child {
+    margin-bottom: 0;
+}
+.nav-btn.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.main-card, .teacher-main-card {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto 2rem auto;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 1.5rem;
+    box-shadow: var(--card-shadow);
+    padding: 3rem;
+    box-sizing: border-box;
+}
+
+.lesson-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+    max-width: 500px;
+    width: 100%;
+    margin: 0 auto 1rem auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.lesson-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+.action-btn {
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: #fff;
+    color: #06799f;
+    border: 1.5px solid #06799f;
+    transition: all 0.2s;
+    flex: 1 1 0;
+    white-space: nowrap;
+}
+.logout-btn {
+    background: #fff;
+    color: #06799f;
+    border: 2px solid #06799f;
+    border-radius: 1rem;
+    font-weight: 600;
+    padding: 0.5rem 1.2rem;
+    margin-left: 1rem;
+    transition: background 0.2s, color 0.2s;
+}
+.logout-btn:hover {
+    background: #06799f;
+    color: #fff;
+}
+.action-btn:hover {
+    background: #06799f;
+    color: #fff;
+}
+.lesson-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.action-btn {
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+}
+
+.add-lesson-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: var(--transition);
+    margin-top: 1.5rem;
+}
+
+.add-lesson-btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+.modal-content {
+    border-radius: 1rem;
+    border: none;
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+}
+
+.form-control {
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e0e0e0;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(6, 121, 159, 0.1);
+}
+
+@media (max-width: 768px) {
+    .lesson-actions {
+        flex-direction: column;
+    }
+    
+    .action-btn {
+        width: 100%;
+    }
+    .main-card, .teacher-main-card {
+        padding: 1rem;
+        max-width: 100%;
+    }
+    .lesson-card {
+        max-width: 100%;
+        padding: 1rem;
+    }
+}

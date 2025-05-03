@@ -1,0 +1,186 @@
+/* Градиентный фон для страницы урока */
+.lesson-bg {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #024e68 0%, #ceedff 50%, #ffffff 100%);
+}
+
+/* Основная карточка урока */
+.lesson-main-card {
+    background: rgba(255,255,255,0.97);
+    border-radius: 1.5rem;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.10);
+    padding: 2rem 2rem 2.5rem 2rem;
+    max-width: 800px;
+    margin: 0 auto 2rem auto;
+}
+
+.lesson-header-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    gap: 2rem;
+}
+
+.lesson-header-info {
+    flex: 1;
+}
+
+.lesson-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color, #06799f);
+    margin-bottom: 0.5rem;
+}
+
+.lesson-description {
+    width: 100%;
+    min-height: 90px;
+    border-radius: 1rem;
+    border: 1px solid #cce4f6;
+    background: #f6fbff;
+    color: #333;
+    font-size: 1rem;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    resize: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.lesson-description:focus {
+    border-color: var(--primary-color, #06799f);
+    box-shadow: 0 0 0 2px #ceedff;
+}
+.lesson-description:read-only {
+    background: #f6fbff;
+    color: #888;
+    border-style: dashed;
+}
+
+.status-indicator {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    margin-top: 0.5rem;
+    box-shadow: 0 0 0 2px #e0e0e0;
+}
+.status-completed { background: #4CAF50; }
+.status-in-progress { background: #FFC107; }
+.status-not-started { background: #F44336; }
+
+.lesson-files {
+    margin-bottom: 1.5rem;
+}
+.download-btn {
+    background: var(--primary-color, #06799f);
+    color: #fff;
+    border-radius: 1rem;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 2px 8px rgba(6,121,159,0.08);
+    transition: background 0.2s, color 0.2s;
+}
+.download-btn:hover {
+    background: var(--primary-hover, #056a8a);
+    color: #fff;
+}
+
+.tasks-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+}
+
+.task-card {
+    background: #f8fbff;
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(6,121,159,0.07);
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+.task-card:hover {
+    box-shadow: 0 6px 18px rgba(6,121,159,0.13);
+    transform: translateY(-2px) scale(1.01);
+}
+.task-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #06799f;
+}
+.task-status-indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-left: 1rem;
+}
+.task-status-completed { background: #4CAF50; }
+.task-status-in-progress { background: #FFC107; }
+.task-status-not-started { background: #F44336; }
+
+/* Кнопки навигации */
+.nav-buttons {
+    margin-bottom: 2rem;
+}
+.nav-btn {
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 1rem;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color, #06799f);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.10);
+    transition: all 0.3s;
+    margin: 0.5rem;
+    min-width: 180px;
+}
+.nav-btn:hover, .nav-btn.active {
+    background: var(--primary-color, #06799f);
+    color: #fff;
+}
+
+/* Сообщения */
+.error-message {
+    border-radius: 1rem;
+    padding: 1rem;
+    background: #ffebee;
+    color: #c62828;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+.logout-btn {
+    background: #fff;
+    color: #06799f;
+    border: 2px solid #06799f;
+    border-radius: 1rem;
+    font-weight: 600;
+    padding: 0.5rem 1.2rem;
+    margin-left: 1rem;
+    transition: background 0.2s, color 0.2s;
+}
+.logout-btn:hover {
+    background: #06799f;
+    color: #fff;
+}
+
+@media (max-width: 600px) {
+    .lesson-main-card {
+        padding: 1rem;
+    }
+    .lesson-header-block {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .tasks-grid {
+        gap: 10px;
+    }
+    .task-card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+    }
+} 

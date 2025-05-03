@@ -1,0 +1,160 @@
+/* Градиентный фон для страницы задания */
+.task-bg {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #024e68 0%, #ceedff 50%, #ffffff 100%);
+}
+.logout-btn {
+    background: #fff;
+    color: #06799f;
+    border: 2px solid #06799f;
+    border-radius: 1rem;
+    font-weight: 600;
+    padding: 0.5rem 1.2rem;
+    margin-left: 1rem;
+    transition: background 0.2s, color 0.2s;
+}
+.logout-btn:hover {
+    background: #06799f;
+    color: #fff;
+}
+.task-main-card {
+    background: rgba(255,255,255,0.97);
+    border-radius: 1.5rem;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.10);
+    padding: 2rem 2rem 2.5rem 2rem;
+    max-width: 800px;
+    margin: 0 auto 2rem auto;
+}
+
+.task-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color, #06799f);
+    margin-bottom: 0.5rem;
+}
+
+.task-desc {
+    width: 100%;
+    min-height: 90px;
+    border-radius: 1rem;
+    border: 1px solid #cce4f6;
+    background: #f6fbff;
+    color: #333;
+    font-size: 1rem;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    resize: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.task-desc.filled {
+    background: #e6f7e6;
+    border-color: #4CAF50;
+}
+.task-desc:focus {
+    border-color: var(--primary-color, #06799f);
+    box-shadow: 0 0 0 2px #ceedff;
+}
+.task-desc:read-only {
+    background: #f6fbff;
+    color: #888;
+    border-style: dashed;
+}
+
+.task-answer {
+    width: 100%;
+    min-height: 120px;
+    border-radius: 1rem;
+    border: 1.5px solid #cce4f6;
+    background: #f6fbff;
+    color: #333;
+    font-size: 1rem;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    resize: vertical;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.task-answer.filled {
+    background: #e6f7e6;
+    border-color: #4CAF50;
+}
+.task-answer:focus {
+    border-color: var(--primary-color, #06799f);
+    box-shadow: 0 0 0 2px #ceedff;
+}
+
+.task-files {
+    margin-bottom: 1.5rem;
+}
+.download-btn {
+    background: var(--primary-color, #06799f);
+    color: #fff;
+    border-radius: 1rem;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 2px 8px rgba(6,121,159,0.08);
+    transition: background 0.2s, color 0.2s;
+}
+.download-btn:hover {
+    background: var(--primary-hover, #056a8a);
+    color: #fff;
+}
+
+.send-btn {
+    background: var(--primary-color, #06799f);
+    color: #fff;
+    border-radius: 1rem;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 2px 8px rgba(6,121,159,0.08);
+    transition: background 0.2s, color 0.2s;
+}
+.send-btn:hover {
+    background: var(--primary-hover, #056a8a);
+    color: #fff;
+}
+
+/* Кнопки навигации */
+.nav-buttons {
+    margin-bottom: 2rem;
+}
+.nav-btn {
+    background: rgba(255,255,255,0.9);
+    border: none;
+    border-radius: 1rem;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color, #06799f);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.10);
+    transition: all 0.3s;
+    margin: 0.5rem;
+    min-width: 180px;
+}
+.nav-btn:hover, .nav-btn.active {
+    background: var(--primary-color, #06799f);
+    color: #fff;
+}
+
+/* Сообщения */
+.error-message {
+    border-radius: 1rem;
+    padding: 1rem;
+    background: #ffebee;
+    color: #c62828;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .task-main-card {
+        padding: 1rem;
+    }
+    .task-title {
+        font-size: 1.1rem;
+    }
+    .task-desc, .task-answer {
+        font-size: 0.95rem;
+        padding: 0.7rem;
+    }
+} 

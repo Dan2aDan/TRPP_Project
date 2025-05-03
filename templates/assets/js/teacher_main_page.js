@@ -1,65 +1,119 @@
 // Функция для загрузки списка учеников с сервера
 async function loadStudents() {
     try {
-        // Загружаем список учеников с сервера
-        const response = await fetch('/api/v0/students/students'); // Замените на ваш эндпоинт
+        const response = await fetch('/api/v0/students/students');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const students = await response.json();
-        console.trace(students);
-        const container = document.getElementById('students-container'); // Контейнер на странице
-        // const lessonsList = container.querySelector('.row'); // Секция для отображения уроков
-        container.innerHTML = ''; // Очищаем старые уроки
-
-        if (students.students.length > 0) {
-
-            students.students.forEach(student => {
-                const row = document.createElement('div');
-                row.className = 'row';
-                row.style.cssText = 'margin: 10px 0; padding: 0;';
-
-                row.innerHTML = `
-        <div class="col d-lg-flex justify-content-start align-items-center"
-             style="padding: 0;">
-            <p style="width: 250px; margin: 0;">${student.login}</p>
-            <button class="btn link-dark my-btn add-lesson" type="button" style="width:296px;">Открыть урок</button>
-            <button class="btn link-dark my-btn view-tasks" data-id="${student.id}" style="margin-left: 10px;">Посмотреть выполненные задания</button>
-            <button class="btn my-btn edit-account" data-id="${student.id}" style="margin-left: 10px;">Изменить логин и пароль</button>
-            <button class="btn my-btn delete-student" data-id="${student.id}" style="margin-left: 10px;">Удалить ученика</button>
-        </div>
-    `;
-
-                // Добавление обработчиков
-                row.querySelector('.add-lesson').addEventListener('click', () => addLessonp(student.id));
-                row.querySelector('.view-tasks').addEventListener('click', () => viewStudentTasks(student.id));
-                row.querySelector('.edit-account').addEventListener('click', () => editStudentAccount(student.id));
-                row.querySelector('.delete-student').addEventListener('click', () => deleteStudent(student.id));
-
-                container.appendChild(row);
-            });
-
-
+        const container = document.getElementById('students-container');
+        
+        if (!container) {
+            console.error('Container element not found');
+            return;
         }
 
-    } catch
-        (error) {
+        container.innerHTML = '';
+
+        if (students.students && students.students.length > 0) {
+            students.students.forEach(student => {
+                const studentCard = document.createElement('div');
+                studentCard.className = 'student-card';
+                // Первая строка: login
+                const studentLoginRow = document.createElement('div');
+                studentLoginRow.className = 'student-login-row';
+                studentLoginRow.textContent = student.login;
+                // Вторая строка: 2 кнопки
+                const actionsRow1 = document.createElement('div');
+                actionsRow1.className = 'student-actions-row';
+                const addLessonBtn = createActionButton('Уроки', 'add-lesson', 'fa-book');
+                const viewTasksBtn = createActionButton('Задания', 'view-tasks', 'fa-tasks', student.id);
+                actionsRow1.append(addLessonBtn, viewTasksBtn);
+                // Третья строка: 2 кнопки
+                const actionsRow2 = document.createElement('div');
+                actionsRow2.className = 'student-actions-row';
+                const editAccountBtn = createActionButton('Изменить', 'edit-account', 'fa-edit', student.id);
+                const deleteStudentBtn = createActionButton('Удалить', 'delete-student', 'fa-trash', student.id);
+                actionsRow2.append(editAccountBtn, deleteStudentBtn);
+                // Собираем карточку
+                studentCard.append(studentLoginRow, actionsRow1, actionsRow2);
+                container.appendChild(studentCard);
+                // Обработчики
+                addLessonBtn.addEventListener('click', () => addLessonp(student.id));
+                viewTasksBtn.addEventListener('click', () => viewStudentTasks(student.id));
+                editAccountBtn.addEventListener('click', () => editStudentAccount(student.id));
+                deleteStudentBtn.addEventListener('click', () => deleteStudent(student.id));
+            });
+        }
+    } catch (error) {
         console.error('Ошибка загрузки списка учеников:', error);
+        showError('Произошла ошибка при загрузке списка учеников');
     }
 }
 
-// Вызываем функцию при загрузке страницы
-document.addEventListener('DOMContentLoaded', loadStudents);
+// Вспомогательная функция для создания кнопок действий
+function createActionButton(text, className, iconClass, dataId = null) {
+    const button = document.createElement('button');
+    button.className = `btn action-btn ${className}`;
+    button.innerHTML = `<i class="fas ${iconClass} me-2"></i>${text}`;
+    if (dataId) {
+        button.dataset.id = dataId;
+    }
+    return button;
+}
 
-// Перенаправление на другие страницы
-document.getElementById('btn_students').addEventListener('click', () => {
-    window.location.href = 'teacher_main_page.html';
+// Функция для отображения ошибки
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'alert alert-danger error-message';
+    errorDiv.textContent = message;
+    document.getElementById('students-container').prepend(errorDiv);
+    setTimeout(() => errorDiv.remove(), 5000);
+}
+
+// Инициализация страницы
+document.addEventListener('DOMContentLoaded', () => {
+    loadStudents();
+
+    // Кнопка выхода
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+            if (confirm('Вы действительно хотите выйти?')) {
+                try {
+                    await fetch('/api/v0/auth/logout', { method: 'POST', credentials: 'include' });
+                } catch (e) {}
+                window.location.href = 'login.html';
+            }
+        });
+    }
+
+    // Навигация
+    const studentsBtn = document.getElementById('btn_students');
+    const lessonsBtn = document.getElementById('btn_lsns');
+    const tasksBtn = document.getElementById('btn_tsks');
+
+    if (studentsBtn) studentsBtn.addEventListener('click', () => {
+        window.location.href = 'teacher_main_page.html';
+    });
+
+    if (lessonsBtn) lessonsBtn.addEventListener('click', () => {
+        window.location.href = 'lessons_page.html';
+    });
+
+    if (tasksBtn) tasksBtn.addEventListener('click', () => {
+        window.location.href = 'tasks_page.html';
+    });
+
+    // Выделение заполненных полей
+    document.querySelectorAll('.form-control').forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.value.trim()) this.classList.add('filled');
+            else this.classList.remove('filled');
+        });
+    });
 });
 
-document.getElementById('btn_lsns').addEventListener('click', () => {
-    window.location.href = 'lessons_page.html';
-});
-
-document.getElementById('btn_tsks').addEventListener('click', () => {
-    window.location.href = 'tasks_page.html';
-});
 function addLessonp(studentId) {
     console.log('Просмотр заданий ученика с ID:', studentId);
     window.location.href = `lessons_page(frm_tsk_n).html?id=${studentId}`;
@@ -73,16 +127,24 @@ function viewStudentTasks(studentId) {
 // Функция для изменения аккаунта ученика
 async function editStudentAccount(studentId) {
     try {
-        // Получаем текущие данные ученика
         const response = await fetch(`/api/v0/students/${studentId}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const student = await response.json();
-        console.trace(student)
-        // Заполняем поля модального окна
-        document.getElementById('studentId').value = studentId;
-        document.getElementById('studentLogin').value = student.result.login;
-        document.getElementById('studentPassword').value = student.result.password; // Пароль не отображаем
 
-        // Показываем модальное окно
+        const studentIdInput = document.getElementById('studentId');
+        const studentLoginInput = document.getElementById('studentLogin');
+        const studentPasswordInput = document.getElementById('studentPassword');
+
+        if (!studentIdInput || !studentLoginInput || !studentPasswordInput) {
+            throw new Error('Required form elements not found');
+        }
+
+        studentIdInput.value = studentId;
+        studentLoginInput.value = student.result.login;
+        studentPasswordInput.value = student.result.password;
+
         const modal = new bootstrap.Modal(document.getElementById('editStudentModal'));
         modal.show();
     } catch (error) {
@@ -162,22 +224,23 @@ document.getElementById('addStudentBtn').addEventListener('click', async () => {
 
 // Функция для удаления ученика
 async function deleteStudent(studentId) {
-    if (confirm('Вы уверены, что хотите удалить этого ученика?')) {
-        try {
-            // Отправляем запрос на удаление ученика с сервера
-            const response = await fetch(`/api/v0/students/${studentId}`, {
-                method: 'DELETE',
-            });
+    if (!confirm('Вы уверены, что хотите удалить этого ученика?')) {
+        return;
+    }
 
-            if (response.ok) {
-                alert('Ученика удалили');
-                loadStudents();  // Перезагружаем список учеников после удаления
-            } else {
-                alert('Ошибка при удалении ученика');
-            }
-        } catch (error) {
-            console.error('Ошибка при удалении ученика:', error);
-            alert('Произошла ошибка при удалении ученика');
+    try {
+        const response = await fetch(`/api/v0/students/${studentId}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+
+        alert('Ученик успешно удален');
+        loadStudents();
+    } catch (error) {
+        console.error('Ошибка при удалении ученика:', error);
+        alert('Произошла ошибка при удалении ученика');
     }
 }

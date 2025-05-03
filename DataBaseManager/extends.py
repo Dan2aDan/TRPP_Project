@@ -46,7 +46,6 @@ class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, DatabaseTasks,
             conn.commit()
 
     def create_data(self):
-        pass
         teacher1 = self.register_teacher("teacher1", "password1", "Коваленко Кирилл")
         teacher2 = self.register_teacher("teacher2", "password2", "Абубакаров Турпал")
         student1 = self.register_student("student1", "password1", teacher1.id)
@@ -56,3 +55,4 @@ class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, DatabaseTasks,
         task1 = self.add_task(lesson1.id, "task1", "content task 1")
         teacher_solution = self.create_teacher_solution("teacher solution 1")
         self.update_task(task1.id, solution=teacher_solution.id)
+        self.add_lesson_dependencies(lesson1.id, [student1.id,])

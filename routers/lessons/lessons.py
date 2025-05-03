@@ -1,13 +1,17 @@
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse, RedirectResponse
 from datetime import datetime
-from DataBaseManager.extends import DBALL
-from DataBaseManager.models import Lessons
+from DataBaseManager.extends import DBALL, db
+from DataBaseManager.models import Lessons, LessonsDepends, StudentSolutions, Tasks, Teachers
+from routers.auth.auntefication import cookie
 from routers.lessons.schems import (
     LessonCreate, LessonUpdate, LessonDetailResponse,
-    LessonShortResponse, LessonsListResponse, ResponseLesson, LongResponseLesson, LessonDependencyRequest
+    LessonShortResponse, LessonsListResponse, ResponseLesson, LongResponseLesson, LessonDependencyRequest, LessonResponse,
+    StudentLessonsResponse, StudentLessonResponse, TeacherInfo
 )
 from utils.utils import generate_json
+import sqlalchemy
+from sqlalchemy import and_
 
 router = APIRouter()
 
@@ -157,3 +161,84 @@ async def set_lesson_dependencies(data: LessonDependencyRequest, request: Reques
     DBALL().add_lesson_dependencies(data.lesson_id, data.student_ids)
 
     return JSONResponse(content={"message": "Dependencies created successfully", "code": 201})
+
+
+@router.get("/student/{student_id}", response_class=JSONResponse)
+async def get_student_lessons(student_id: int):
+    
+    # Получаем все уроки, назначенные студенту
+    query = sqlalchemy.select(Lessons).join(
+        LessonsDepends,
+        Lessons.id == LessonsDepends.lesson_id
+    ).where(LessonsDepends.student_id == student_id)
+
+    lessons = db.select(query, types=db.all_)
+
+    if not lessons:
+        return generate_json(StudentLessonsResponse.model_validate({
+            "result": [],
+            "msg": "No lessons found for this student",
+            "code": 200
+        }))
+
+    # Для каждого урока определяем статус
+    lessons_with_status = []
+    for lesson in lessons:
+        # Получаем все задачи для урока
+        tasks_query = sqlalchemy.select(Tasks).where(Tasks.lesson_id == lesson.id)
+        tasks = db.select(tasks_query, types=db.all_)
+
+        if not tasks:
+            # Если нет задач, считаем урок не начатым
+            status = "not_started"
+        else:
+            # Проверяем решения студента для всех задач
+            completed_tasks = 0
+            in_progress_tasks = 0
+
+            for task in tasks:
+                solution_query = sqlalchemy.select(StudentSolutions).where(
+                    and_(
+                        StudentSolutions.student_id == student_id,
+                        StudentSolutions.task_id == task.id
+                    )
+                )
+                solution = db.select(solution_query, types=db.all_)
+
+                if solution:
+                    if solution.state == 3:  # Правильно решено
+                        completed_tasks += 1
+                    elif solution.state in [1, 2]:  # В процессе
+                        in_progress_tasks += 1
+
+            # Определяем статус урока на основе решенных задач
+            if completed_tasks == len(tasks):
+                status = "completed"
+            elif completed_tasks > 0 or in_progress_tasks > 0:
+                status = "in_progress"
+            else:
+                status = "not_started"
+
+        # Получаем информацию об учителе
+        teacher_query = sqlalchemy.select(Teachers).where(Teachers.id == lesson.teacher_id)
+        teacher = db.select(teacher_query, types=db.any_)
+
+        # Создаем объект урока со статусом
+        lesson_response = StudentLessonResponse(
+            id=lesson.id,
+            title=lesson.title,
+            description=lesson.content,
+            teacher=TeacherInfo(
+                id=teacher.id,
+                name=teacher.bio
+            ),
+            created_at=lesson.created_at.isoformat(),
+            status=status
+        )
+        lessons_with_status.append(lesson_response.model_dump())
+
+    return generate_json(StudentLessonsResponse.model_validate({
+        "result": lessons_with_status,
+        "msg": "ok",
+        "code": 200
+    }))
