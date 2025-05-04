@@ -19,7 +19,6 @@ router = APIRouter()
 @router.get("/lessons", response_class=JSONResponse)
 async def get_lessons(request: Request):
     session_data = request.state.session_data
-    print(session_data)
     user_id = session_data.id
     user_state = session_data.state
 

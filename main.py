@@ -26,6 +26,7 @@ router.include_router(auth_router, prefix="/auth")
 router.include_router(student_router, prefix="/students")
 router.include_router(lessons_router, prefix="/lessons")
 router.include_router(tasks_router, prefix="/tasks")
+router.include_router(tasks_router, prefix="/solutions")
 app.include_router(router, prefix="/api/v0")
 app.mount("/templates", StaticFiles(directory="templates"), name="templates")
 
