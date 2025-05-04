@@ -65,11 +65,12 @@ async def get_file(file_id: int):
 
 @router.delete("/file/{file_id}", response_class=JSONResponse)
 async def delete_file(file_id: int):
-    # Открепление от уроков
-    # lessons = DBALL().get_teacher_lessons(None)
-    # for lesson in lessons:
-    #     if lesson.file_id == file_id:
-    #         DBALL().update_lesson(lesson.id, file_id=None)
+    #Открепление от уроков
+    lessons = DBALL().get_all_lessons()
+    print(lessons)
+    for lesson in lessons:
+        if lesson.file_id == file_id:
+            DBALL().update_lesson(lesson.id, file_id=None)
 
     # Открепление от задач
     tasks = DBALL().get_all_tasks()
