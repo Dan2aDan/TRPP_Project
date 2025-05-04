@@ -14,6 +14,8 @@ from routers.auth.auth import router as auth_router
 from routers.students.students import router as student_router
 from routers.lessons.lessons import router as lessons_router
 from routers.tasks.tasks import router as tasks_router
+from routers.files.files import router as files_router
+from routers.solutions.solutions import router as solutions_router
 from utils.variable_environment import VarEnv
 
 app = FastAPI()
@@ -26,6 +28,8 @@ router.include_router(auth_router, prefix="/auth")
 router.include_router(student_router, prefix="/students")
 router.include_router(lessons_router, prefix="/lessons")
 router.include_router(tasks_router, prefix="/tasks")
+router.include_router(solutions_router, prefix="/solutions")
+router.include_router(files_router, prefix="/files")
 app.include_router(router, prefix="/api/v0")
 app.mount("/templates", StaticFiles(directory="templates"), name="templates")
 

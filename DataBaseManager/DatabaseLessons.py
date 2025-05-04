@@ -10,6 +10,11 @@ class DatabaseLessons:
     def __init__(self, db):
         self.db = db
 
+    def get_all_lessons(self):
+        query = sqlalchemy.select(Lessons)
+        return self.db.select(query, types=self.db.all_)
+
+
     def get_lesson_by_id(self, lesson_id):
         query = sqlalchemy.select(Lessons).where(Lessons.id == lesson_id)
         return self.db.select(query, types=self.db.any_)
@@ -76,7 +81,7 @@ class DatabaseLessons:
             update_data['title'] = title
         if content is not None:
             update_data['content'] = content
-        if file_id is not None:
+        if file_id is not ...:
             update_data['file_id'] = file_id
 
         if not update_data:

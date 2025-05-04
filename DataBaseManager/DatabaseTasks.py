@@ -54,7 +54,7 @@ class DatabaseTasks:
             update_data['test'] = test
         if solution is not None:
             update_data['compl_solution_id'] = solution
-        if file_id is not None:
+        if file_id is not ...:
             update_data['file_id'] = file_id
 
         if not update_data:
