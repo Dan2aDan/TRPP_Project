@@ -27,11 +27,13 @@ class Files(Base):
     __tablename__ = 'files'
     id: int = Column(Integer, primary_key=True)
     path: str = Column(String(255), nullable=False)
-    url: str = Column(String(255), nullable=False)
+    # url: str = Column(String(255), nullable=False)
     uploaded_at: date = Column(Date)
 
     # Связь с таблицей Lessons
     lessons = relationship("Lessons", back_populates="file")
+    # Связь с таблицей Tasks
+    tasks = relationship("Tasks", back_populates="file")
 
 
 class Lessons(Base):
@@ -41,7 +43,7 @@ class Lessons(Base):
     content: str = Column(String, nullable=False)
     created_at: datetime = Column(DateTime, default=datetime.utcnow)
     teacher_id: int = Column(Integer, ForeignKey('teachers.id'), nullable=False)
-    file_id: int = Column(Integer, ForeignKey('files.id'), nullable=False)
+    file_id: int = Column(Integer, ForeignKey('files.id'), nullable=True)
 
     # Связи
     teacher = relationship("Teachers", back_populates="lessons")
@@ -77,11 +79,13 @@ class Tasks(Base):
     created_at: datetime = Column(DateTime, default=datetime.utcnow)
     test: str = Column(String, nullable=False)
     compl_solution_id: int = Column(Integer, ForeignKey('teacher_solutions.id'), nullable=True)
+    file_id: int = Column(Integer, ForeignKey('files.id'), nullable=True)
 
     # Связи
     lesson = relationship("Lessons", back_populates="tasks")
     teacher_solution = relationship("TeacherSolutions", back_populates="task__")
     student_solutions = relationship("StudentSolutions", back_populates="task")
+    file = relationship("Files", back_populates="tasks")
 
 
 class Students(Base):
