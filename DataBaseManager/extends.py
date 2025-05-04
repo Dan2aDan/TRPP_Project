@@ -14,12 +14,13 @@ from DataBaseManager.DatabaseStudents import DatabaseStudents
 from DataBaseManager.DatabaseTasks import DatabaseTasks
 from DataBaseManager.DbTeacherSolutions import DbTeacherSolutions
 from DataBaseManager.DbStudentSolutions import DbStudentSolutions
+from DataBaseManager.DatabaseFiles import DatabaseFiles
 from utils.utils import singleton
 
 
 @singleton
 class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, DatabaseTasks,
-            UserManager, DbTeacherSolutions, DbStudentSolutions):
+            UserManager, DbTeacherSolutions, DbStudentSolutions, DatabaseFiles):
     def __init__(self, db_=db):
         self.db = db
         super().__init__(db_)
@@ -54,5 +55,6 @@ class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, DatabaseTasks,
         lesson2 = self.add_lesson("lesson2", "content lesson 2", teacher1.id, None)
         task1 = self.add_task(lesson1.id, "task1", "content task 1")
         teacher_solution = self.create_teacher_solution("teacher solution 1")
+        student_solution = self.create_teacher_solution(student1, task1, "student solution 1")
         self.update_task(task1.id, solution=teacher_solution.id)
         self.add_lesson_dependencies(lesson1.id, [student1.id,])
