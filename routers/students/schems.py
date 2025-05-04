@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import List
 
+
 class StudentAdd(BaseModel):
     login: str
     password: str

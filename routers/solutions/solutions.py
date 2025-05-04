@@ -1,14 +1,3 @@
-# Получить решение ученика по id решения(id решения);
-# получить решения ученика по задаче(id задачи);
-# создать решение(параметр result пустой)
-
-#------
-# создать файл (бинарник файла, то к чему его нужно прикрепить (тип к чему прикрепить и его id))
-# получить файл (id файла)
-# удалить файл (id файла) -проверить к чему прикреплен и открепить
-
-
-
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from DataBaseManager.extends import DBALL
@@ -93,7 +82,6 @@ async def get_latest_student_solution_by_task(task_id: int, student_id: int):
     }))
 
 
-
 @router.post("/student_solutions", response_class=JSONResponse, status_code=201)
 async def create_student_solution(data: StudentSolutionCreate):
     solution = DBALL().create_student_solution(
@@ -101,7 +89,7 @@ async def create_student_solution(data: StudentSolutionCreate):
         task_id=data.task_id,
         text=data.text,
         result=None,  # по условию
-        state=1       # по умолчанию
+        state=1  # по умолчанию
     )
 
     result = StudentSolutionResponse(
@@ -118,6 +106,3 @@ async def create_student_solution(data: StudentSolutionCreate):
         "msg": "created",
         "code": 201
     }))
-
-
-

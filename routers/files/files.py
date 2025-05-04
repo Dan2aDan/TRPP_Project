@@ -5,13 +5,15 @@ from routers.files.schems import FileInfo, ResponseFile, ResponseDeleteFile
 from utils.utils import generate_json
 from fastapi.responses import FileResponse
 import os
+
 router = APIRouter()
+
 
 @router.post("/file", response_class=JSONResponse, status_code=201)
 async def upload_file(
-    file: UploadFile = File(...),
-    bind_type: str = Form(...),  # "lesson" or "task"
-    bind_id: int = Form(...)
+        file: UploadFile = File(...),
+        bind_type: str = Form(...),  # "lesson" or "task"
+        bind_id: int = Form(...)
 ):
     if bind_type not in ("lesson", "task"):
         raise HTTPException(status_code=400, detail={"error": "Invalid bind_type"})
@@ -48,10 +50,9 @@ async def get_file(file_id: int):
     )
 
 
-
 @router.delete("/file/{file_id}", response_class=JSONResponse)
 async def delete_file(file_id: int):
-    #Открепление от уроков
+    # Открепление от уроков
     lessons = DBALL().get_all_lessons()
     print(lessons)
     for lesson in lessons:

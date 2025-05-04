@@ -67,7 +67,7 @@ async def get_current_user_info(request: Request):
         if not user_data:
             return generate_json(
                 AnswerResponse.model_validate({"result": None, "msg": "Teacher not found", 'code': 404}))
-        
+
         return generate_json(AnswerResponse.model_validate({
             "result": {
                 "id": user_data.id,
@@ -84,7 +84,7 @@ async def get_current_user_info(request: Request):
         if not user_data:
             return generate_json(
                 AnswerResponse.model_validate({"result": None, "msg": "Student not found", 'code': 404}))
-        
+
         return generate_json(AnswerResponse.model_validate({
             "result": {
                 "id": user_data.id,
@@ -96,4 +96,3 @@ async def get_current_user_info(request: Request):
             "msg": "ok",
             "code": 200
         }))
-

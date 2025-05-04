@@ -57,4 +57,4 @@ class DBALL(DatabaseTeachers, DatabaseStudents, DatabaseLessons, DatabaseTasks,
         teacher_solution = self.create_teacher_solution("teacher solution 1")
         student_solution = self.create_student_solution(student1.id, task1.id, "student solution 1")
         self.update_task(task1.id, solution=teacher_solution.id)
-        self.add_lesson_dependencies(lesson1.id, [student1.id,])
+        self.add_lesson_dependencies(lesson1.id, [student1.id, ])

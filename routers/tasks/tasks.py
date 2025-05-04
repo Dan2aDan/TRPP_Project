@@ -157,6 +157,7 @@ async def delete_task(task_id: int, request: Request):
 
     return JSONResponse(content={"message": "Task deleted successfully"})
 
+
 @router.get("/student/{student_id}", response_class=JSONResponse)
 async def get_all_tasks_for_student(student_id: int, request: Request):
     """

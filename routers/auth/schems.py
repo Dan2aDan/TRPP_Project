@@ -24,6 +24,3 @@ class CurrentUserInfo(BaseModel):
     login: str
     is_teacher: bool
     bio: Optional[str] = None
-
-
-

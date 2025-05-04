@@ -6,7 +6,8 @@ from DataBaseManager.models import Lessons, LessonsDepends, StudentSolutions, Ta
 from routers.auth.auntefication import cookie
 from routers.lessons.schems import (
     LessonCreate, LessonUpdate, LessonDetailResponse,
-    LessonShortResponse, LessonsListResponse, ResponseLesson, LongResponseLesson, LessonDependencyRequest, LessonResponse,
+    LessonShortResponse, LessonsListResponse, ResponseLesson, LongResponseLesson, LessonDependencyRequest,
+    LessonResponse,
     StudentLessonsResponse, StudentLessonResponse, TeacherInfo
 )
 from utils.utils import generate_json
@@ -114,7 +115,8 @@ async def update_lesson(lesson_id: int, data: LessonUpdate, request: Request):
             "message": f"Lesson with ID {lesson_id} does not exist"
         })
 
-    lesson = DBALL().update_lesson(lesson_id, content=data.description, file_id=None if data.file_id == -1 else data.file_id)
+    lesson = DBALL().update_lesson(lesson_id, content=data.description,
+                                   file_id=None if data.file_id == -1 else data.file_id)
     # print(lesson_id)
     # lesson = DBALL().get_lesson_by_id(lesson_id)
 
@@ -164,7 +166,6 @@ async def set_lesson_dependencies(data: LessonDependencyRequest, request: Reques
 
 @router.get("/student/{student_id}", response_class=JSONResponse)
 async def get_student_lessons(student_id: int):
-    
     # Получаем все уроки, назначенные студенту
     query = sqlalchemy.select(Lessons).join(
         LessonsDepends,

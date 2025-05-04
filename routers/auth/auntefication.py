@@ -40,7 +40,8 @@ async def create_session_user(response, **session_data) -> SessionData:
 class AuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         # Пути, которые не требуют авторизации
-        public_paths = ["/templates/login_page.html", "/templates/assets", "/api/v0/auth/login", "/api/v0/auth/register"]
+        public_paths = ["/templates/login_page.html", "/templates/assets", "/api/v0/auth/login",
+                        "/api/v0/auth/register"]
         if any(request.url.path.startswith(path) for path in public_paths):
             return await call_next(request)
         try:

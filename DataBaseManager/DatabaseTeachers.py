@@ -21,4 +21,5 @@ class DatabaseTeachers:
         query = sqlalchemy.select(Teachers.bio).where(Teachers.id == teacher_id)
         return self.db.select(query, types=db.any_)
 
+
 db_teachers = DatabaseTeachers(db)

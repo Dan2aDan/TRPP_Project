@@ -82,10 +82,10 @@ async def get_student_by_id(student_id: int, request: Request):
         return RedirectResponse(url="/")
 
     teacher_id = session_data.id
-    
+
     # Получаем студента из базы данных
     student = DBALL().get_student_by_id(student_id)
-    
+
     # Проверяем, существует ли студент и принадлежит ли он данному учителю
     if not student or student.teacher_id != teacher_id:
         return generate_json(
@@ -113,10 +113,10 @@ async def get_student_by_id(student_id: int, request: Request):
 @router.put("/{student_id}", response_class=JSONResponse)
 async def update_student(student_id: int, item: StudentUpdate, request: Request):
     teacher_id = request.state.session_data.id
-    
+
     # Получаем студента из базы данных
     student = DBALL().get_student_by_id(student_id)
-    
+
     # Проверяем, существует ли студент и принадлежит ли он данному учителю
     if not student or student.teacher_id != teacher_id:
         return generate_json(
@@ -126,7 +126,7 @@ async def update_student(student_id: int, item: StudentUpdate, request: Request)
         )
 
     DBALL().update_student(student_id, item.login, item.password)
-    
+
     # Получаем обновленные данные
     updated_student = DBALL().get_student_by_id(student_id)
     student_data = StudentResponse(
@@ -147,10 +147,10 @@ async def update_student(student_id: int, item: StudentUpdate, request: Request)
 @router.delete("/{student_id}", response_class=JSONResponse)
 async def delete_student(student_id: int, request: Request):
     teacher_id = request.state.session_data.id
-    
+
     # Получаем студента из  базы данных
     student = DBALL().get_student_by_id(student_id)
-    
+
     # Проверяем, существует ли студент и принадлежит ли он данному учителю
     if not student or student.teacher_id != teacher_id:
         return generate_json(

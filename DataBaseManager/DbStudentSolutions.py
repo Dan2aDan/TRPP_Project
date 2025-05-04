@@ -43,12 +43,12 @@ class DbStudentSolutions:
             )
         )
         return self.db.select(query, types=self.db.all_)
-    
+
     def get_student_solutions_by_states(self, student_id, states):
         """Получить решения ученика с указанными статусами"""
         if not states:
             return []
-            
+
         query = sqlalchemy.select(StudentSolutions).where(
             and_(
                 StudentSolutions.student_id == student_id,

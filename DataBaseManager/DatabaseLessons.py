@@ -3,7 +3,8 @@ from requests import Session
 import sqlalchemy
 from sqlalchemy import and_, delete, or_
 from DataBaseManager.__init__ import db
-from DataBaseManager.models import Students, Teachers, Lessons, Tasks, LessonsDepends, StudentSolutions, TeacherSolutions
+from DataBaseManager.models import Students, Teachers, Lessons, Tasks, LessonsDepends, StudentSolutions, \
+    TeacherSolutions
 
 
 class DatabaseLessons:
@@ -13,7 +14,6 @@ class DatabaseLessons:
     def get_all_lessons(self):
         query = sqlalchemy.select(Lessons)
         return self.db.select(query, types=self.db.all_)
-
 
     def get_lesson_by_id(self, lesson_id):
         query = sqlalchemy.select(Lessons).where(Lessons.id == lesson_id)
