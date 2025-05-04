@@ -21,22 +21,25 @@ class DbStudentSolutions:
         )
         return self.db.select(query, types=self.db.all_)
 
-    def get_student_lesson_solutions(self, student_id, lesson_id):
+    def get_student_lesson_solutions(self, student_id, lesson_id, states=[]):
         """Получить все решения ученика по конкретному уроку"""
         query = sqlalchemy.select(StudentSolutions).join(Tasks).where(
             and_(
                 StudentSolutions.student_id == student_id,
-                Tasks.lesson_id == lesson_id
+                Tasks.lesson_id == lesson_id,
+                StudentSolutions.state.in_(states)
             )
         )
         return self.db.select(query, types=self.db.all_)
 
-    def get_student_task_solutions(self, student_id, task_id):
+    def get_student_task_solutions(self, student_id, task_id, states=[]):
         """Получить все решения ученика по конкретной задаче"""
         query = sqlalchemy.select(StudentSolutions).where(
             and_(
                 StudentSolutions.student_id == student_id,
-                StudentSolutions.task_id == task_id
+                StudentSolutions.task_id == task_id,
+                StudentSolutions.state.in_(states)
+
             )
         )
         return self.db.select(query, types=self.db.all_)
