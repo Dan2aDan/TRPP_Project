@@ -180,20 +180,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     downloadFilesBtn.addEventListener('click', async () => {
         // showLoading();
         try {
-            const response = await fetch(`/api/v0/lessons/lesson/${lessonId}/files`, {
+            // Сначала получаем урок
+            const lessonResponse = await fetch(`/api/v0/lessons/lesson/${lessonId}`, {
                 method: 'GET',
                 credentials: 'include'
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            if (!lessonResponse.ok) {
+                throw new Error(`HTTP error! status: ${lessonResponse.status}`);
             }
 
-            const blob = await response.blob();
+            const lessonData = await lessonResponse.json();
+            const fileId = lessonData.result.file_id;
+
+            if (!fileId) {
+                showError('У этого урока нет прикрепленных файлов');
+                return;
+            }
+
+            // Затем получаем файл по его ID
+            const fileResponse = await fetch(`/api/v0/files/file/${fileId}`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (!fileResponse.ok) {
+                throw new Error(`HTTP error! status: ${fileResponse.status}`);
+            }
+
+            const blob = await fileResponse.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `lesson_${lessonId}_files.zip`;
+            a.download = `lesson_${lessonId}_file.zip`;
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
@@ -202,6 +221,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (error) {
             console.error('Ошибка при скачивании файлов:', error);
             showError('Ошибка при скачивании файлов');
+            hideLoading();
         }
     });
 
@@ -219,11 +239,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             showLoading();
             const formData = new FormData();
             for (let i = 0; i < files.length; i++) {
-                formData.append('files', files[i]);
+                formData.append('file', files[i]);
+                formData.append('bind_type', 'lesson');
+                formData.append('bind_id', lessonId);
             }
 
             try {
-                const response = await fetch(`/api/v0/lessons/lesson/${lessonId}/files`, {
+                const response = await fetch('/api/v0/files/file', {
                     method: 'POST',
                     credentials: 'include',
                     body: formData
@@ -233,11 +255,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                alert('Файлы успешно загружены');
+                const data = await response.json();
+                if (data.code === 201) {
+                    alert('Файлы успешно загружены');
+                } else {
+                    throw new Error(data.msg || 'Ошибка при загрузке файлов');
+                }
                 hideLoading();
             } catch (error) {
                 console.error('Ошибка при загрузке файлов:', error);
                 showError('Ошибка при загрузке файлов');
+                hideLoading();
             }
         });
 
