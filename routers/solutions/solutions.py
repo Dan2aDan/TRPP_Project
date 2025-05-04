@@ -67,6 +67,33 @@ async def get_student_solutions_by_task(task_id: int, student_id: int):
     }))
 
 
+@router.get("/latest_student_solution/task/{task_id}/{student_id}", response_class=JSONResponse)
+async def get_latest_student_solution_by_task(task_id: int, student_id: int):
+    solutions = DBALL().get_student_task_solutions(student_id, task_id, states=[1, 2, 3, 4])
+
+    if not solutions:
+        raise HTTPException(status_code=404, detail={"error": "No solutions found"})
+
+    latest = max(solutions, key=lambda s: s.created_at)
+
+    result = StudentSolutionResponse(
+        id=latest.id,
+        student_id=latest.student_id,
+        task_id=latest.task_id,
+        text=latest.text,
+        result=latest.result,
+        state=latest.state,
+        created_at=latest.created_at.isoformat(),
+    )
+
+    return generate_json(ResponseOneSolution.model_validate({
+        "result": result,
+        "msg": "ok",
+        "code": 200
+    }))
+
+
+
 @router.post("/student_solutions", response_class=JSONResponse, status_code=201)
 async def create_student_solution(data: StudentSolutionCreate):
     solution = DBALL().create_student_solution(

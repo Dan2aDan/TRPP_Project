@@ -3,21 +3,9 @@ from fastapi.responses import JSONResponse
 from DataBaseManager.extends import DBALL
 from routers.files.schems import FileInfo, ResponseFile, ResponseDeleteFile
 from utils.utils import generate_json
-from DataBaseManager.__init__ import db
 from fastapi.responses import FileResponse
 import os
 router = APIRouter()
-
-
-from sqlalchemy import select
-from DataBaseManager.models import Files
-
-@router.get("/debug/files")
-def list_files():
-    query = select(Files)
-    files = db.select(query, types=db.all_)
-    return files
-
 
 @router.post("/file", response_class=JSONResponse, status_code=201)
 async def upload_file(
@@ -45,11 +33,6 @@ async def upload_file(
         "msg": "ok",
         "code": 201
     }))
-
-
-
-
-
 
 
 @router.get("/file/{file_id}", response_class=FileResponse)
