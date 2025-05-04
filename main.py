@@ -9,7 +9,8 @@ from starlette.staticfiles import StaticFiles
 
 from DataBaseManager import db
 from DataBaseManager.extends import DBALL
-from routers.auth.auntefication import SessionData, get_session_data, create_session_user, backend, cookie, AuthMiddleware
+from routers.auth.auntefication import SessionData, get_session_data, create_session_user, backend, cookie, \
+    AuthMiddleware
 from routers.auth.auth import router as auth_router
 from routers.students.students import router as student_router
 from routers.lessons.lessons import router as lessons_router
@@ -21,7 +22,6 @@ from utils.variable_environment import VarEnv
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key=VarEnv.SECRET_KEY)
 app.add_middleware(AuthMiddleware)
-
 
 router = APIRouter()
 router.include_router(auth_router, prefix="/auth")

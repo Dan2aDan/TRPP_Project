@@ -4,6 +4,7 @@ from DataBaseManager.__init__ import db
 from DataBaseManager.models import TeacherSolutions, Tasks
 import logging
 
+
 class DbTeacherSolutions:
     def __init__(self, db):
         self.db = db
@@ -12,12 +13,12 @@ class DbTeacherSolutions:
         """Получить решение учителя по ID"""
         query = sqlalchemy.select(TeacherSolutions).where(TeacherSolutions.id == solution_id)
         return self.db.select(query, types=self.db.any_)
-    
+
     def get_all_teacher_solutions(self, teacher_id):
         """Получить все решения учителей"""
         query = sqlalchemy.select(TeacherSolutions).where(TeacherSolutions.teacher_id == teacher_id)
         return self.db.select(query, types=self.db.all_)
-    
+
     def get_teacher_lesson_solutions(self, teacher_id, lesson_id):
         """Получить все решения ученика по конкретному уроку"""
         query = sqlalchemy.select(TeacherSolutions).join(Tasks).where(
@@ -27,7 +28,7 @@ class DbTeacherSolutions:
             )
         )
         return self.db.select(query, types=self.db.all_)
-    
+
     # def get_teacher_task_solutions(self, teacher_id, task_id):
     #     """Получить все решения ученика по конкретной задаче"""
     #     query = sqlalchemy.select(TeacherSolutions).where(

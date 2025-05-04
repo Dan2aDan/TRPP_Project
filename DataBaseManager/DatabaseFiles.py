@@ -39,7 +39,6 @@ class DatabaseFiles:
             session.refresh(file_record)
             return file_record
 
-
     def delete_file(self, file_id):
         """Delete a file by ID from both the database and the src directory."""
         with self.db.create_session() as session:

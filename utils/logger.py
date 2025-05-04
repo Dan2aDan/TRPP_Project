@@ -1,6 +1,8 @@
 import datetime
 import functools
 from fastapi.responses import JSONResponse
+
+
 class Logger:
     INFO = "INFO"
     WARNING = "WARNING"
