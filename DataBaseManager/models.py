@@ -27,7 +27,7 @@ class Files(Base):
     __tablename__ = 'files'
     id: int = Column(Integer, primary_key=True)
     path: str = Column(String(255), nullable=False)
-    url: str = Column(String(255), nullable=False)
+    # url: str = Column(String(255), nullable=False)
     uploaded_at: date = Column(Date)
 
     # Связь с таблицей Lessons

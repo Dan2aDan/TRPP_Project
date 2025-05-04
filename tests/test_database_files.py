@@ -12,7 +12,7 @@ def test_create_file(database_all):
     # Проверяем запись в базе данных
     assert file_record is not None
     assert file_record.path == os.path.join("src", filename)
-    assert file_record.url == f"/src/{filename}"
+    # assert file_record.url == f"/src/{filename}"
     assert file_record.uploaded_at is not None
     
     # Проверяем, что файл существует в файловой системе
@@ -33,7 +33,7 @@ def test_get_file_by_id(database_all):
     assert retrieved_file is not None
     assert retrieved_file.id == file_record.id
     assert retrieved_file.path == file_record.path
-    assert retrieved_file.url == file_record.url
+    # assert retrieved_file.url == file_record.url
     assert retrieved_file.uploaded_at == file_record.uploaded_at
 
 
