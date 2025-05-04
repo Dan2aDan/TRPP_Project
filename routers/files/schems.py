@@ -1,13 +1,13 @@
 from pydantic import BaseModel
 
-class FileResponse(BaseModel):
+class FileInfo(BaseModel):
     id: int
     path: str
     uploaded_at: str
 
 
 class ResponseFile(BaseModel):
-    result: FileResponse
+    result: FileInfo
     msg: str
     code: int
 

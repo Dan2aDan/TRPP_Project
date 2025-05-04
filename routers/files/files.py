@@ -1,10 +1,11 @@
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
 from DataBaseManager.extends import DBALL
-from routers.files.schems import FileResponse, ResponseFile, ResponseDeleteFile
+from routers.files.schems import FileInfo, ResponseFile, ResponseDeleteFile
 from utils.utils import generate_json
 from DataBaseManager.__init__ import db
-
+from fastapi.responses import FileResponse
+import os
 router = APIRouter()
 
 
@@ -36,7 +37,7 @@ async def upload_file(
         DBALL().update_task(bind_id, file_id=file_record.id)
 
     return generate_json(ResponseFile.model_validate({
-        "result": FileResponse(
+        "result": FileInfo(
             id=file_record.id,
             path=file_record.path,
             uploaded_at=file_record.uploaded_at.isoformat()
@@ -46,21 +47,23 @@ async def upload_file(
     }))
 
 
-@router.get("/file/{file_id}", response_class=JSONResponse)
+
+
+
+
+
+@router.get("/file/{file_id}", response_class=FileResponse)
 async def get_file(file_id: int):
     file = DBALL().get_file_by_id(file_id)
-    if not file:
-        raise HTTPException(status_code=404, detail={"error": "File not found"})
+    if not file or not os.path.exists(file.path):
+        raise HTTPException(status_code=404, detail={"error": "File not found on disk"})
 
-    return generate_json(ResponseFile.model_validate({
-        "result": FileResponse(
-            id=file.id,
-            path=file.path,
-            uploaded_at=file.uploaded_at.isoformat()
-        ),
-        "msg": "ok",
-        "code": 200
-    }))
+    return FileResponse(
+        path=file.path,
+        filename=os.path.basename(file.path),
+        media_type="application/octet-stream"
+    )
+
 
 
 @router.delete("/file/{file_id}", response_class=JSONResponse)

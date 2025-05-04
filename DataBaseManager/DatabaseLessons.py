@@ -81,7 +81,7 @@ class DatabaseLessons:
             update_data['title'] = title
         if content is not None:
             update_data['content'] = content
-        if file_id is not None:
+        if file_id is not ...:
             update_data['file_id'] = file_id
 
         if not update_data:

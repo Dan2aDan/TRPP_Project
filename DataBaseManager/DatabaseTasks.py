@@ -48,17 +48,15 @@ class DatabaseTasks:
     def update_task(self, task_id, description=None, test=None, solution=None, file_id=None):
         """Обновляет задачу"""
         update_data = {}
-        print(file_id)
         if description is not None:
             update_data['description'] = description
         if test is not None:
             update_data['test'] = test
         if solution is not None:
             update_data['compl_solution_id'] = solution
-        if file_id is not None:
+        if file_id is not ...:
             update_data['file_id'] = file_id
 
-        print(update_data)
         if not update_data:
             return None
 
