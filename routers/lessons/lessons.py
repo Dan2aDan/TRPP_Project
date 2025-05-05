@@ -204,9 +204,9 @@ async def get_student_lessons(student_id: int):
                         StudentSolutions.task_id == task.id
                     )
                 )
-                solution = db.select(solution_query, types=db.all_)
+                solutions = db.select(solution_query, types=db.all_)
 
-                if solution:
+                for solution in solutions:
                     if solution.state == 3:  # Правильно решено
                         completed_tasks += 1
                     elif solution.state in [1, 2]:  # В процессе

@@ -24,6 +24,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    // Получаем кнопку для скачивания файлов
+    const downloadFilesBtn = document.getElementById('download-files-btn');
+
+    if (!downloadFilesBtn) {
+        console.error('Download button not found');
+        return;
+    }
+
     // Функция для отображения сообщения об ошибке
     function showError(message) {
         errorMessage.textContent = message;
@@ -169,6 +177,68 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
+
+    // Обработчик скачивания файлов
+    downloadFilesBtn.addEventListener('click', async () => {
+        showLoading();
+        try {
+            // Сначала получаем урок
+            const lessonResponse = await fetch(`/api/v0/lessons/lesson/${lessonId}`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (!lessonResponse.ok) {
+                throw new Error(`HTTP error! status: ${lessonResponse.status}`);
+            }
+
+            const lessonData = await lessonResponse.json();
+            const fileId = lessonData.result.file_id;
+
+            if (!fileId) {
+                showError('У этого урока нет прикрепленных файлов');
+                return;
+            }
+
+            // Затем получаем файл по его ID
+            const fileResponse = await fetch(`/api/v0/files/file/${fileId}`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (!fileResponse.ok) {
+                throw new Error(`HTTP error! status: ${fileResponse.status}`);
+            }
+
+            // Получаем имя файла из заголовка Content-Disposition или используем ID
+            const contentDisposition = fileResponse.headers.get('Content-Disposition');
+            let filename = `lesson_${fileId}.png`;
+            
+            if (contentDisposition) {
+                const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
+                if (matches != null && matches[1]) {
+                    const originalName = matches[1].replace(/['"]/g, '');
+                    const extension = originalName.split('.').pop();
+                    filename = `lesson_${fileId}.${extension}`;
+                }
+            }
+
+            const blob = await fileResponse.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            hideLoading();
+        } catch (error) {
+            console.error('Ошибка при скачивании файлов:', error);
+            showError('Ошибка при скачивании файлов');
+            hideLoading();
+        }
+    });
 
     // Загружаем данные урока
     loadLessonData();

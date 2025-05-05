@@ -37,7 +37,7 @@ async def get_student_solution_by_id(solution_id: int):
 
 @router.get("/student_solutions/task/{task_id}/{student_id}", response_class=JSONResponse)
 async def get_student_solutions_by_task(task_id: int, student_id: int):
-    solutions = DBALL().get_student_task_solutions(student_id, task_id, states=[1, 2, 3, 4])
+    solutions = DBALL().get_student_task_solutions(student_id, task_id, states=[1, 2, 3, 0])
 
     result = [StudentSolutionResponse(
         id=s.id,
@@ -58,7 +58,7 @@ async def get_student_solutions_by_task(task_id: int, student_id: int):
 
 @router.get("/latest_student_solution/task/{task_id}/{student_id}", response_class=JSONResponse)
 async def get_latest_student_solution_by_task(task_id: int, student_id: int):
-    solutions = DBALL().get_student_task_solutions(student_id, task_id, states=[1, 2, 3, 4])
+    solutions = DBALL().get_student_task_solutions(student_id, task_id, states=[1, 2, 3, 0])
 
     if not solutions:
         raise HTTPException(status_code=404, detail={"error": "No solutions found"})
