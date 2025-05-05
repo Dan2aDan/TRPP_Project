@@ -25,11 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Загрузка задач
     loadTasks();
-
-    // Кнопка добавления задачи
-    document.getElementById('btn_new_tsk').addEventListener('click',() => {
-        viewTask(-1)
-    });
 });
 
 function viewTask(id_task) {

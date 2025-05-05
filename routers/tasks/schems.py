@@ -12,6 +12,7 @@ class TaskBigResponse(BaseModel):
     test: Optional[str] = None
     text: Optional[str] = None
     result: Optional[str] = None
+    task_file: Optional[int] = None
 
 
 class TaskShortResponse(BaseModel):

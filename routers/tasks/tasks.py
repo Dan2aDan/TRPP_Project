@@ -81,6 +81,7 @@ async def get_task(task_id: int, request: Request):
         test=task.test,
         text=teacher_solution.text,
         result=teacher_solution.result,
+        task_file=task.file_id
     )
 
     return generate_json(ResponseTask.model_validate({

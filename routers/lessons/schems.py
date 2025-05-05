@@ -49,7 +49,7 @@ class LessonDetailResponse(BaseModel):
     teacher: TeacherInfo
     students: List[StudentInfo]
     created_at: str
-
+    file_id: int | None = None
 
 class LessonCreate(BaseModel):
     title: str

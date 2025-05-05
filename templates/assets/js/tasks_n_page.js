@@ -169,4 +169,126 @@ document.addEventListener('DOMContentLoaded', async () => {
     attachBtn.addEventListener('click', () => {
         alert('Функционал прикрепления задачи находится в разработке');
     });
+
+    // Получаем кнопки для работы с файлами
+    const downloadFilesBtn = document.querySelector('.btn.my-btn[style*="margin-left:126px"]');
+    const uploadFilesBtn = document.querySelector('.btn.my-btn[style*="margin-left:185px"]');
+
+    if (!downloadFilesBtn || !uploadFilesBtn) {
+        console.error('Кнопки для работы с файлами не найдены');
+        return;
+    }
+
+    // Обработчик скачивания файлов
+    downloadFilesBtn.addEventListener('click', async () => {
+        try {
+            // Сначала получаем задачу
+            const taskResponse = await fetch(`/api/v0/tasks/tasks/${state}`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (!taskResponse.ok) {
+                throw new Error(`HTTP error! status: ${taskResponse.status}`);
+            }
+
+            const taskData = await taskResponse.json();
+            const fileId = taskData.result.task_file;
+
+            if (!fileId) {
+                alert('У этой задачи нет прикрепленных файлов');
+                return;
+            }
+
+            // Затем получаем файл по его ID
+            const fileResponse = await fetch(`/api/v0/files/file/${fileId}`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (!fileResponse.ok) {
+                throw new Error(`HTTP error! status: ${fileResponse.status}`);
+            }
+
+            // Получаем имя файла из заголовка Content-Disposition или используем ID
+            const contentDisposition = fileResponse.headers.get('Content-Disposition');
+            let filename = `task_${fileId}`;
+            
+            if (contentDisposition) {
+                const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
+                if (matches != null && matches[1]) {
+                    const originalName = matches[1].replace(/['"]/g, '');
+                    const extension = originalName.split('.').pop();
+                    filename = `task_${fileId}.${extension}`;
+                }
+            }
+
+            const blob = await fileResponse.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error('Ошибка при скачивании файлов:', error);
+            alert('Ошибка при скачивании файлов');
+        }
+    });
+
+    // Обработчик загрузки файлов
+    uploadFilesBtn.addEventListener('click', () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.multiple = true;
+        input.accept = '.txt,.py,.java,.cpp,.cs,.js,.html,.css,.json,.xml,.md,.pdf,.doc,.docx,.xls,.xlsx,.zip,.rar,.7z';
+        
+        input.addEventListener('change', async (event) => {
+            const files = event.target.files;
+            if (files.length === 0) return;
+
+            const formData = new FormData();
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                // Проверяем размер файла (максимум 10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    alert(`Файл ${file.name} слишком большой. Максимальный размер - 10MB`);
+                    continue;
+                }
+                formData.append('file', file);
+                formData.append('bind_type', 'task');
+                formData.append('bind_id', state);
+            }
+
+            if (formData.getAll('file').length === 0) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/v0/files/file', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (data.code === 201) {
+                    alert('Файлы успешно загружены');
+                } else {
+                    throw new Error(data.msg || 'Ошибка при загрузке файлов');
+                }
+            } catch (error) {
+                console.error('Ошибка при загрузке файлов:', error);
+                alert('Ошибка при загрузке файлов');
+            }
+        });
+
+        input.click();
+    });
 });

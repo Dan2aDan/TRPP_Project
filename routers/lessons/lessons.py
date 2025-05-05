@@ -92,7 +92,8 @@ async def get_lesson(lesson_id: int, request: Request):
         description=lesson.content,
         teacher={"id": lesson.teacher_id, "name": DBALL().get_teacher_bio(lesson.teacher_id)},
         students=[{"id": s, "full_name": DBALL().get_student_by_id(s).bio} for s in students],
-        created_at=lesson.created_at.isoformat()
+        created_at=lesson.created_at.isoformat(),
+        file_id=lesson.file_id
     )
 
     return generate_json(LongResponseLesson.model_validate({

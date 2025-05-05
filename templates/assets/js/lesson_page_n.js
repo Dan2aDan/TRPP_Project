@@ -208,11 +208,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                 throw new Error(`HTTP error! status: ${fileResponse.status}`);
             }
 
+            // Получаем имя файла из заголовка Content-Disposition или используем ID
+            const contentDisposition = fileResponse.headers.get('Content-Disposition');
+            let filename = `lesson_${fileId}`;
+            
+            if (contentDisposition) {
+                const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
+                if (matches != null && matches[1]) {
+                    const originalName = matches[1].replace(/['"]/g, '');
+                    const extension = originalName.split('.').pop();
+                    filename = `lesson_${fileId}.${extension}`;
+                }
+            }
+
             const blob = await fileResponse.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `lesson_${lessonId}_file.zip`;
+            a.download = filename;
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
@@ -230,7 +243,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const input = document.createElement('input');
         input.type = 'file';
         input.multiple = true;
-        input.accept = '*/*';
+        input.accept = '.txt,.py,.java,.cpp,.cs,.js,.html,.css,.json,.xml,.md,.pdf,.doc,.docx,.xls,.xlsx,.zip,.rar,.7z';
         
         input.addEventListener('change', async (event) => {
             const files = event.target.files;
@@ -239,9 +252,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             showLoading();
             const formData = new FormData();
             for (let i = 0; i < files.length; i++) {
-                formData.append('file', files[i]);
+                const file = files[i];
+                // Проверяем размер файла (максимум 10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    alert(`Файл ${file.name} слишком большой. Максимальный размер - 10MB`);
+                    continue;
+                }
+                formData.append('file', file);
                 formData.append('bind_type', 'lesson');
                 formData.append('bind_id', lessonId);
+            }
+
+            if (formData.getAll('file').length === 0) {
+                hideLoading();
+                return;
             }
 
             try {
