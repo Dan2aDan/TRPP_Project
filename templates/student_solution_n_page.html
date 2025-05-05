@@ -6,7 +6,7 @@
     <title>Решение | Личный кабинет ученика</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.min.css">
-    <link rel="stylesheet" href="assets/css/student_solution_page.css">
+    <link rel="stylesheet" href="assets/css/student_solution_n_page.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
@@ -29,31 +29,29 @@
             <div id="error-message" class="error-message" style="display: none;"></div>
             
             <div class="solution-header mb-4">
-                <h2 id="solution-title" class="solution-title">Решение</h2>
-                <div class="solution-meta">
-                    <span id="solution-date" class="solution-date"></span>
-                    <span id="solution-status" class="solution-status"></span>
+                <h2 id="solution-title" class="solution-title">Загрузка...</h2>
+                <div id="solution-status" class="solution-status"></div>
+            </div>
+
+            <div class="solution-content">
+                <div class="solution-section mb-4">
+                    <h3 class="section-title">Программа</h3>
+                    <textarea id="solution-program" class="solution-text" readonly></textarea>
+                </div>
+
+                <div class="solution-section">
+                    <h3 class="section-title">Результат тестирования</h3>
+                    <textarea id="solution-result" class="solution-text" readonly></textarea>
                 </div>
             </div>
-            
-            <div class="solution-content">
-                <h3 class="mb-3">Код решения</h3>
-                <pre id="solution-code" class="solution-code"></pre>
-                
-                <h3 class="mb-3 mt-4">Результат проверки</h3>
-                <div id="solution-result" class="solution-result"></div>
-                
-                <h3 class="mb-3 mt-4">Ожидаемый результат</h3>
-                <div id="expected-result" class="expected-result"></div>
-            </div>
-            
-            <div class="text-end mt-4">
-                <button class="btn action-btn back-btn" id="back-btn"><i class="fas fa-arrow-left"></i> Назад к задаче</button>
+
+            <div class="solution-footer mt-4">
+                <button class="btn action-btn back-btn" id="back-btn"><i class="fas fa-arrow-left"></i> Назад</button>
             </div>
         </div>
     </div>
 </div>
 <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-<script src="assets/js/student_solution_page.js"></script>
+<script src="assets/js/student_solution_n_page.js"></script>
 </body>
 </html> 
