@@ -98,7 +98,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             // Создаем элементы для каждой задачи
-            tasks.forEach(task => {
+            for (const task of tasks) {
+                // Получаем статус задачи
+                let statusData;
+                try {
+                    const statusResponse = await fetch(`/api/v0/lessons/task/${task.id}/status`, {
+                        credentials: 'include'
+                    });
+                    if (!statusResponse.ok) {
+                        throw new Error('Ошибка при загрузке статуса задачи');
+                    }
+                    statusData = await statusResponse.json();
+                } catch (error) {
+                    console.error('Ошибка при загрузке статуса задачи:', error);
+                    statusData = { status: 'not-started', message: 'Не удалось загрузить статус' };
+                }
+
                 const taskCard = document.createElement('div');
                 taskCard.className = 'task-card';
 
@@ -114,15 +129,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 description.textContent = task.description || 'Описание отсутствует';
                 if (task.description) description.classList.add('filled');
 
-                const lessonInfo = document.createElement('div');
-                lessonInfo.className = 'task-desc';
-                lessonInfo.style.fontSize = '0.95em';
-                lessonInfo.style.color = '#888';
-                lessonInfo.textContent = `Урок: ${task.lesson_title || 'Неизвестный урок'}`;
+                // const lessonInfo = document.createElement('div');
+                // lessonInfo.className = 'task-desc';
+                // lessonInfo.style.fontSize = '0.95em';
+                // lessonInfo.style.color = '#888';
+                // lessonInfo.textContent = `Урок: ${task.lesson_title || 'Неизвестный урок'}`;
 
                 leftBlock.appendChild(title);
                 leftBlock.appendChild(description);
-                leftBlock.appendChild(lessonInfo);
+                // leftBlock.appendChild(lessonInfo);
 
                 const rightBlock = document.createElement('div');
                 rightBlock.style.display = 'flex';
@@ -130,9 +145,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const statusIndicator = document.createElement('div');
                 statusIndicator.className = 'task-status-indicator';
-                if (task.status === 'completed') statusIndicator.classList.add('task-status-completed');
-                else if (task.status === 'in_progress') statusIndicator.classList.add('task-status-in-progress');
-                else statusIndicator.classList.add('task-status-not-started');
+                
+                // Устанавливаем класс и подсказку в зависимости от статуса
+                switch (statusData.status) {
+                    case 'completed':
+                        statusIndicator.classList.add('task-status-completed');
+                        statusIndicator.title = statusData.message || 'Задача решена';
+                        break;
+                    case 'in-progress':
+                        statusIndicator.classList.add('task-status-in-progress');
+                        statusIndicator.title = statusData.message || 'Задача в процессе';
+                        break;
+                    case 'not-started':
+                        statusIndicator.classList.add('task-status-not-started');
+                        statusIndicator.title = statusData.message || 'Задача не начата';
+                        break;
+                    default:
+                        statusIndicator.classList.add('task-status-not-started');
+                        statusIndicator.title = statusData.message || 'Задача не начата';
+                }
 
                 const openButton = document.createElement('button');
                 openButton.className = 'open-task-btn';
@@ -147,7 +178,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 taskCard.appendChild(leftBlock);
                 taskCard.appendChild(rightBlock);
                 tasksList.appendChild(taskCard);
-            });
+            }
         } catch (error) {
             console.error('Ошибка при загрузке задач:', error);
             const errorDiv = document.createElement('div');
