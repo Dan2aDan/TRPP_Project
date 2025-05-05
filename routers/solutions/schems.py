@@ -25,7 +25,6 @@ class ResponseSolutionList(BaseModel):
 
 
 class StudentSolutionCreate(BaseModel):
-    student_id: int
     task_id: int
     text: str
 

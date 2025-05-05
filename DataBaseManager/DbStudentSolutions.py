@@ -3,6 +3,7 @@ from sqlalchemy import and_, delete
 from DataBaseManager.__init__ import db
 from DataBaseManager.models import StudentSolutions, Tasks
 import logging
+from datetime import datetime, timezone
 
 
 class DbStudentSolutions:
@@ -65,8 +66,7 @@ class DbStudentSolutions:
                 task_id=task_id,
                 text=text,
                 result=result,
-                state=state,
-                created_at=sqlalchemy.func.now()
+                state=state
             )
             session.add(solution)
             session.commit()

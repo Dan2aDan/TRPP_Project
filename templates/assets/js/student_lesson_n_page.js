@@ -75,12 +75,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             lessonDescription.value = lesson.description;
             lessonDescription.classList.toggle('filled', !!lesson.description);
 
-            // Индикатор статуса
+            // Индикатор статуса урока
             const statusIndicator = document.getElementById('lesson-status-indicator');
             statusIndicator.className = 'status-indicator';
-            if (lesson.status === 'completed') statusIndicator.classList.add('status-completed');
-            else if (lesson.status === 'in_progress') statusIndicator.classList.add('status-in-progress');
-            else statusIndicator.classList.add('status-not-started');
+            
+            // Определяем статус урока
+            if (lesson.status === 'completed') {
+                statusIndicator.classList.add('status-completed');
+                statusIndicator.title = 'Урок завершен';
+            } else if (lesson.status === 'in_progress') {
+                statusIndicator.classList.add('status-in-progress');
+                statusIndicator.title = 'Урок в процессе';
+            } else {
+                statusIndicator.classList.add('status-not-started');
+                statusIndicator.title = 'Урок не начат';
+            }
 
             // Загружаем список задач урока
             await loadLessonTasks();
@@ -94,7 +103,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Загружаем список задач урока
     async function loadLessonTasks() {
         try {
-            const response = await fetch(`/api/v0/tasks/tasks/${lessonId}/tasks`, {
+            const response = await fetch(`/api/v0/tasks/lesson/${lessonId}`, {
                 credentials: 'include'
             });
 
@@ -103,8 +112,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             const data = await response.json();
-            const tasks = data.tasks || [];
+            const tasks = data.result || [];
 
+            // Очищаем контейнер задач
             tasksContainer.innerHTML = '';
 
             if (tasks.length === 0) {
@@ -126,9 +136,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const statusIndicator = document.createElement('div');
                 statusIndicator.className = 'task-status-indicator';
-                if (task.status === 'completed') statusIndicator.classList.add('task-status-completed');
-                else if (task.status === 'in_progress') statusIndicator.classList.add('task-status-in-progress');
-                else statusIndicator.classList.add('task-status-not-started');
+                
+                // Определяем статус задачи
+                if (task.status === 'completed') {
+                    statusIndicator.classList.add('task-status-completed');
+                    statusIndicator.title = 'Задача решена';
+                } else if (task.status === 'in_progress') {
+                    statusIndicator.classList.add('task-status-in-progress');
+                    statusIndicator.title = 'Задача в процессе';
+                } else {
+                    statusIndicator.classList.add('task-status-not-started');
+                    statusIndicator.title = 'Задача не начата';
+                }
 
                 taskCard.appendChild(taskTitle);
                 taskCard.appendChild(statusIndicator);

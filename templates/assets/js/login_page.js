@@ -81,9 +81,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            const responseData = await response.json();
+            const userData = responseData.result;
+
+            // Сохраняем токен и ID пользователя
+            localStorage.setItem('token', userData.token);
+            if (userData.id) {
+                localStorage.setItem('studentId', userData.id);
+            }
 
             // Определяем тип пользователя и перенаправляем
-            const userType = (await response.json()).result.state;
+            const userType = userData.state;
             const redirectUrl = !userType
                 ? 'student_main_page.html' 
                 : 'teacher_main_page.html';

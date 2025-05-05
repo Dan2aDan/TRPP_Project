@@ -90,42 +90,64 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Обработчик отправки решения
     async function handleTaskSubmit(event) {
         event.preventDefault();
-
-        const solution = solutionTextarea.value.trim();
-        if (!solution) {
-            showError('Пожалуйста, введите решение задачи');
+        
+        const solutionText = document.getElementById('lesson-description-1').value.trim();
+        if (!solutionText) {
+            showError('Пожалуйста, введите решение');
             return;
         }
-
-        showLoading();
+        
         try {
-            const response = await fetch('/api/v0/tasks/submit', {
+            showLoading();
+            
+            const response = await fetch('/api/v0/solutions/student_solutions', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
                 body: JSON.stringify({
-                    task_id: parseInt(taskId),
-                    solution: solution
-                }),
-                credentials: 'include'
+                    task_id: taskId,
+                    text: solutionText
+                })
             });
-
+            
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const errorData = await response.json();
+                throw new Error(errorData.msg || 'Ошибка при отправке решения');
             }
-
+            
             const result = await response.json();
-            if (result.success) {
-                alert('Решение успешно отправлено!');
-                window.location.href = 'student_tasks_page.html';
-            } else {
-                showError(result.message || 'Ошибка при отправке решения');
-            }
+            
+            // Очищаем поле ввода
+            document.getElementById('lesson-description-1').value = '';
+            
+            // Обновляем список решений
+            await loadSolutionsHistory();
+            
+            // Показываем сообщение об успехе
+            showSuccess('Решение успешно отправлено');
         } catch (error) {
-            console.error('Error submitting task:', error);
-            showError('Ошибка при отправке решения');
+            console.error('Ошибка:', error);
+            showError(error.message || 'Не удалось отправить решение');
+        } finally {
+            hideLoading();
         }
+    }
+
+    // Функция для отображения сообщения об успехе
+    function showSuccess(message) {
+        const successElement = document.createElement('div');
+        successElement.className = 'alert alert-success';
+        successElement.textContent = message;
+        
+        const mainCard = document.querySelector('.task-main-card');
+        mainCard.insertBefore(successElement, mainCard.firstChild);
+        
+        // Удаляем сообщение через 3 секунды
+        setTimeout(() => {
+            successElement.remove();
+        }, 3000);
     }
 
     // Добавляем обработчики событий
@@ -214,4 +236,94 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Загружаем данные задачи
     loadTaskData();
+
+    // Функция для загрузки истории решений
+    async function loadSolutionsHistory() {
+        try {
+            const response = await fetch(`/api/v0/solutions/student_solutions/task/${taskId}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Ошибка при загрузке истории решений');
+            }
+            
+            const solutions = await response.json();
+            displaySolutions(solutions.result);
+        } catch (error) {
+            console.error('Ошибка:', error);
+            showError('Не удалось загрузить историю решений');
+        }
+    }
+
+    // Функция для отображения решений
+    function displaySolutions(solutions) {
+        const solutionsList = document.getElementById('solutions-list');
+        solutionsList.innerHTML = '';
+        
+        solutions.forEach(solution => {
+            const solutionElement = createSolutionElement(solution);
+            solutionsList.appendChild(solutionElement);
+        });
+    }
+
+    // Функция для создания элемента решения
+    function createSolutionElement(solution) {
+        const div = document.createElement('div');
+        div.className = 'solution-item';
+        div.onclick = () => navigateToSolution(solution.id);
+        
+        const statusClass = getStatusClass(solution.state);
+        const statusText = getStatusText(solution.state);
+        
+        div.innerHTML = `
+            <div class="solution-header">
+                <span class="solution-date">${formatDate(solution.created_at)}</span>
+                <span class="solution-status ${statusClass}">${statusText}</span>
+            </div>
+            <div class="solution-preview">${solution.text}</div>
+        `;
+        
+        return div;
+    }
+
+    // Функция для получения класса статуса
+    function getStatusClass(state) {
+        switch (state) {
+            case 3: return 'status-success';
+            case 4: return 'status-failure';
+            default: return 'status-pending';
+        }
+    }
+
+    // Функция для получения текста статуса
+    function getStatusText(state) {
+        switch (state) {
+            case 3: return 'Успешно';
+            case 4: return 'Ошибка';
+            default: return 'В обработке';
+        }
+    }
+
+    // Функция для форматирования даты
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleString('ru-RU', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    // Функция для перехода на страницу решения
+    function navigateToSolution(solutionId) {
+        window.location.href = `/student/solution/${solutionId}`;
+    }
+
+    // Добавляем загрузку истории решений при загрузке страницы
+    loadSolutionsHistory();
 });
