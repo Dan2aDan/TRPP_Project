@@ -2,8 +2,21 @@ import asyncio
 import ast
 import sys
 import io
+import traceback
 from multiprocessing import Process, Queue
+from typing import Optional, Tuple
 
+class ExecutionResult:
+    def __init__(self, output: str, error: Optional[str] = None, execution_time: float = 0.0):
+        self.output = output
+        self.error = error
+        self.execution_time = execution_time
+        self.success = error is None
+
+    def __str__(self):
+        if self.success:
+            return f"Success: {self.output}"
+        return f"Error: {self.error}"
 
 def _execute_code_func_process(code_str: str, input_text: str, queue: Queue):
     """
@@ -15,22 +28,42 @@ def _execute_code_func_process(code_str: str, input_text: str, queue: Queue):
     old_stdin = sys.stdin
     sys.stdout = io.StringIO()
     sys.stdin = io.StringIO(input_text)
+    
     try:
-        exec(code_str, {})
+        # Создаем безопасное окружение для выполнения кода
+        safe_globals = {
+            '__builtins__': {
+                'print': print,
+                'input': input,
+                'len': len,
+                'range': range,
+                'str': str,
+                'int': int,
+                'float': float,
+                'list': list,
+                'dict': dict,
+                'set': set,
+                'tuple': tuple,
+            }
+        }
+        
+        # Выполняем код
+        exec(code_str, safe_globals)
         output = sys.stdout.getvalue()
+        queue.put(ExecutionResult(output=output))
+        
     except Exception as e:
-        output = f"Error during execution: {e}"
+        error_msg = f"{type(e).__name__}: {str(e)}\n{traceback.format_exc()}"
+        queue.put(ExecutionResult(output="", error=error_msg))
+        
     finally:
         sys.stdout = old_stdout
         sys.stdin = old_stdin
-    queue.put(output)
-
 
 class AsyncCode:
-    def __init__(self, code_str, allowed_modules=None):
+    def __init__(self, code_str: str, allowed_modules: Optional[set] = None):
         self.code_str = code_str
         self.allowed_modules = allowed_modules or set()
-        self.output = None
         self.check_code()
 
     def check_code(self):
@@ -60,89 +93,38 @@ class AsyncCode:
     def __repr__(self):
         return self.code_str
 
-
-def _execute_code_with_timeout(code_str: str, input_text: str, timeout: float = 5) -> str:
+async def execute_code_with_timeout(code_str: str, input_text: str, timeout: float = 5) -> ExecutionResult:
     """
     Выполняет код в отдельном процессе и ожидает его завершения в течение timeout секунд.
     Если процесс не завершается за timeout, принудительно завершает его и выбрасывает исключение.
-    Возвращает вывод, переданный через очередь.
+    Возвращает результат выполнения.
     """
     q = Queue()
     p = Process(target=_execute_code_func_process, args=(code_str, input_text, q))
     p.start()
-    p.join(timeout)
-    if p.is_alive():
+    
+    try:
+        # Ждем результат с таймаутом
+        result = await asyncio.wait_for(asyncio.get_event_loop().run_in_executor(None, q.get), timeout)
+        return result
+    except asyncio.TimeoutError:
         p.terminate()
         p.join()
-        raise Exception("Timeout: Task execution took too long")
-    # Если очередь пуста — вернуть пустую строку
-    output = q.get() if not q.empty() else ""
-    return output
-
+        return ExecutionResult(output="", error="Timeout: Task execution took too long")
+    finally:
+        if p.is_alive():
+            p.terminate()
+            p.join()
 
 class Runner:
-    def __init__(self, task_g: AsyncCode, task_e: AsyncCode, tests: list[str]):
-        self.task_g = task_g
-        self.task_e = task_e
-        self.tests = tests
+    def __init__(self, code: AsyncCode, test_input: str):
+        self.code = code
+        self.test_input = test_input
 
-    async def run_and_compare(self, input_text: str):
+    async def run(self) -> ExecutionResult:
         """
-        Асинхронно запускает оба куска кода с входными данными input_text.
-        Если выполнение занимает более timeout секунд, генерируется исключение.
-        Если выводы отличаются — также генерируется исключение.
+        Запускает код с тестовыми входными данными.
+        Возвращает результат выполнения.
         """
-        loop = asyncio.get_running_loop()
-        # Запускаем оба процесса через run_in_executor, чтобы не блокировать event loop.
-        task1 = loop.run_in_executor(None, _execute_code_with_timeout, str(self.task_g), input_text, 5)
-        task2 = loop.run_in_executor(None, _execute_code_with_timeout, str(self.task_e), input_text, 5)
-        res1, res2 = await asyncio.gather(task1, task2)
-        if res1 != res2:
-            raise Exception(f"Outputs differ:\n{res1}\n != \n{res2}")
-        return res1, res2
+        return await execute_code_with_timeout(str(self.code), self.test_input)
 
-    async def run(self):
-        """
-        Для каждого тестового входа запускает сравнение двух программ.
-        Если все тесты проходят, возвращает "ok", иначе — сообщение об ошибке.
-        """
-        try:
-            for test in self.tests:
-                await self.run_and_compare(test)
-            return "ok"
-        except Exception as e:
-            return str(e)
-
-
-# Пример использования
-async def main():
-    # Пример кода: первая программа засыпает на 10 секунд, вторая — на 1 секунду
-    code_str1 = """
-print(open("logger.py").read())
-"""
-    code_str2 = """
-print(open("logger.py").read())
-
-"""
-    # Разрешаем использовать модуль time
-    try:
-        bibl = {'time', 'random', 'math', 'functools'}
-        task1 = AsyncCode(code_str1, allowed_modules=bibl)
-        task2 = AsyncCode(code_str2, allowed_modules=bibl)
-    except Exception as e:
-        print("Ошибка проверки кода:", e)
-        return
-
-    # Один тестовый вход (например, пустой ввод)
-    runner = Runner(task1, task2, tests=[''])
-    try:
-        result = await runner.run()
-    except Exception as e:
-        result = str(e)
-    print("Captured output:")
-    print(result)
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
-    print("Done")
