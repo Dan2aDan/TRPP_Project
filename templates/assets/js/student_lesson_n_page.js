@@ -57,91 +57,118 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Загружаем данные урока
     async function loadLessonData() {
-        showLoading();
         try {
-            const response = await fetch(`/api/v0/lessons/lesson/${lessonId}`, {
-                credentials: 'include'
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            const lessonId = new URLSearchParams(window.location.search).get('id');
+            if (!lessonId) {
+                throw new Error('ID урока не указан');
             }
 
-            const data = await response.json();
-            const lesson = data.result;
+            // Загружаем данные урока
+            const lessonResponse = await fetch(`/api/v0/lessons/lesson/${lessonId}`, {
+                credentials: 'include'
+            });
+            if (!lessonResponse.ok) {
+                throw new Error('Ошибка при загрузке урока');
+            }
+            const lessonData = await lessonResponse.json();
+            const lesson = lessonData.result;
 
-            // Отображаем содержимое урока
-            lessonTitle.textContent = lesson.title;
-            lessonDescription.value = lesson.description;
-            lessonDescription.classList.toggle('filled', !!lesson.description);
+            // Загружаем статус урока
+            const statusResponse = await fetch(`/api/v0/lessons/lesson/${lessonId}/status`, {
+                credentials: 'include'
+            });
+            if (!statusResponse.ok) {
+                throw new Error('Ошибка при загрузке статуса урока');
+            }
+            const statusData = await statusResponse.json();
 
-            // Индикатор статуса
+            // Обновляем заголовок и описание урока
+            document.getElementById('lesson-title').textContent = lesson.title;
+            document.getElementById('lesson-description').textContent = lesson.description;
+
+            // Обновляем индикатор статуса урока
             const statusIndicator = document.getElementById('lesson-status-indicator');
             statusIndicator.className = 'status-indicator';
-            if (lesson.status === 'completed') statusIndicator.classList.add('status-completed');
-            else if (lesson.status === 'in_progress') statusIndicator.classList.add('status-in-progress');
-            else statusIndicator.classList.add('status-not-started');
+            statusIndicator.classList.add(`status-${statusData.status}`);
+            statusIndicator.title = statusData.message;
 
-            // Загружаем список задач урока
-            await loadLessonTasks();
-            hideLoading();
+            // Загружаем задачи урока
+            await loadLessonTasks(lessonId);
         } catch (error) {
-            console.error('Error loading lesson data:', error);
-            showError('Ошибка при загрузке данных урока');
+            console.error('Ошибка при загрузке данных урока:', error);
+            showError(error.message);
         }
     }
 
     // Загружаем список задач урока
-    async function loadLessonTasks() {
+    async function loadLessonTasks(lessonId) {
         try {
-            const response = await fetch(`/api/v0/tasks/tasks/${lessonId}/tasks`, {
-                credentials: 'include'
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            const tasks = data.tasks || [];
-
+            const tasksContainer = document.getElementById('tasks-container');
             tasksContainer.innerHTML = '';
 
+            // Загружаем список задач урока
+            const tasksResponse = await fetch(`/api/v0/tasks/tasks/${lessonId}/tasks`, {
+                credentials: 'include'
+            });
+            if (!tasksResponse.ok) {
+                throw new Error('Ошибка при загрузке списка задач');
+            }
+            const tasksData = await tasksResponse.json();
+            const tasks = tasksData.tasks || [];
+
             if (tasks.length === 0) {
-                const noTasksDiv = document.createElement('div');
-                noTasksDiv.className = 'task-card';
-                noTasksDiv.innerHTML = '<span class="task-title">В этом уроке пока нет задач</span>';
-                tasksContainer.appendChild(noTasksDiv);
+                tasksContainer.innerHTML = '<div class="no-tasks">В этом уроке пока нет задач</div>';
                 return;
             }
 
-            // Создаем элементы для каждой задачи
-            tasks.forEach(task => {
+            // Для каждой задачи загружаем её статус и создаем карточку
+            for (const task of tasks) {
+                const statusResponse = await fetch(`/api/v0/lessons/task/${task.id}/status`, {
+                    credentials: 'include'
+                });
+                if (!statusResponse.ok) {
+                    console.error(`Ошибка при загрузке статуса задачи ${task.id}`);
+                    continue;
+                }
+                const statusData = await statusResponse.json();
+
                 const taskCard = document.createElement('div');
                 taskCard.className = 'task-card';
+                taskCard.onclick = () => window.location.href = `student_task_n_page.html?task_id=${task.id}&lesson_id=${lessonId}`;
 
                 const taskTitle = document.createElement('span');
                 taskTitle.className = 'task-title';
-                taskTitle.textContent = task.title || `Задание ${task.id}`;
+                taskTitle.textContent = 'Задача ' + task.id;
 
                 const statusIndicator = document.createElement('div');
                 statusIndicator.className = 'task-status-indicator';
-                if (task.status === 'completed') statusIndicator.classList.add('task-status-completed');
-                else if (task.status === 'in_progress') statusIndicator.classList.add('task-status-in-progress');
-                else statusIndicator.classList.add('task-status-not-started');
+                
+                // Устанавливаем класс и подсказку в зависимости от статуса
+                switch (statusData.status) {
+                    case 'completed':
+                        statusIndicator.classList.add('task-status-completed');
+                        statusIndicator.title = 'Задача решена';
+                        break;
+                    case 'in-progress':
+                        statusIndicator.classList.add('task-status-in-progress');
+                        statusIndicator.title = statusData.message;
+                        break;
+                    case 'not-started':
+                        statusIndicator.classList.add('task-status-not-started');
+                        statusIndicator.title = 'Задача не начата';
+                        break;
+                    default:
+                        statusIndicator.classList.add('task-status-not-started');
+                        statusIndicator.title = 'Задача не начата';
+                }
 
                 taskCard.appendChild(taskTitle);
                 taskCard.appendChild(statusIndicator);
-
-                taskCard.addEventListener('click', () => {
-                    window.location.href = `student_task_n_page.html?task_id=${task.id}&lesson_id=${lessonId}`;
-                });
-
                 tasksContainer.appendChild(taskCard);
-            });
+            }
         } catch (error) {
-            console.error('Error loading lesson tasks:', error);
-            showError('Ошибка при загрузке списка задач');
+            console.error('Ошибка при загрузке задач:', error);
+            showError(error.message);
         }
     }
 

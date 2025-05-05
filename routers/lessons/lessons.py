@@ -8,11 +8,12 @@ from routers.lessons.schems import (
     LessonCreate, LessonUpdate, LessonDetailResponse,
     LessonShortResponse, LessonsListResponse, ResponseLesson, LongResponseLesson, LessonDependencyRequest,
     LessonResponse,
-    StudentLessonsResponse, StudentLessonResponse, TeacherInfo
+    StudentLessonsResponse, StudentLessonResponse, TeacherInfo, LessonStatusResponse, TaskStatusResponse
 )
 from utils.utils import generate_json
 import sqlalchemy
 from sqlalchemy import and_
+from sqlalchemy.orm import Session
 
 router = APIRouter()
 
@@ -243,3 +244,145 @@ async def get_student_lessons(student_id: int):
         "msg": "ok",
         "code": 200
     }))
+
+
+@router.get("/lesson/{lesson_id}/status", response_model=LessonStatusResponse)
+async def get_lesson_status(
+    lesson_id: int,
+    request: Request
+):
+    """
+    Получение статуса урока для студента
+    """
+    try:
+        # Получаем ID студента из сессии
+        student_id = request.state.session_data.id
+        
+        with db.create_session() as session:
+            # Получаем урок
+            lesson = session.query(Lessons).filter(Lessons.id == lesson_id).first()
+            if not lesson:
+                raise HTTPException(status_code=404, detail="Урок не найден")
+                
+            # Получаем все задачи урока
+            tasks = session.query(Tasks).filter(Tasks.lesson_id == lesson_id).all()
+            
+            if not tasks:
+                return LessonStatusResponse(
+                    lesson_id=lesson_id,
+                    status="not-started",
+                    message="В уроке нет задач"
+                )
+                
+            # Получаем все решения студента для задач этого урока
+            solutions = session.query(StudentSolutions).filter(
+                StudentSolutions.student_id == student_id,
+                StudentSolutions.task_id.in_([task.id for task in tasks])
+            ).all()
+            
+            # Если нет решений, урок не начат
+            if not solutions:
+                return LessonStatusResponse(
+                    lesson_id=lesson_id,
+                    status="not-started",
+                    message="Урок не начат"
+                )
+                
+            # Проверяем статус всех задач
+            completed_tasks = 0
+            in_progress_tasks = 0
+            
+            for task in tasks:
+                # Получаем все решения для текущей задачи
+                task_solutions = [s for s in solutions if s.task_id == task.id]
+                
+                # Если есть хотя бы одно зачтенное решение, задача считается решенной
+                if any(s.state == 3 for s in task_solutions):
+                    completed_tasks += 1
+                # Если есть решения, но нет зачтенного, задача в процессе
+                elif task_solutions:
+                    in_progress_tasks += 1
+            
+            # Определяем общий статус урока
+            if completed_tasks == len(tasks):
+                return LessonStatusResponse(
+                    lesson_id=lesson_id,
+                    status="completed",
+                    message="Урок завершен"
+                )
+            elif in_progress_tasks > 0 or completed_tasks > 0:
+                return LessonStatusResponse(
+                    lesson_id=lesson_id,
+                    status="in-progress",
+                    message="Урок в процессе"
+                )
+            else:
+                return LessonStatusResponse(
+                    lesson_id=lesson_id,
+                    status="not-started",
+                    message="Урок не начат"
+                )
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/task/{task_id}/status", response_model=TaskStatusResponse)
+async def get_task_status(
+    task_id: int,
+    request: Request
+):
+    """
+    Получение статуса задачи для студента
+    """
+    try:
+        # Получаем ID студента из сессии
+        student_id = request.state.session_data.id
+        
+        with db.create_session() as session:
+            # Получаем задачу
+            task = session.query(Tasks).filter(Tasks.id == task_id).first()
+            if not task:
+                raise HTTPException(status_code=404, detail="Задача не найдена")
+                
+            # Получаем все решения студента для этой задачи
+            solutions = session.query(StudentSolutions).filter(
+                StudentSolutions.student_id == student_id,
+                StudentSolutions.task_id == task_id
+            ).order_by(StudentSolutions.created_at.desc()).all()
+            
+            if not solutions:
+                return TaskStatusResponse(
+                    task_id=task_id,
+                    status="not_started",
+                    message="Задача не начата"
+                )
+            
+            # Берем последнее решение
+            last_solution = solutions[-1]
+            
+            # Определяем статус на основе state последнего решения
+            if last_solution.state == 3:  # Правильно решено
+                status = "completed"
+                message = "Задача решена"
+            elif last_solution.state == 2:  # На проверке
+                status = "in_progress"
+                message = "Задача на проверке"
+            elif last_solution.state == 1:  # В процессе
+                status = "in_progress"
+                message = "Задача в процессе"
+            elif last_solution.state == 4:  # Неверно решено
+                status = "in_progress"
+                message = "Задача решена неверно"
+            else:  # Не начата или другая ошибка
+                status = "not_started"
+                message = "Задача не начата"
+                
+            return TaskStatusResponse(
+                task_id=task_id,
+                status=status,
+                message=message
+            )
+                
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

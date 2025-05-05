@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 lessonsContainer.appendChild(noLessonsDiv);
                 return;
             }
-            displayLessons(lessons);
+            await displayLessons(lessons);
         } catch (error) {
             console.error('Error loading student data:', error);
             showError('Ошибка при загрузке данных');
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadStudentData();
 });
 
-function displayLessons(lessons) {
+async function displayLessons(lessons) {
     function startLesson(lessonId) {
         window.location.href = 'student_lesson_n_page.html?id=' + lessonId;
     }
@@ -141,7 +141,22 @@ function displayLessons(lessons) {
     container.innerHTML = '';
 
     if (lessons && lessons.length > 0) {
-        lessons.forEach(lesson => {
+        for (const lesson of lessons) {
+            // Получаем статус урока
+            let statusData;
+            try {
+                const statusResponse = await fetch(`/api/v0/lessons/lesson/${lesson.id}/status`, {
+                    credentials: 'include'
+                });
+                if (!statusResponse.ok) {
+                    throw new Error('Ошибка при загрузке статуса урока');
+                }
+                statusData = await statusResponse.json();
+            } catch (error) {
+                console.error('Ошибка при загрузке статуса урока:', error);
+                statusData = { status: 'not-started', message: 'Не удалось загрузить статус' };
+            }
+
             // Создаем карточку урока
             const lessonCard = document.createElement('div');
             lessonCard.className = 'lesson-card';
@@ -166,7 +181,26 @@ function displayLessons(lessons) {
             
             // Создаем индикатор статуса
             const statusIndicator = document.createElement('div');
-            statusIndicator.className = `status-indicator status-${lesson.status || 'not-started'}`;
+            statusIndicator.className = 'status-indicator';
+            
+            // Устанавливаем класс и подсказку в зависимости от статуса
+            switch (statusData.status) {
+                case 'completed':
+                    statusIndicator.classList.add('status-completed');
+                    statusIndicator.title = statusData.message || 'Урок завершен';
+                    break;
+                case 'in-progress':
+                    statusIndicator.classList.add('status-in-progress');
+                    statusIndicator.title = statusData.message || 'Урок в процессе';
+                    break;
+                case 'not-started':
+                    statusIndicator.classList.add('status-not-started');
+                    statusIndicator.title = statusData.message || 'Урок не начат';
+                    break;
+                default:
+                    statusIndicator.classList.add('status-not-started');
+                    statusIndicator.title = statusData.message || 'Урок не начат';
+            }
             
             // Добавляем обработчики событий
             startLessonBtn.addEventListener('click', () => startLesson(lesson.id));
@@ -182,7 +216,7 @@ function displayLessons(lessons) {
             
             // Добавляем карточку в контейнер
             container.appendChild(lessonCard);
-        });
+        }
     } else {
         // Создаем сообщение об отсутствии уроков
         const noLessonsMessage = document.createElement('div');

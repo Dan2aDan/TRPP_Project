@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 from DataBaseManager.extends import DBALL
 from routers.solutions.schems import (
@@ -9,6 +9,9 @@ from routers.solutions.schems import (
     ResponseMessage,
 )
 from utils.utils import generate_json
+from pydantic import BaseModel
+from datetime import datetime, timezone
+import pytz
 
 router = APIRouter()
 
@@ -37,7 +40,7 @@ async def get_student_solution_by_id(solution_id: int):
 
 @router.get("/student_solutions/task/{task_id}/{student_id}", response_class=JSONResponse)
 async def get_student_solutions_by_task(task_id: int, student_id: int):
-    solutions = DBALL().get_student_task_solutions(student_id, task_id, states=[1, 2, 3, 0])
+    solutions = DBALL().get_student_task_solutions(student_id, task_id, states=[1, 2, 3, 4])
 
     result = [StudentSolutionResponse(
         id=s.id,
@@ -55,10 +58,30 @@ async def get_student_solutions_by_task(task_id: int, student_id: int):
         "code": 200
     }))
 
+@router.get("/student_solutions/task/{task_id}", response_class=JSONResponse)
+async def get_student_solutions_by_task(task_id: int, request: Request):
+    student_id = request.state.session_data.id
+    solutions = DBALL().get_student_task_solutions(student_id, task_id, states=[1, 2, 3, 4])
+
+    result = [StudentSolutionResponse(
+        id=s.id,
+        student_id=s.student_id,
+        task_id=s.task_id,
+        text=s.text,
+        result=s.result,
+        state=s.state,
+        created_at=s.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+    ) for s in solutions]
+
+    return generate_json(ResponseSolutionList.model_validate({
+        "result": result,
+        "msg": "ok",
+        "code": 200
+    }))
 
 @router.get("/latest_student_solution/task/{task_id}/{student_id}", response_class=JSONResponse)
 async def get_latest_student_solution_by_task(task_id: int, student_id: int):
-    solutions = DBALL().get_student_task_solutions(student_id, task_id, states=[1, 2, 3, 0])
+    solutions = DBALL().get_student_task_solutions(student_id, task_id, states=[1, 2, 3, 4])
 
     if not solutions:
         raise HTTPException(status_code=404, detail={"error": "No solutions found"})
@@ -83,14 +106,21 @@ async def get_latest_student_solution_by_task(task_id: int, student_id: int):
 
 
 @router.post("/student_solutions", response_class=JSONResponse, status_code=201)
-async def create_student_solution(data: StudentSolutionCreate):
+async def create_student_solution(data: StudentSolutionCreate, request: Request):
+    # Получаем текущее время в UTC
+    utc_now = datetime.now(timezone.utc)
+    
     solution = DBALL().create_student_solution(
-        student_id=data.student_id,
+        student_id=request.state.session_data.id,
         task_id=data.task_id,
         text=data.text,
         result=None,  # по условию
-        state=1  # по умолчанию
+        state=1,  # по умолчанию
     )
+
+    # Конвертируем время в локальный часовой пояс для отображения
+    local_tz = pytz.timezone('Europe/Moscow')
+    local_created_at = solution.created_at.astimezone(local_tz)
 
     result = StudentSolutionResponse(
         id=solution.id,
@@ -99,10 +129,10 @@ async def create_student_solution(data: StudentSolutionCreate):
         text=solution.text,
         result=solution.result,
         state=solution.state,
-        created_at=solution.created_at.isoformat(),
+        created_at=local_created_at.isoformat(),
     )
-    return generate_json(ResponseOneSolution.model_validate({
-        "result": result,
-        "msg": "created",
-        "code": 201
-    }))
+
+    return JSONResponse(
+        content={"result": result.model_dump()},
+        status_code=201
+    )

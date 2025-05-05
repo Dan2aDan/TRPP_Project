@@ -1,6 +1,6 @@
 version: '3'
 services:
-  api0:
+  api:
     build: .
     env_file:
       - .env
@@ -9,6 +9,15 @@ services:
       - "main.py"
     ports:
       - "8000:8000"
+    restart: always
+
+  test_container:
+    build: .
+    env_file:
+      - .env
+    command:
+      - "python"
+      - "test_container.py"
     restart: always
 
 networks:

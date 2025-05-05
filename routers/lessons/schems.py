@@ -86,3 +86,15 @@ class LessonResponse(BaseModel):
     teacher_id: int
     file_id: int
     status: Optional[str] = None  # completed, in_progress, not_started
+
+
+class LessonStatusResponse(BaseModel):
+    lesson_id: int
+    status: str
+    message: str
+
+
+class TaskStatusResponse(BaseModel):
+    task_id: int
+    status: str
+    message: str

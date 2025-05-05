@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Задание | Личный кабинет ученика</title>
+    <title>Решение | Личный кабинет ученика</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/styles.min.css">
-    <link rel="stylesheet" href="assets/css/student_task_n_page.css">
+    <link rel="stylesheet" href="assets/css/student_solution_n_page.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
-<div class="task-bg">
+<div class="solution-bg">
     <div class="container py-4">
         <div class="header-bar d-flex justify-content-between align-items-center mb-4">
             <h1 class="mb-0">Личный кабинет ученика</h1>
@@ -20,35 +20,38 @@
             <button class="nav-btn" id="btn_lsns"><i class="fas fa-book me-2"></i>Уроки</button>
             <button class="nav-btn active" id="btn_tsks"><i class="fas fa-tasks me-2"></i>Задачи</button>
         </div>
-        <div class="main-card task-main-card">
+        <div class="main-card solution-main-card">
             <div id="loading-indicator" class="text-center mb-3" style="display: none;">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Загрузка...</span>
                 </div>
             </div>
             <div id="error-message" class="error-message" style="display: none;"></div>
-            <h2 id="task-title" class="task-title">Загрузка...</h2>
-            <textarea id="task-description" class="task-desc" readonly placeholder="Описание задания"></textarea>
-            <div class="task-files mb-3">
-                <button class="btn action-btn download-btn" id="download-files-btn"><i class="fas fa-download"></i> Скачать файлы</button>
-            </div>
-            <h3 class="mb-3">Ответ на задание</h3>
-            <textarea id="task-answer" class="task-answer" placeholder="Введите ваш ответ..."></textarea>
-            <div class="text-end mt-3">
-                <button class="btn action-btn send-btn" id="send_btn"><i class="fas fa-paper-plane"></i> Отправить</button>
-            </div>
             
-            <!-- История решений -->
-            <div class="solutions-history mt-4">
-                <h3 class="mb-3">История решений</h3>
-                <div id="solutions-list" class="solutions-list">
-                    <!-- Здесь будут отображаться решения -->
+            <div class="solution-header mb-4">
+                <h2 id="solution-title" class="solution-title">Загрузка...</h2>
+                <div id="solution-status" class="solution-status"></div>
+            </div>
+
+            <div class="solution-content">
+                <div class="solution-section mb-4">
+                    <h3 class="section-title">Программа</h3>
+                    <textarea id="solution-program" class="solution-text" readonly></textarea>
                 </div>
+
+                <div class="solution-section">
+                    <h3 class="section-title">Результат тестирования</h3>
+                    <textarea id="solution-result" class="solution-text" readonly></textarea>
+                </div>
+            </div>
+
+            <div class="solution-footer mt-4">
+                <button class="btn action-btn back-btn" id="back-btn"><i class="fas fa-arrow-left"></i> Назад</button>
             </div>
         </div>
     </div>
 </div>
 <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-<script src="assets/js/student_task_n_page.js"></script>
+<script src="assets/js/student_solution_n_page.js"></script>
 </body>
-</html>
+</html> 
