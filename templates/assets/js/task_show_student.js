@@ -1,4 +1,3 @@
-
 // Перенаправление на другие страницы
 document.getElementById('btn_students').addEventListener('click', () => {
     window.location.href = 'teacher_main_page.html';
@@ -16,64 +15,77 @@ document.getElementById('btn_tsks').addEventListener('click', () => {
 const params = new URLSearchParams(window.location.search);
 const studentId = params.get('id');
 
-console.log('Загрузка задач ученика', studentId);
+console.log('Загрузка задач и статусов ученика', studentId);
 
-async function loadStudentTasks() {
+async function loadStudentTasksWithStatus() {
     try {
+        // Получаем все задачи студента
         const response = await fetch(`/api/v0/tasks/student/${studentId}`, {
             method: 'GET'
         });
         const data = await response.json();
-
         const tasks = data.tasks || [];
-        const container = document.getElementById('student_tsks').parentElement.parentElement;
-        console.trace(data)
-        // Удаляем старые элементы
-        container.querySelectorAll('.row').forEach(row => row.remove());
+        const container = document.querySelector('.main-card');
+        container.querySelectorAll('.solution-row').forEach(row => row.remove());
 
-        tasks.forEach(task => {
+        for (const task of tasks) {
+            // Получаем статус задачи через отдельный endpoint
+            let statusClass = 'failed';
+            let statusText = '';
+            try {
+                const statusResp = await fetch(`/api/v0/lessons/task/${task.id}/status`);
+                const statusData = await statusResp.json();
+                const status = statusData.status || 'not_started';
+                statusClass = getStatusClassByText(status);
+                statusText = getStatusText(status);
+            } catch (e) {
+                statusText = 'Ошибка';
+            }
+
             const row = document.createElement('div');
-            row.className = 'row';
-            row.style = 'height:51px;width:586px;margin:0;padding:0;margin-top:10px;margin-left:77px;';
-
+            row.className = 'solution-row';
             row.innerHTML = `
-                <div class="col-lg-11 col-xl-12 col-xxl-12 d-lg-flex justify-content-lg-start align-items-lg-center"
-                     style="height:51px;width:586px;padding:0;margin:0;margin-left:0;margin-top:0px;">
-                    <p style="margin-left:20px;margin-top:16px;">${task.id}</p>
-                    <div class="card"
-                         style="width:38px;height:38px;margin-left:92px;border-radius:32px;background:${getStatusColor(task.status)};"></div>
-                    <button class="btn my-btn" type="button"
-                            style="margin-left:75px;width:239.414px;height:41px;padding:0px;"
-                            onclick="location.href='view_solution.html?taskId=${task.id}&studentId=${studentId}'">
-                        Просмотреть решение
-                    </button>
-                </div>
+                <span class="solution-id">${task.id}</span>
+                <span class="solution-task">${task.description || ''}</span>
+                <span class="solution-status ${statusClass}" title="${statusText}"></span>
+                <button class="view-solution-btn" onclick="location.href='view_solution.html?taskId=${task.id}&studentId=${studentId}'">
+                    <i class="fas fa-eye me-2"></i>Просмотреть решение
+                </button>
             `;
-
             container.appendChild(row);
-        });
-
-        // Устанавливаем имя ученика (если есть)
-        if (tasks.length > 0 && tasks[0].student_name) {
-            document.getElementById('student_name').textContent = tasks[0].student_name;
         }
 
+        // Имя ученика (если есть)
+        // Можно получить отдельным запросом, если нужно
+
     } catch (error) {
-        console.error('Ошибка при загрузке задач ученика:', error);
+        console.error('Ошибка при загрузке задач и статусов ученика:', error);
     }
 }
 
-function getStatusColor(status) {
+function getStatusClassByText(status) {
     switch (status) {
-        case 'done':
-            return 'green';
-        case 'pending':
-            return 'yellow';
-        case 'missing':
-            return 'red';
+        case 'completed':
+            return 'completed';
+        case 'in-progress':
+            return 'in-progress';
+        case 'not-started':
         default:
-            return 'gray';
+            return 'failed';
     }
 }
 
-loadStudentTasks();
+function getStatusText(status) {
+    switch (status) {
+        case 'completed':
+            return 'Выполнено';
+        case 'in_progress':
+            return 'В процессе';
+        case 'not_started':
+            return 'Не начато';
+        default:
+            return status;
+    }
+}
+
+loadStudentTasksWithStatus();
