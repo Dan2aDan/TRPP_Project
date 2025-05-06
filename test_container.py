@@ -70,10 +70,10 @@ class TestContainer:
                         solution.result = student_result.output
                     else:
                         solution.state = 4
-                        solution.result = f"Ожидалось: {teacher_result.output}, Получено: {student_result.output}"
+                        solution.result = f"Ожидалось: {teacher_result.output}\nПолучено: {student_result.output}"
                 except Exception as e:
                     solution.state = 4
-                    solution.result = str(e)
+                    solution.result = "В ходе выполнения получена ошибка " + str(e)
                 session.commit()
         finally:
             session.close()
