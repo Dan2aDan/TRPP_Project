@@ -110,7 +110,7 @@ class StudentSolutions(Base):
     text: str = Column(String, nullable=False)
     result: str = Column(String)
     state: int = Column(Integer, default=1)  # 1 - получено, 2 - проверка, 3 - правильно, 4 - неправильно
-    created_at: datetime = Column(DateTime(timezone=True), default=datetime.now(timezone.utc))
+    created_at: datetime = Column(DateTime(timezone=True), default=datetime.now)
 
     # Связи
     student = relationship("Students", back_populates="student_solutions")
