@@ -45,6 +45,13 @@ class DbStudentSolutions:
         )
         return self.db.select(query, types=self.db.all_)
 
+    def get_task_solutions(self, task_id):
+        """Получить все решения по конкретной задаче"""
+        query = sqlalchemy.select(StudentSolutions).where(
+            StudentSolutions.task_id == task_id
+        ).order_by(StudentSolutions.created_at.desc())
+        return self.db.select(query, types=self.db.all_)
+
     def get_student_solutions_by_states(self, student_id, states):
         """Получить решения ученика с указанными статусами"""
         if not states:

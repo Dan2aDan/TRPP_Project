@@ -154,14 +154,10 @@ async def delete_lesson(lesson_id: int, request: Request):
 
 @router.post("/dependencies", response_class=JSONResponse)
 async def set_lesson_dependencies(data: LessonDependencyRequest, request: Request):
-    if not data.student_ids:
-        raise HTTPException(status_code=400, detail={
-            "error": "Missing student IDs",
-            "message": "Provide at least one student ID"
-        })
-
-    DBALL().add_lesson_dependencies(data.lesson_id, data.student_ids)
-
+    if data.state:
+        DBALL().add_lesson_dependencies(data.lesson_id, [data.student_id])
+    else:
+        DBALL().delete_lesson_dependencies(data.lesson_id, [data.student_id])
     return JSONResponse(content={"message": "Dependencies created successfully", "code": 201})
 
 

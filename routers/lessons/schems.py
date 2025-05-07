@@ -74,7 +74,8 @@ class LongResponseLesson(BaseModel):
 
 class LessonDependencyRequest(BaseModel):
     lesson_id: int
-    student_ids: List[int]
+    student_id: int
+    state: bool
 
 
 class LessonResponse(BaseModel):

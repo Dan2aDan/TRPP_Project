@@ -69,11 +69,159 @@ document.addEventListener('DOMContentLoaded', async () => {
             descriptionTextarea.value = task.description;
             codeTextarea.value = task.text;
             testTextarea.value = task.test;
+
+            // Загружаем решения задачи
+            await loadTaskSolutions(state);
         } catch (error) {
             console.error('Ошибка загрузки задачи:', error);
             alert('Произошла ошибка при загрузке задачи');
         }
     }
+
+    // Функция для загрузки решений задачи
+    async function loadTaskSolutions(taskId) {
+        try {
+            const response = await fetch(`/api/v0/solutions/task/${taskId}/solutions`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const solutions = data.solutions || [];
+            
+            // Очищаем контейнер решений
+            const solutionsList = document.getElementById('solutions-list');
+            solutionsList.innerHTML = '';
+
+            if (solutions.length === 0) {
+                solutionsList.innerHTML = '<p class="text-muted">Пока нет решений</p>';
+                return;
+            }
+
+            // Отображаем каждое решение
+            solutions.forEach(solution => {
+                const solutionRow = document.createElement('div');
+                solutionRow.className = 'student-solution-row';
+                
+                // Определяем статус решения
+                let statusClass = '';
+                let statusText = '';
+                switch(solution.state) {
+                    case 1:
+                        statusClass = 'in-progress';
+                        statusText = 'В процессе';
+                        break;
+                    case 2:
+                        statusClass = 'in-progress';
+                        statusText = 'На проверке';
+                        break;
+                    case 3:
+                        statusClass = 'completed';
+                        statusText = 'Правильно';
+                        break;
+                    case 4:
+                        statusClass = 'failed';
+                        statusText = 'Неправильно';
+                        break;
+                    default:
+                        statusClass = 'failed';
+                        statusText = 'Неизвестно';
+                }
+
+                solutionRow.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <span class="student-name">${solution.student_name}</span>
+                        <span class="solution-status ${statusClass}" title="${statusText}"></span>
+                        <span class="text-muted ms-2">${new Date(solution.created_at).toLocaleString()}</span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="view-solution-btn" onclick="viewSolution(${solution.id})">
+                            <i class="fas fa-eye me-2"></i>Просмотреть решение
+                        </button>
+                    </div>
+                `;
+                
+                solutionsList.appendChild(solutionRow);
+            });
+        } catch (error) {
+            console.error('Ошибка при загрузке решений:', error);
+            alert('Произошла ошибка при загрузке решений');
+        }
+    }
+
+    // Функция для просмотра решения
+    window.viewSolution = async (solutionId) => {
+        try {
+            const response = await fetch(`/api/v0/solutions/student_solutions/${solutionId}`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const solution = data.result;
+
+            // Показываем решение в модальном окне
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.innerHTML = `
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Решение ученика</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <pre class="bg-light p-3 rounded">${solution.text}</pre>
+                            ${solution.result ? `<div class="mt-3"><strong>Результат:</strong><pre class="bg-light p-3 rounded">${solution.result}</pre></div>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            const modalInstance = new bootstrap.Modal(modal);
+            modalInstance.show();
+            modal.addEventListener('hidden.bs.modal', () => {
+                document.body.removeChild(modal);
+            });
+        } catch (error) {
+            console.error('Ошибка при просмотре решения:', error);
+            alert('Произошла ошибка при просмотре решения');
+        }
+    };
+
+    // Функция для проверки решения
+    window.checkSolution = async (solutionId) => {
+        try {
+            const response = await fetch(`/api/v0/tasks/solutions/${solutionId}/check`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (data.code === 200) {
+                alert('Решение проверено');
+                // Обновляем список решений
+                await loadTaskSolutions(state);
+            } else {
+                throw new Error(data.msg || 'Ошибка при проверке решения');
+            }
+        } catch (error) {
+            console.error('Ошибка при проверке решения:', error);
+            alert('Произошла ошибка при проверке решения');
+        }
+    };
 
     // Сохранение задачи
     saveBtn.addEventListener('click', async () => {

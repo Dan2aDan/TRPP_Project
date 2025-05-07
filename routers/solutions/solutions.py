@@ -7,6 +7,8 @@ from routers.solutions.schems import (
     ResponseSolutionList,
     StudentSolutionCreate,
     ResponseMessage,
+    TaskSolutionResponse,
+    TaskSolutionsList,
 )
 from utils.utils import generate_json
 from pydantic import BaseModel
@@ -136,3 +138,39 @@ async def create_student_solution(data: StudentSolutionCreate, request: Request)
         content={"result": result.model_dump()},
         status_code=201
     )
+
+@router.get("/task/{task_id}/solutions", response_class=JSONResponse)
+async def get_task_solutions(task_id: int):
+    # Получаем все решения для задачи
+    solutions = DBALL().get_task_solutions(task_id)
+
+    if not solutions:
+        return generate_json(TaskSolutionsList(
+            solutions=[],
+            msg="No solutions found",
+            code=200
+        ))
+
+    # Преобразуем решения в формат ответа
+    result = []
+    for solution in solutions:
+        # Получаем информацию о студенте
+        student = DBALL().get_student_by_id(solution.student_id)
+        student_name = student.login if student else "Неизвестный ученик"
+
+        result.append(TaskSolutionResponse(
+            id=solution.id,
+            student_id=solution.student_id,
+            student_name=student_name,
+            task_id=solution.task_id,
+            text=solution.text,
+            result=solution.result,
+            state=solution.state,
+            created_at=solution.created_at.isoformat()
+        ))
+
+    return generate_json(TaskSolutionsList(
+        solutions=result,
+        msg="ok",
+        code=200
+    ))

@@ -1,0 +1,431 @@
+:root {
+    --primary-color: #06799f;
+    --primary-hover: #056a8a;
+    --gradient-start: #024e68;
+    --gradient-middle: #ceedff;
+    --gradient-end: #ffffff;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-middle) 50%, var(--gradient-end) 100%);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+/* Стили для чекбоксов, соответствующие предоставленной теме */
+.lesson-checkbox {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-top: 0.2rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 0.25rem;
+    background: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    transition: var(--transition);
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.lesson-checkbox:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'%3E%3Cpath fill-rule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clip-rule='evenodd' /%3E%3C/svg%3E");
+    background-size: 80%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.lesson-checkbox:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(6, 121, 159, 0.1);
+}
+
+.lesson-checkbox:hover {
+    border-color: var(--primary-hover);
+}
+
+.lesson-checkbox:checked:hover {
+    background-color: var(--primary-hover);
+}
+
+/* Стили для метки чекбокса */
+.lesson-checkbox + label {
+    color: #333;
+    font-size: 1rem;
+    margin-left: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.lesson-checkbox + label:hover {
+    color: var(--primary-color);
+}
+
+/* Стили для контейнера чекбокса в карточке */
+.main-card .lesson-checkbox {
+    vertical-align: middle;
+}
+
+.main-card .lesson-checkbox + label {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .lesson-checkbox {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    .lesson-checkbox + label {
+        font-size: 0.9rem;
+        margin-left: 0.5rem;
+    }
+}
+/* Стили для навигации */
+.nav-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 1rem;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+    width: 186px;
+    height: 66px;
+}
+
+.nav-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.nav-btn.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Основная карточка */
+.main-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 1.5rem;
+    box-shadow: var(--card-shadow);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.main-card h2 {
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* Форма урока */
+.lesson-form {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: var(--transition);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(6, 121, 159, 0.1);
+    outline: none;
+}
+
+textarea.form-control {
+    min-height: 150px;
+    resize: vertical;
+}
+
+/* Кнопки */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: var(--transition);
+    cursor: pointer;
+    border: none;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: #fff;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Кнопка выхода */
+.logout-btn {
+    background: #fff;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    border-radius: 1rem;
+    font-weight: 600;
+    padding: 0.5rem 1.2rem;
+    transition: var(--transition);
+}
+
+.logout-btn:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Сообщения об ошибках */
+.error-message {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Индикатор загрузки */
+.loading-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.spinner-border {
+    color: var(--primary-color);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .header-bar {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .nav-buttons {
+        flex-direction: column;
+    }
+
+    .nav-btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .main-card {
+        padding: 1rem;
+    }
+
+    .lesson-form {
+        padding: 0 1rem;
+    }
+}
+
+/* Стили для списка задач */
+.tasks-list {
+    margin-top: 2rem;
+}
+
+.task-item {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+}
+
+.task-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.task-title {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin: 0;
+}
+
+.task-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Стили для модальных окон */
+.modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    border: none;
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+}
+
+/* Стили для карточки урока */
+.lesson-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+}
+
+.lesson-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.lesson-title {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* Стили для чекбоксов */
+.form-check {
+    margin-bottom: 0.5rem;
+}
+
+.form-check-input {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-top: 0.2rem;
+    border: 2px solid var(--primary-color);
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.form-check-label {
+    color: #333;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+}
+
+/* Стили для списка студентов */
+.lesson-students {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.lesson-students h6 {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.student-list {
+    padding-left: 1rem;
+}
+
+/* Стили для поиска */
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group .form-control {
+    border: 2px solid #e0e0e0;
+    border-radius: 0.5rem 0 0 0.5rem;
+    padding: 0.75rem 1rem;
+}
+
+.input-group .btn {
+    border-radius: 0 0.5rem 0.5rem 0;
+    padding: 0.75rem 1.5rem;
+}
+
+/* Кнопка добавления урока */
+#btn_new_lsn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+#btn_new_lsn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+} 

@@ -1,0 +1,117 @@
+/* Стили для контейнера решений */
+.solutions-container {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.solutions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.solutions-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.student-solution-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+}
+
+.student-solution-row:hover {
+    background-color: #f8f9fa;
+}
+
+.student-solution-row:last-child {
+    border-bottom: none;
+}
+
+.student-name {
+    font-weight: 500;
+    color: #333;
+}
+
+.solution-status {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-left: 10px;
+    display: inline-block;
+}
+
+.solution-status.in-progress {
+    background-color: #ffc107;
+}
+
+.solution-status.completed {
+    background-color: #28a745;
+}
+
+.solution-status.failed {
+    background-color: #dc3545;
+}
+
+.view-solution-btn,
+.task-action-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.view-solution-btn {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+.view-solution-btn:hover {
+    background-color: #dee2e6;
+}
+
+.task-action-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.task-action-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Стили для модального окна с решением */
+.modal-content {
+    border-radius: 10px;
+    border: none;
+}
+
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 10px 10px 0 0;
+}
+
+.modal-body pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+} 

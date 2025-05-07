@@ -11,47 +11,46 @@ document.getElementById('btn_tsks').addEventListener('click', () => {
 });
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const container = document.getElementById("students-container");
+    const container = document.getElementById("lessons-container");
     if (!container) return;
-
+    const params = new URLSearchParams(window.location.search);
+    const state = params.get('id');
     try {
-        // Получаем список уроков
         const lessonsResp = await fetch("/api/v0/lessons/lessons");
         const lessonsData = await lessonsResp.json();
-
+        const lessonsdeps = await (await fetch(`/api/v0/lessons/student/${state}`)).json();
+        console.trace(lessonsdeps);
         if (!lessonsResp.ok || !Array.isArray(lessonsData.lessons)) {
             console.error("Ошибка получения уроков");
             return;
         }
 
-        // Очищаем старый список
-        container.innerHTML = "";
-
-        // Для каждого урока создаём кнопку и вешаем обработчик
+// Для каждого урока создаём чекбокс и вешаем обработчик
         lessonsData.lessons.forEach(lesson => {
-            const btn = document.createElement("button");
-            btn.className = "btn link-dark my-btn";
-            btn.textContent = `Урок ${lesson.id} - ${lesson.title}`;
-            btn.style.width = "500px";
-            btn.style.height = "50px";
-            btn.style.marginBottom = "10px";
-
             const wrapper = document.createElement("div");
-            wrapper.className = "col-lg-11 col-xl-12 col-xxl-12 d-lg-flex justify-content-lg-start align-items-lg-center";
-            wrapper.style.height = "51px";
-            wrapper.style.width = "500px";
-            wrapper.style.padding = "0px";
+            wrapper.className = "main-card";
 
-            wrapper.appendChild(btn);
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.id = `lesson-${lesson.id}`;
+            checkbox.className = "lesson-checkbox";
+            if (lessonsdeps.result.some(dep => dep.id === lesson.id)) {
+                checkbox.checked = true;
+            }
+
+            const label = document.createElement("label");
+            label.htmlFor = `lesson-${lesson.id}`;
+            label.textContent = lesson.title;
+
+            wrapper.appendChild(checkbox);
+            wrapper.appendChild(label);
             container.appendChild(wrapper);
 
-            // Вешаем обработчик на кнопку
-            btn.addEventListener("click", async () => {
+            // Вешаем обработчик на изменение статуса чекбокса
+            checkbox.addEventListener("change", async () => {
                 try {
                     // Получаем всех студентов
-                    const params = new URLSearchParams(window.location.search);
-                    const state = params.get('id');
-                    const studentIds = [parseInt(state)]
+
 
                     // Отправляем запрос на установку зависимостей
                     const depResp = await fetch("/api/v0/lessons/dependencies", {
@@ -61,7 +60,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                         },
                         body: JSON.stringify({
                             lesson_id: lesson.id,
-                            student_ids: studentIds
+                            student_id: state,
+                            state: checkbox.checked
                         })
                     });
 
@@ -70,16 +70,18 @@ document.addEventListener("DOMContentLoaded", async () => {
                         console.error("Ошибка:", err);
                         alert("Не удалось установить зависимости");
                     } else {
-                        alert(`Зависимости для урока "${lesson.title}" успешно установлены`);
+                        alert(`Зависимости для урока "${lesson.title}" успешно ${checkbox.checked ? 'установлены' : 'сняты'}`);
                     }
 
                 } catch (err) {
                     console.error("Ошибка при обработке урока:", err);
+                    alert("Произошла ошибка при обработке запроса");
                 }
             });
         });
-
-    } catch (err) {
+    } catch
+        (err) {
         console.error("Ошибка при инициализации:", err);
     }
-});
+})
+;

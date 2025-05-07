@@ -75,6 +75,18 @@ class DatabaseLessons:
                 )
             )
 
+    def delete_lesson_dependencies(self, lesson_id, student_ids):
+        if not student_ids:
+            return
+
+        for student_id in student_ids:
+            self.db.execute_commit(
+                sqlalchemy.delete(LessonsDepends).where(
+                    LessonsDepends.lesson_id == lesson_id,
+                    LessonsDepends.student_id == student_id
+                )
+            )
+
     def update_lesson(self, lesson_id, title=None, content=None, file_id=None):
         update_data = {}
         if title is not None:
