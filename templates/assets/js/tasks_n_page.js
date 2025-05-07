@@ -4,7 +4,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const studentsBtn = document.getElementById('btn_students');
     const lessonsBtn = document.getElementById('btn_lsns');
     const tasksBtn = document.getElementById('btn_tsks');
-
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await fetch('/api/v0/auth/logout', {method: 'POST', credentials: 'include'});
+            } catch (e) {
+            }
+            window.location.href = 'login.html';
+        });
+    }
     if (studentsBtn) {
         studentsBtn.addEventListener('click', () => {
             window.location.href = 'teacher_main_page.html';
@@ -58,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const response = await fetch(`/api/v0/tasks/tasks/${state}`, {
                 method: 'GET'
             });
-            
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -92,7 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const data = await response.json();
             const solutions = data.solutions || [];
-            
+
             // Очищаем контейнер решений
             const solutionsList = document.getElementById('solutions-list');
             solutionsList.innerHTML = '';
@@ -106,11 +115,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             solutions.forEach(solution => {
                 const solutionRow = document.createElement('div');
                 solutionRow.className = 'student-solution-row';
-                
+
                 // Определяем статус решения
                 let statusClass = '';
                 let statusText = '';
-                switch(solution.state) {
+                switch (solution.state) {
                     case 1:
                         statusClass = 'in-progress';
                         statusText = 'В процессе';
@@ -144,7 +153,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                         </button>
                     </div>
                 `;
-                
+
                 solutionsList.appendChild(solutionRow);
             });
         } catch (error) {
@@ -356,7 +365,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Получаем имя файла из заголовка Content-Disposition или используем ID
             const contentDisposition = fileResponse.headers.get('Content-Disposition');
             let filename = `task_${fileId}`;
-            
+
             if (contentDisposition) {
                 const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
                 if (matches != null && matches[1]) {
@@ -387,7 +396,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         input.type = 'file';
         input.multiple = true;
         input.accept = '.txt,.py,.java,.cpp,.cs,.js,.html,.css,.json,.xml,.md,.pdf,.doc,.docx,.xls,.xlsx,.zip,.rar,.7z';
-        
+
         input.addEventListener('change', async (event) => {
             const files = event.target.files;
             if (files.length === 0) return;

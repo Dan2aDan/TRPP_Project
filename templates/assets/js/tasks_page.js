@@ -14,12 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
-            if (confirm('Вы действительно хотите выйти?')) {
-                try {
-                    await fetch('/api/v0/auth/logout', { method: 'POST', credentials: 'include' });
-                } catch (e) {}
-                window.location.href = 'login.html';
+            try {
+                await fetch('/api/v0/auth/logout', {method: 'POST', credentials: 'include'});
+            } catch (e) {
             }
+            window.location.href = 'login.html';
         });
     }
 
@@ -28,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function viewTask(id_task) {
-    if  (id_task !== -1)
+    if (id_task !== -1)
         window.location.href = `tasks_n_page.html?state=${id_task}`;
     else
         window.location.href = `tasks_n_page.html?state=new`;
