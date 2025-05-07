@@ -171,8 +171,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Получаем кнопки для работы с файлами
-    const downloadFilesBtn = document.querySelector('.btn.my-btn[style*="margin-left:126px"]');
-    const uploadFilesBtn = document.querySelector('.btn.my-btn[style*="margin-left:185px"]');
+    const taskActionButtons = document.querySelectorAll('.task-action-btn');
+    const downloadFilesBtn = Array.from(taskActionButtons).find(btn => btn.textContent.includes('Скачать файлы'));
+    const uploadFilesBtn = Array.from(taskActionButtons).find(btn => btn.textContent.includes('Загрузить файлы'));
 
     if (!downloadFilesBtn || !uploadFilesBtn) {
         console.error('Кнопки для работы с файлами не найдены');

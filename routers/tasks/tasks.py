@@ -125,7 +125,8 @@ async def update_task(task_id: int, data: TaskUpdate, request: Request):
             "message": f"Task with ID {task_id} does not exist"
         })
 
-    task = DBALL().update_task(task_id, data.description)
+    task = DBALL().update_task(task_id, data.description, data.test)
+    DBALL().update_teacher_solution(task.compl_solution_id, data.text_program, state=1)
 
     result = TaskShortResponse(
         id=task.id,

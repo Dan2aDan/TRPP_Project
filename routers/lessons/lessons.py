@@ -117,8 +117,7 @@ async def update_lesson(lesson_id: int, data: LessonUpdate, request: Request):
             "message": f"Lesson with ID {lesson_id} does not exist"
         })
 
-    lesson = DBALL().update_lesson(lesson_id, content=data.description,
-                                   file_id=None if data.file_id == -1 else data.file_id)
+    lesson = DBALL().update_lesson(lesson_id, content=data.description)
     # print(lesson_id)
     # lesson = DBALL().get_lesson_by_id(lesson_id)
 

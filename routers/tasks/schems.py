@@ -38,6 +38,8 @@ class TaskCreate(BaseModel):
 
 class TaskUpdate(BaseModel):
     description: Optional[str] = None
+    text_program: Optional[str] = None
+    test: Optional[str] = None
 
 
 class ResponseTask(BaseModel):

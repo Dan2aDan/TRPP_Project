@@ -57,7 +57,6 @@ class LessonCreate(BaseModel):
 
 
 class LessonUpdate(BaseModel):
-    file_id: int
     description: str
 
 

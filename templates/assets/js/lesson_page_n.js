@@ -1,33 +1,37 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    // Получаем элементы навигации и формы
+    // Навигация
     const studentsBtn = document.getElementById('btn_students');
     const lessonsBtn = document.getElementById('btn_lsns');
     const tasksBtn = document.getElementById('btn_tsks');
-    const saveLessonBtn = document.getElementById('save-lesson');
-    const deleteLessonBtn = document.getElementById('delete-lesson');
-    const createTaskBtn = document.getElementById('create');
-    const downloadFilesBtn = document.querySelector('.btn.my-btn[style*="margin-left:126px"]');
-    const uploadFilesBtn = document.querySelector('.btn.my-btn[style*="margin-left:185px"]');
+    // Кнопки действий
+    const lessonActions = document.querySelectorAll('.lesson-actions .lesson-action-btn');
+    const lessonActionsBottom = document.querySelectorAll('.lesson-actions-bottom .lesson-action-btn');
+    // Основные поля
     const lessonTitle = document.getElementById('lesson-title');
     const lessonDescription = document.getElementById('lesson-description');
     const errorMessage = document.createElement('div');
     errorMessage.id = 'error-message';
     errorMessage.style.cssText = 'display: none; color: red; margin: 10px;';
-    document.querySelector('.col-md-12.col-lg-12.col-xl-10.col-xxl-8').appendChild(errorMessage);
+    document.querySelector('.main-card').appendChild(errorMessage);
 
     const loadingIndicator = document.createElement('div');
     loadingIndicator.className = 'loading-indicator';
     loadingIndicator.style.cssText = 'display: none; text-align: center; margin: 20px;';
     loadingIndicator.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Загрузка...</span></div>';
-    document.querySelector('.col-md-12.col-lg-12.col-xl-10.col-xxl-8').appendChild(loadingIndicator);
+    document.querySelector('.main-card').appendChild(loadingIndicator);
 
     // Проверяем существование только необходимых элементов
-    if (!studentsBtn || !lessonsBtn || !tasksBtn || !saveLessonBtn || !deleteLessonBtn || 
-        !createTaskBtn || !downloadFilesBtn || !uploadFilesBtn || !lessonTitle || 
-        !lessonDescription) {
+    if (!studentsBtn || !lessonsBtn || !tasksBtn || lessonActions.length < 2 || lessonActionsBottom.length < 3 || !lessonTitle || !lessonDescription) {
         console.error('Required elements not found');
         return;
     }
+
+    // Теперь используйте:
+    // lessonActions[0] — Скачать файлы
+    // lessonActions[1] — Загрузить файлы
+    // lessonActionsBottom[0] — Прикрепить задачу
+    // lessonActionsBottom[1] — Сохранить урок
+    // lessonActionsBottom[2] — Удалить урок
 
     // Получаем параметры из URL
     const params = new URLSearchParams(window.location.search);
@@ -101,83 +105,57 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const data = await response.json();
             const tasks = data.tasks || [];
-            const container = document.querySelector('.row > .col > .card')?.parentElement;
-
-            if (!container) {
-                throw new Error('Container for tasks not found');
-            }
-
-            // Очищаем контейнер
-            container.innerHTML = '';
+            const tasksList = document.getElementById('tasks-list');
+            tasksList.innerHTML = '';
 
             if (tasks.length === 0) {
-                container.innerHTML = '<p class="no-tasks">В этом уроке пока нет задач</p>';
+                tasksList.innerHTML = '<p class="no-tasks">В этом уроке пока нет задач</p>';
                 hideLoading();
                 return;
             }
 
-            // Создаем элементы для каждой задачи
-            tasks.forEach(task => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.style.cssText = 'border-radius:28px;width:811px;margin-left:72px;height:auto;min-height:50px;margin-bottom:10px;';
-
-                card.innerHTML = `
-                    <div class="card-body" style="border-radius:0px;">
-                        <button class="btn my-btn show-btn" type="button" data-task-id="${task.id}" style="width:250px;margin-right:220px;">
-                            ${task.title || `Задача ${task.id}`}
-                        </button>
-                        <button class="btn my-btn delete-task-btn" type="button" style="width:250px;" data-task-id="${task.id}">
-                            Удалить задачу
-                        </button>
-                    </div>
-                `;
-
-                container.appendChild(card);
-            });
-
-            // Добавляем обработчики для кнопок просмотра
-            document.querySelectorAll('.show-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const taskId = btn.getAttribute('data-task-id');
-                    window.location.href = `/templates/tasks_n_page.html?state=${taskId}`;
-                });
-            });
-
-            // Добавляем обработчики для кнопок удаления
-            document.querySelectorAll('.delete-task-btn').forEach(btn => {
-                btn.addEventListener('click', async () => {
-                    const taskId = btn.getAttribute('data-task-id');
-                    if (!confirm('Вы уверены, что хотите удалить эту задачу?')) {
-                        return;
-                    }
-
-                    try {
-                        const response = await fetch(`/api/v0/tasks/tasks/${taskId}`, {
-                            method: 'DELETE',
-                            credentials: 'include'
-                        });
-
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-
-                        await loadTasks();
-                    } catch (error) {
-                        console.error('Ошибка при удалении задачи:', error);
-                        showError('Ошибка при удалении задачи');
-                    }
-                });
-            });
+            renderTasks(tasks);
             hideLoading();
         } catch (error) {
             console.error('Ошибка при загрузке задач:', error);
             showError('Ошибка при загрузке списка задач');
         }
     }
+    async function deleteTask(taskId) {
+        if (!confirm('Вы уверены, что хотите удалить эту задачу?')) return;
+        try {
+            const response = await fetch(`/api/v0/tasks/tasks/${taskId}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            await loadTasks(); // обновить список задач после удаления
+        } catch (error) {
+            alert('Ошибка при удалении задачи');
+            console.error(error);
+        }
+    }
+    function renderTasks(tasks) {
+        const tasksList = document.getElementById('tasks-list');
+        tasksList.innerHTML = '';
+        tasks.forEach(task => {
+            const row = document.createElement('div');
+            row.className = 'lesson-task-row';
+            row.innerHTML = `
+                <span class="lesson-task-title">${task.title || 'Задание'}</span>
+                <div class="d-flex flex-wrap gap-2">
+                    <button class="lesson-task-btn" onclick="window.location.href='tasks_n_page.html?state=${task.id}'">Открыть</button>
+                    <button class="lesson-task-btn" onclick="deleteTask(${task.id})">Удалить</button>
+                </div>
+            `;
+            tasksList.appendChild(row);
+        });
+    }
 
     // Обработчик скачивания файлов
-    downloadFilesBtn.addEventListener('click', async () => {
+    lessonActions[0].addEventListener('click', async () => {
         // showLoading();
         try {
             // Сначала получаем урок
@@ -239,7 +217,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Обработчик загрузки файлов
-    uploadFilesBtn.addEventListener('click', () => {
+    lessonActions[1].addEventListener('click', () => {
         const input = document.createElement('input');
         input.type = 'file';
         input.multiple = true;
@@ -297,7 +275,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Обработчик сохранения урока
-    saveLessonBtn.addEventListener('click', async () => {
+    lessonActionsBottom[1].addEventListener('click', async () => {
         showLoading();
         try {
             const response = await fetch(`/api/v0/lessons/lesson/${lessonId}`, {
@@ -324,7 +302,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Обработчик удаления урока
-    deleteLessonBtn.addEventListener('click', async () => {
+    lessonActionsBottom[2].addEventListener('click', async () => {
         if (!confirm('Вы уверены, что хотите удалить этот урок?')) {
             return;
         }
@@ -348,7 +326,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Обработчик создания задачи
-    createTaskBtn.addEventListener('click', () => {
+    lessonActionsBottom[0].addEventListener('click', () => {
         window.location.href = `tasks_n_page.html?lesson_id=${lessonId}&state=-1`;
     });
 
@@ -369,4 +347,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (lessonId !== '-1') {
     await loadLesson();
     await loadTasks();}
+
+    
 });
