@@ -339,44 +339,60 @@ async def get_task_status(
             task = session.query(Tasks).filter(Tasks.id == task_id).first()
             if not task:
                 raise HTTPException(status_code=404, detail="Задача не найдена")
-                
+
             # Получаем все решения студента для этой задачи
             solutions = session.query(StudentSolutions).filter(
                 StudentSolutions.student_id == student_id,
                 StudentSolutions.task_id == task_id
             ).order_by(StudentSolutions.created_at.desc()).all()
-            
+
             if not solutions:
                 return TaskStatusResponse(
                     task_id=task_id,
                     status="not_started",
                     message="Задача не начата"
                 )
-            
-            # Берем последнее решение
-            last_solution = solutions[-1]
-            
-            # Определяем статус на основе state последнего решения
-            if last_solution.state == 3:  # Правильно решено
-                status = "completed"
-                message = "Задача решена"
-            elif last_solution.state == 2:  # На проверке
-                status = "in_progress"
-                message = "Задача на проверке"
-            elif last_solution.state == 1:  # В процессе
-                status = "in_progress"
-                message = "Задача в процессе"
-            elif last_solution.state == 4:  # Неверно решено
-                status = "in_progress"
-                message = "Задача решена неверно"
-            else:  # Не начата или другая ошибка
-                status = "not_started"
-                message = "Задача не начата"
-                
+
+            # Флаги для отслеживания состояний
+            has_correct = False
+            has_in_review = False
+            has_in_progress_or_wrong = False
+
+            # Один цикл по решениям
+            for solution in solutions:
+                if solution.state == 3:
+                    has_correct = True
+                    break  # Если есть правильное решение, дальше проверять не нужно
+                elif solution.state == 2:
+                    has_in_review = True
+                elif solution.state in (1, 4):
+                    has_in_progress_or_wrong = True
+
+            # Определяем статус по приоритетам
+            if has_correct:
+                return TaskStatusResponse(
+                    task_id=task_id,
+                    status="completed",
+                    message="Задача решена"
+                )
+            elif has_in_review:
+                return TaskStatusResponse(
+                    task_id=task_id,
+                    status="in_progress",
+                    message="Задача на проверке"
+                )
+            elif has_in_progress_or_wrong:
+                return TaskStatusResponse(
+                    task_id=task_id,
+                    status="in_progress",
+                    message="Задача в процессе"
+                )
+
+            # Если нет других состояний
             return TaskStatusResponse(
                 task_id=task_id,
-                status=status,
-                message=message
+                status="not_started",
+                message="Задача не начата"
             )
                 
     except Exception as e:
