@@ -14,7 +14,18 @@ document.getElementById('btn_tsks').addEventListener('click', () => {
 
 const params = new URLSearchParams(window.location.search);
 const studentId = params.get('id');
+const logoutBtn = document.getElementById('logout-btn');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
 
+        try {
+            await fetch('/api/v0/auth/logout', {method: 'POST', credentials: 'include'});
+        } catch (e) {
+        }
+        window.location.href = 'login.html';
+
+    });
+}
 console.log('Загрузка задач и статусов ученика', studentId);
 
 async function loadStudentTasksWithStatus() {
