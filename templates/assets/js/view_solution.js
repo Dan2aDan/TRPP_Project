@@ -4,6 +4,18 @@ const studentId = params.get('studentId');
 
 let solutions = [];
 let currentIndex = 0;
+// const logoutBtn = document.getElementById('logout-btn');
+// if (logoutBtn) {
+//     logoutBtn.addEventListener('click', async () => {
+//
+//         try {
+//             await fetch('/api/v0/auth/logout', {method: 'POST', credentials: 'include'});
+//         } catch (e) {
+//         }
+//         window.location.href = 'login.html';
+//
+//     });
+// }
 
 async function loadSolutions() {
     try {
@@ -49,11 +61,16 @@ function setStatus(statusClass) {
 function getStatusClass(state) {
     // 3 — правильно, 2 — на проверке, 1 — в процессе, 4 — неверно, остальное — не начато
     switch (state) {
-        case 3: return 'completed';
-        case 2: return 'in-progress';
-        case 1: return 'in-progress';
-        case 4: return 'failed';
-        default: return 'failed';
+        case 3:
+            return 'completed';
+        case 2:
+            return 'in-progress';
+        case 1:
+            return 'in-progress';
+        case 4:
+            return 'failed';
+        default:
+            return 'failed';
     }
 }
 

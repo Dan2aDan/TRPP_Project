@@ -15,6 +15,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!container) return;
     const params = new URLSearchParams(window.location.search);
     const state = params.get('id');
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+            if (confirm('Вы действительно хотите выйти?')) {
+                try {
+                    await fetch('/api/v0/auth/logout', { method: 'POST', credentials: 'include' });
+                } catch (e) {}
+                window.location.href = 'login.html';
+            }
+        });
+    }
     try {
         const lessonsResp = await fetch("/api/v0/lessons/lessons");
         const lessonsData = await lessonsResp.json();
