@@ -45,9 +45,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const saveBtn = findButtonByText("Сохранить задачу");
     const deleteBtn = findButtonByText("Удалить задачу");
-    const attachBtn = findButtonByText("Прикрепить задачу");
 
-    if (!saveBtn || !deleteBtn || !attachBtn) {
+    if (!saveBtn || !deleteBtn) {
         console.error('Required buttons not found');
         alert('Ошибка: Не найдены необходимые кнопки');
         return;
@@ -163,11 +162,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('Ошибка при удалении задачи:', error);
             alert('Произошла ошибка при удалении задачи');
         }
-    });
-
-    // Прикрепление задачи
-    attachBtn.addEventListener('click', () => {
-        alert('Функционал прикрепления задачи находится в разработке');
     });
 
     // Получаем кнопки для работы с файлами
