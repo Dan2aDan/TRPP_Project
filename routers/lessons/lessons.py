@@ -79,7 +79,7 @@ async def get_lesson(lesson_id: int, request: Request):
     user_id = session_data.id
 
     lesson = DBALL().get_lesson_by_id(lesson_id)
-    if not lesson or lesson.teacher_id != user_id:
+    if not lesson:
         raise HTTPException(status_code=404, detail={
             "error": "Lesson not found",
             "message": f"Lesson with ID {lesson_id} does not exist"
